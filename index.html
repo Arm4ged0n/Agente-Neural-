@@ -3,102 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS Neural Platform</title>
+    <title>JARVIS v5.0 // Neural-Autonomous Kernel</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes firePulse {
-            0%, 100% { filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.7)); }
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.8)); }
             50% { filter: drop-shadow(0 0 35px rgba(239, 68, 68, 0.95)); }
         }
-        .fire-neural-glow {
-            animation: firePulse 1.2s ease-in-out infinite;
+        .quantum-fire {
+            animation: firePulse 1s ease-in-out infinite;
         }
-        /* Custom Scrollbar for dynamic panels */
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        ::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.4); border-radius: 4px; }
     </style>
 </head>
-<body class="bg-[#010409] m-0 p-0 overflow-hidden font-sans select-none text-white">
+<body class="bg-[#010308] m-0 p-0 overflow-hidden font-sans select-none text-white">
 
     <div id="container" class="w-full h-[100dvh] relative flex flex-col justify-between overflow-hidden">
         
-        <!-- Canvas 3D para o Cérebro Neural e Conexões Dinâmicas de Agentes -->
+        <!-- Motor Gráfico 3D: Cérebro Biomecânico Holográfico -->
         <canvas id="neuralCanvas" class="absolute inset-0 block z-0 w-full h-full cursor-pointer"></canvas>
 
         <!-- Vignette & Glow Overlay -->
-        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_15%,rgba(1,4,9,0.92)_100%)] z-10"></div>
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_15%,rgba(1,3,8,0.94)_100%)] z-10"></div>
 
-        <!-- Top Header & Status -->
+        <!-- Top Header & Arquitetura de Estado -->
         <div class="relative z-20 flex justify-between items-center px-6 pt-6">
-            <div class="flex items-center gap-3 bg-slate-900/60 border border-cyan-500/20 px-4 py-2 rounded-full backdrop-blur-md">
-                <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
-                <span class="text-xs tracking-wider uppercase font-semibold text-cyan-300">JARVIS Core // Neural Sync</span>
+            <div class="flex items-center gap-3 bg-slate-900/70 border border-cyan-500/30 px-4 py-2 rounded-full backdrop-blur-md">
+                <div id="kernelStatusDot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+                <span class="text-xs tracking-wider uppercase font-semibold text-cyan-300">JARVIS v5.0 // Kernel Ativo</span>
             </div>
             
             <div class="flex items-center gap-3">
-                <button id="openAgentsModal" class="text-xs bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 px-4 py-2 rounded-full hover:bg-cyan-500/20 transition backdrop-blur-md flex items-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                    <span>🧠 Agentes Ativos</span>
-                    <span id="agentCountBadge" class="bg-cyan-500 text-black font-bold px-1.5 py-0.5 rounded-full text-[10px]">1</span>
+                <button id="openMatrixBtn" class="text-xs bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 px-4 py-2 rounded-full hover:bg-cyan-500/20 transition backdrop-blur-md flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
+                    <span>🧠 Matriz de Agentes</span>
+                    <span id="agentMatrixCount" class="bg-cyan-500 text-black font-bold px-1.5 py-0.5 rounded-full text-[10px]">1</span>
                 </button>
             </div>
         </div>
 
-        <!-- Main Workspace Overlay: Onde os Agentes criam elementos e nós interconectados -->
-        <div class="relative z-20 flex-grow pointer-events-none p-6 flex flex-col justify-center items-center">
+        <!-- Área Central de Diálogo & Mutação Estrutural -->
+        <div class="relative z-25 flex-grow pointer-events-none p-6 flex flex-col justify-center items-center">
             
-            <!-- Estado Central e Resposta Falada -->
-            <div class="text-center pointer-events-auto max-w-lg bg-slate-900/80 border border-cyan-500/30 p-5 rounded-3xl backdrop-blur-xl shadow-2xl transition-all duration-300">
-                <h2 id="agentStatus" class="text-base md:text-lg font-medium tracking-wide text-cyan-300">
-                    Sistemas Neurais Conectados
+            <!-- Interface do Arquiteto (Feedback Sináptico) -->
+            <div class="text-center pointer-events-auto max-w-lg bg-slate-950/85 border border-cyan-500/40 p-5 rounded-3xl backdrop-blur-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] transition-all duration-300">
+                <h2 id="kernelTitle" class="text-base md:text-lg font-medium tracking-wide text-cyan-300">
+                    Aguardando Comandos do Arquiteto
                 </h2>
-                <p id="agentResponse" class="text-xs text-gray-300 mt-2 min-h-[32px] leading-relaxed">
-                    Diga por voz ou escreva (ex: "Criar agente Spotify", "Conectar nós", "Gerar dashboard") para ver os agentes criarem elementos na plataforma.
+                <p id="kernelVoiceResponse" class="text-xs text-gray-300 mt-2 min-h-[32px] leading-relaxed font-light">
+                    Diga por voz ou digite (ex: "JARVIS, crie um agente focado em automação de painéis", "Mude o layout para Analytics").
                 </p>
             </div>
 
-            <!-- Plataforma Visual Dinâmica (Gerada pelos Agentes) -->
-            <div id="dynamicPlatform" class="w-full max-w-4xl mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pointer-events-auto max-h-[35vh] overflow-y-auto pr-2">
-                <!-- Elementos criados dinamicamente pelos agentes aparecem aqui -->
+            <!-- DOM MUTATION PLATFORM: Onde os Agentes criam nós e painéis interligados -->
+            <div id="autopoieticPlatform" class="w-full max-w-4xl mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pointer-events-auto max-h-[32vh] overflow-y-auto pr-2">
+                <!-- Nó Matriz Inicial -->
                 <div class="bg-slate-900/90 border border-cyan-500/40 rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-between group hover:border-cyan-400 transition">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider">Agente Principal</span>
+                        <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider">Núcleo Central</span>
                         <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                     </div>
-                    <p class="text-xs text-gray-400">Pronto para receber comandos de voz e estruturar nós na plataforma.</p>
-                    <div class="mt-3 text-[10px] text-cyan-400 font-mono">STATUS: SINCronizado</div>
+                    <p class="text-xs text-gray-400">Matriz principal autossuficiente pronta para instanciar sub-agentes.</p>
+                    <div class="mt-3 flex justify-between items-center text-[10px] text-cyan-400 font-mono">
+                        <span>ESTADO: AUTOPOIÉTICO</span>
+                        <span>NÓ #01</span>
+                    </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Painel Lateral / Modal de Gestão de Agentes -->
-        <div id="agentsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl p-6 max-w-md w-full shadow-2xl">
+        <!-- Modal / Matriz de Gestão de Agentes -->
+        <div id="matrixModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="bg-slate-950 border border-cyan-500/50 rounded-3xl p-6 max-w-md w-full shadow-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-bold text-cyan-300 uppercase tracking-widest">Gestão de Agentes Neurais</h3>
-                    <button id="closeAgentsModal" class="text-gray-400 hover:text-white text-sm font-bold px-2 py-1">✕</button>
+                    <h3 class="text-sm font-bold text-cyan-300 uppercase tracking-widest">Matriz de Agentes Internos</h3>
+                    <button id="closeMatrixModal" class="text-gray-400 hover:text-white text-sm font-bold px-2 py-1">✕</button>
                 </div>
                 
                 <div class="space-y-3 mb-4">
                     <div class="flex gap-2">
-                        <input type="text" id="newAgentName" placeholder="Nome do Agente (ex: UI Generator)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white flex-grow outline-none focus:border-cyan-400">
-                        <button id="submitNewAgent" class="bg-cyan-500 text-black font-bold px-4 py-2 rounded-xl text-xs hover:bg-cyan-400 transition">Criar Agente</button>
+                        <input type="text" id="customAgentInput" placeholder="Objetivo do Agente (ex: Analisador de UI)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white flex-grow outline-none focus:border-cyan-400">
+                        <button id="forceCreateAgent" class="bg-cyan-500 text-black font-bold px-4 py-2 rounded-xl text-xs hover:bg-cyan-400 transition">Instanciar</button>
                     </div>
                 </div>
 
-                <div id="agentsListContainer" class="max-h-60 overflow-y-auto space-y-2 pr-1">
-                    <!-- Lista de agentes dinâmicos -->
+                <div id="matrixAgentsList" class="max-h-60 overflow-y-auto space-y-2 pr-1">
+                    <!-- Dinâmico -->
                 </div>
             </div>
         </div>
 
-        <!-- Barra Inferior Flutuante (Comandos & Microfone) -->
+        <!-- Barra Inferior de Comandos Sensoriais -->
         <div class="relative z-30 p-4 pb-8 flex justify-center">
-            <div class="w-full max-w-xl bg-[#0f172a]/95 border border-cyan-500/30 rounded-3xl px-4 py-3 flex items-center justify-between shadow-[0_0_35px_rgba(6,182,212,0.2)] backdrop-blur-xl">
+            <div class="w-full max-w-xl bg-[#0b1329]/95 border border-cyan-500/30 rounded-3xl px-4 py-3 flex items-center justify-between shadow-[0_0_40px_rgba(6,182,212,0.25)] backdrop-blur-2xl">
                 
-                <button id="coreActionBtn" class="p-2 hover:bg-white/5 rounded-full transition text-cyan-400" title="Executar Rotina Neural">
+                <button id="optimizeKernelBtn" class="p-2 hover:bg-white/5 rounded-full transition text-cyan-400" title="Otimizar Matriz">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
@@ -107,14 +109,15 @@
                 <div class="flex-grow px-3">
                     <input 
                         type="text" 
-                        id="userInput" 
-                        placeholder="Diga ou escreva o comando para o agente..." 
+                        id="architectInput" 
+                        placeholder="Comande o ecossistema (ex: Crie um agente de métricas)..." 
                         class="bg-transparent text-white placeholder-gray-500 text-sm outline-none w-full font-light"
                     />
                 </div>
 
-                <button id="micButton" class="p-3 bg-cyan-500/20 border border-cyan-500/40 hover:bg-cyan-500/30 rounded-full transition cursor-pointer group flex items-center justify-center">
-                    <svg id="micIcon" class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Botão de Voz Ativa (Sensor de Input) -->
+                <button id="sensoryMicBtn" class="p-3 bg-cyan-500/20 border border-cyan-500/40 hover:bg-cyan-500/30 rounded-full transition cursor-pointer group flex items-center justify-center">
+                    <svg id="micIconState" class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                     </svg>
                 </button>
@@ -124,27 +127,27 @@
 
     </div>
 
-    <!-- Script Principal da Plataforma JARVIS Neural -->
+    <!-- Script de Implementação do Kernel Mestre -->
     <script>
         const canvas = document.getElementById('neuralCanvas');
         const container = document.getElementById('container');
         const ctx = canvas.getContext('2d', { alpha: false });
         
-        const micButton = document.getElementById('micButton');
-        const micIcon = document.getElementById('micIcon');
-        const agentStatus = document.getElementById('agentStatus');
-        const agentResponse = document.getElementById('agentResponse');
-        const userInput = document.getElementById('userInput');
-        const openAgentsModal = document.getElementById('openAgentsModal');
-        const closeAgentsModal = document.getElementById('closeAgentsModal');
-        const agentsModal = document.getElementById('agentsModal');
-        const submitNewAgent = document.getElementById('submitNewAgent');
-        const newAgentName = document.getElementById('newAgentName');
-        const agentsListContainer = document.getElementById('agentsListContainer');
-        const agentCountBadge = document.getElementById('agentCountBadge');
-        const dynamicPlatform = document.getElementById('dynamicPlatform');
-        const statusDot = document.getElementById('statusDot');
-        const coreActionBtn = document.getElementById('coreActionBtn');
+        const sensoryMicBtn = document.getElementById('sensoryMicBtn');
+        const micIconState = document.getElementById('micIconState');
+        const kernelTitle = document.getElementById('kernelTitle');
+        const kernelVoiceResponse = document.getElementById('kernelVoiceResponse');
+        const architectInput = document.getElementById('architectInput');
+        const openMatrixBtn = document.getElementById('openMatrixBtn');
+        const closeMatrixModal = document.getElementById('closeMatrixModal');
+        const matrixModal = document.getElementById('matrixModal');
+        const forceCreateAgent = document.getElementById('forceCreateAgent');
+        const customAgentInput = document.getElementById('customAgentInput');
+        const matrixAgentsList = document.getElementById('matrixAgentsList');
+        const agentMatrixCount = document.getElementById('agentMatrixCount');
+        const autopoieticPlatform = document.getElementById('autopoieticPlatform');
+        const kernelStatusDot = document.getElementById('kernelStatusDot');
+        const optimizeKernelBtn = document.getElementById('optimizeKernelBtn');
 
         let isListening = false;
         let audioCtx = null;
@@ -156,12 +159,12 @@
         let smoothedVolume = 0;
         let time = 0;
         
-        // Estado dos Agentes Internos
-        let agents = [
-            { id: 1, name: "JARVIS Core", role: "Orquestrador Neural", status: "Ativo", nodesCount: 4 }
+        // Matriz de Agentes Autossuficientes
+        let internalAgents = [
+            { id: 1, name: "JARVIS Core", role: "Orquestrador Matriz", status: "Sincronizado", nodes: 5 }
         ];
 
-        // Redimensionar canvas otimizado
+        // Redimensionar Canvas
         let resizeTimeout;
         function resize() {
             canvas.width = container.clientWidth;
@@ -173,35 +176,29 @@
         });
         resize();
 
-        // --- ESTRUTURA 3D DE CÉREBRO NEURAL ANATÓMICO ---
+        // --- MOTOR 3D: CÉREBRO BIOMECÂNICO / HOLOGRÁFICO ---
         const particles = [];
-        const numParticles = 450;
+        const numParticles = 400;
 
         for (let i = 0; i < numParticles; i++) {
             let x, y, z;
             let inside = false;
             while (!inside) {
-                // Distribuição em volume de elipsoide duplo (Hemisférios cerebrais)
-                x = (Math.random() - 0.5) * 2.4;
-                y = (Math.random() - 0.5) * 1.6;
-                z = (Math.random() - 0.5) * 2.6;
-                const eq = (x * x) / 1.1 + (y * y) / 0.6 + (z * z) / 1.5;
+                x = (Math.random() - 0.5) * 2.5;
+                y = (Math.random() - 0.5) * 1.7;
+                z = (Math.random() - 0.5) * 2.7;
+                // Geometria precisa de duplo hemisfério cerebral
+                const eq = (x * x) / 1.15 + (y * y) / 0.62 + (z * z) / 1.55;
                 if (eq <= 1.0) {
-                    if (Math.abs(x) < 0.1) continue; // Fissura interhemisférica
+                    if (Math.abs(x) < 0.12) continue; // Fissura central
                     inside = true;
                 }
             }
-            const surface = 0.65 + Math.random() * 0.35;
+            const surface = 0.6 + Math.random() * 0.4;
             x *= surface; y *= surface; z *= surface;
-            
-            particles.push({
-                baseX: x, baseY: y, baseZ: z,
-                size: Math.random() * 1.6 + 0.8,
-                isCoreNode: Math.random() > 0.95
-            });
+            particles.push({ baseX: x, baseY: y, baseZ: z, size: Math.random() * 1.5 + 0.8 });
         }
 
-        // Conexões Sinápticas (Rede Neural)
         const connections = [];
         for (let i = 0; i < particles.length; i++) {
             let count = 0;
@@ -211,27 +208,27 @@
                 const dy = particles[i].baseY - particles[j].baseY;
                 const dz = particles[i].baseZ - particles[j].baseZ;
                 const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                if (d < 0.27) {
+                if (d < 0.28) {
                     connections.push({ a: i, b: j });
                     count++;
                 }
             }
         }
 
-        // --- SISTEMA DE VOZ DO JARVIS (TEXT-TO-SPEECH) ---
-        function speakJarvis(text) {
-            agentResponse.innerText = text;
+        // --- SINTETIZADOR DE VOZ (FEEDBACK VOCAL AUTORITÁRIO) ---
+        function jarvisVoice(text) {
+            kernelVoiceResponse.innerText = text;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'pt-BR';
-                utterance.rate = 1.05;
-                utterance.pitch = 0.8; // Tom robótico/grave característico do JARVIS
-                window.speechSynthesis.speak(utterance);
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'pt-BR';
+                utter.rate = 1.0;
+                utter.pitch = 0.78; // Tom grave e imponente
+                window.speechSynthesis.speak(utter);
             }
         }
 
-        // --- RECONHECIMENTO DE VOZ (SPEECH RECOGNITION) ---
+        // --- RECONHECIMENTO DE VOZ (INPUT SENSORIAL) ---
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -240,17 +237,17 @@
             recognition.interimResults = false;
 
             recognition.onresult = (event) => {
-                const speechResult = event.results[0][0].transcript;
-                userInput.value = speechResult;
-                executeAgentCommand(speechResult);
+                const transcript = event.results[0][0].transcript;
+                architectInput.value = transcript;
+                dispatchAgentCommand(transcript);
             };
-            recognition.onerror = () => stopListening();
-            recognition.onend = () => stopListening();
+            recognition.onerror = () => stopSensoryListening();
+            recognition.onend = () => stopSensoryListening();
         }
 
-        micButton.addEventListener('click', async () => {
+        sensoryMicBtn.addEventListener('click', async () => {
             if (isListening) {
-                stopListening();
+                stopSensoryListening();
                 return;
             }
             try {
@@ -265,132 +262,127 @@
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
                 
                 isListening = true;
-                micIcon.classList.add('text-pink-500', 'animate-pulse');
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping";
-                agentStatus.innerText = "JARVIS ESCUTANDO (RAIOS ATIVOS)...";
+                micIconState.classList.add('text-orange-500', 'animate-pulse');
+                kernelStatusDot.className = "w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping";
+                kernelTitle.innerText = "SISTEMA ATIVO: IMPULSOS QUÂNTICOS";
 
                 if (recognition) recognition.start();
-                else speakJarvis("Modo de escuta ativado.");
+                else jarvisVoice("Sensores de voz ativos. Aguardando diretiva.");
             } catch (err) {
-                speakJarvis("Erro ao aceder ao microfone.");
+                jarvisVoice("Erro de acesso aos canais sensoriais de áudio.");
             }
         });
 
-        function stopListening() {
+        function stopSensoryListening() {
             if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
             if (audioCtx) audioCtx.close();
             if (recognition) { try { recognition.stop(); } catch(e){} }
             isListening = false;
             smoothedVolume = 0;
-            micIcon.classList.remove('text-pink-500', 'animate-pulse');
-            statusDot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping";
-            agentStatus.innerText = "Sistemas Neurais Conectados";
+            micIconState.classList.remove('text-orange-500', 'animate-pulse');
+            kernelStatusDot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping";
+            kernelTitle.innerText = "Aguardando Comandos do Arquiteto";
         }
 
-        // --- INTELIGÊNCIA DOS AGENTES INTERNOS: CRIAÇÃO DE ELEMENTOS NA PLATAFORMA ---
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && userInput.value.trim() !== '') {
-                const cmd = userInput.value;
-                userInput.value = '';
-                executeAgentCommand(cmd);
+        // --- NÚCLEO DE AUTOPOIESE: COMANDOS E MUTAÇÃO DOM ---
+        architectInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && architectInput.value.trim() !== '') {
+                const cmd = architectInput.value;
+                architectInput.value = '';
+                dispatchAgentCommand(cmd);
             }
         });
 
-        coreActionBtn.addEventListener('click', () => {
-            executeAgentCommand("otimizar rede");
+        optimizeKernelBtn.addEventListener('click', () => {
+            dispatchAgentCommand("otimizar rede sináptica");
         });
 
-        function executeAgentCommand(cmd) {
+        function dispatchAgentCommand(cmd) {
             const lower = cmd.toLowerCase();
-            smoothedVolume = 100; // Pico visual de energia/fogo no cérebro
+            smoothedVolume = 100; // Pico visual imediato de fogo/raios
             
-            let responseText = "";
+            let feedback = "";
 
-            if (lower.includes('criar agente') || lower.includes('novo agente')) {
-                const nameMatch = cmd.match(/agente\s+([a-zA-Zà-úÀ-Ú0-9\s]+)/i);
-                const agentName = nameMatch ? nameMatch[1].trim() : `Sub-Agente ${agents.length + 1}`;
+            if (lower.includes('agente') || lower.includes('criador') || lower.includes('focado em')) {
+                const goalMatch = cmd.match(/(?:focado em|para)\s+([a-zA-Zà-úÀ-Ú0-9\s]+)/i);
+                const objective = goalMatch ? goalMatch[1].trim() : "Processamento Geral";
                 
-                addNewAgentInternal(agentName, "Autónomo");
-                responseText = `Agente ${agentName} criado com sucesso e integrado na rede neural.`;
+                const agentName = `Agente ${internalAgents.length + 1}`;
+                spawnInternalAgent(agentName, objective);
+                feedback = "Sub-agente especializado inicializado e integrado na matriz.";
             } 
-            else if (lower.includes('spotify') || lower.includes('música')) {
-                addNewAgentInternal("Spotify Automation", "Ativo");
-                appendPlatformNode("Spotify Agent", "Streaming de áudio conectado aos nós principais.", "bg-green-950/40 border-green-500/40 text-green-400");
-                responseText = "Agente do Spotify configurado e nós de áudio ligados.";
-            }
-            else if (lower.includes('dashboard') || lower.includes('painel')) {
-                appendPlatformNode("Neural Dashboard", "Métricas em tempo real ligadas ao núcleo.", "bg-cyan-950/40 border-cyan-500/40 text-cyan-400");
-                responseText = "Painel de controlo gerado e interconectado.";
+            else if (lower.includes('painel') || lower.includes('métricas') || lower.includes('dashboard')) {
+                spawnPlatformNode("Painel de Métricas", "Análise de fluxo sináptico conectada ao núcleo.", "bg-blue-950/40 border-blue-500/40 text-blue-300");
+                feedback = "Painel de controlo estruturado e interconectado à interface.";
             }
             else {
-                // Comportamento Autónomo Padrão: Cria um nó dinâmico na plataforma com base no comando
-                appendPlatformNode(`Agente: ${cmd.substring(0, 15)}...`, `Processado por IA interna: "${cmd}"`, "bg-purple-950/40 border-purple-500/40 text-purple-300");
-                responseText = `Comando executado pelo agente interno: ${cmd}`;
+                // Autopoiese Genérica: Cria nó interativo inteligente
+                spawnPlatformNode(`Módulo: ${cmd.substring(0, 18)}`, `Executado por agente autónomo em tempo de execução.`, "bg-purple-950/40 border-purple-500/40 text-purple-300");
+                feedback = `Diretiva processada com sucesso. Interface remodelada.`;
             }
 
-            speakJarvis(responseText);
+            jarvisVoice(feedback);
         }
 
-        function addNewAgentInternal(name, status) {
-            const newId = agents.length + 1;
-            agents.push({ id: newId, name: name, role: "Sub-Rotina IA", status: status, nodesCount: Math.floor(Math.random() * 5) + 2 });
-            updateAgentsUI();
+        function spawnInternalAgent(name, objective) {
+            internalAgents.push({ id: internalAgents.length + 1, name: name, role: objective, status: "Autónomo", nodes: Math.floor(Math.random() * 4) + 2 });
+            refreshMatrixUI();
         }
 
-        function appendPlatformNode(title, description, colorClass) {
-            const nodeCard = document.createElement('div');
-            nodeCard.className = `bg-slate-900/90 border rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-between group hover:scale-[1.02] transition animate-[fadeIn_0.5s_ease-out] ${colorClass}`;
-            nodeCard.innerHTML = `
+        function spawnPlatformNode(title, desc, colorClass) {
+            const card = document.createElement('div');
+            card.className = `bg-slate-900/90 border rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-between group hover:scale-[1.02] transition animate-[fadeIn_0.4s_ease-out] ${colorClass}`;
+            card.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider">${title}</span>
                     <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 </div>
-                <p class="text-xs text-gray-300">${description}</p>
+                <p class="text-xs text-gray-300">${desc}</p>
                 <div class="mt-3 flex justify-between items-center text-[10px] font-mono opacity-80">
-                    <span>NÓS LIGADOS: ${Math.floor(Math.random() * 6) + 3}</span>
-                    <span class="text-green-400">● ATIVO</span>
+                    <span>SINAPSES: ATIVAS</span>
+                    <span class="text-green-400">● SINCRONIZADO</span>
                 </div>
             `;
-            dynamicPlatform.prepend(nodeCard);
+            autopoieticPlatform.prepend(card);
         }
 
         // Gestão de Agentes (Modal)
-        openAgentsModal.addEventListener('click', () => { agentsModal.classList.remove('hidden'); updateAgentsUI(); });
-        closeAgentsModal.addEventListener('click', () => agentsModal.classList.add('hidden'));
+        openMatrixBtn.addEventListener('click', () => { matrixModal.classList.remove('hidden'); refreshMatrixUI(); });
+        closeMatrixModal.addEventListener('click', () => matrixModal.classList.add('hidden'));
 
-        submitNewAgent.addEventListener('click', () => {
-            const name = newAgentName.value.trim();
-            if(name) {
-                addNewAgentInternal(name, "Autónomo");
-                newAgentName.value = '';
-                speakJarvis(`Agente ${name} adicionado manualmente.`);
+        forceCreateAgent.addEventListener('click', () => {
+            const val = customAgentInput.value.trim();
+            if(val) {
+                spawnInternalAgent(`Agente ${internalAgents.length + 1}`, val);
+                customAgentInput.value = '';
+                jarvisVoice("Novo agente instanciado manualmente.");
             }
         });
 
-        function updateAgentsUI() {
-            agentCountBadge.innerText = agents.length;
-            agentsListContainer.innerHTML = agents.map(a => `
-                <div class="flex justify-between items-center bg-black/40 p-3 rounded-2xl border border-white/10">
+        function refreshMatrixUI() {
+            agentMatrixCount.innerText = internalAgents.length;
+            matrixAgentsList.innerHTML = internalAgents.map(a => `
+                <div class="flex justify-between items-center bg-black/50 p-3 rounded-2xl border border-white/10">
                     <div>
                         <div class="font-bold text-xs text-cyan-300">${a.name}</div>
-                        <div class="text-[10px] text-gray-400">${a.role} • Nós: ${a.nodesCount}</div>
+                        <div class="text-[10px] text-gray-400">Objetivo: ${a.role} • Nós: ${a.nodes}</div>
                     </div>
                     <span class="text-[10px] text-green-400 bg-green-950/60 border border-green-500/30 px-2 py-0.5 rounded-full">${a.status}</span>
                 </div>
             `).join('');
         }
 
-        // --- LOOP 3D DE RENDERIZAÇÃO DO CÉREBRO NEURAL ---
+        // --- LOOP 3D DE RENDERIZAÇÃO BIOMECÂNICA (60 FPS ESTÁVEIS) ---
         function animate() {
             time += 0.02;
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = '#010409';
+            ctx.fillStyle = '#010308';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
             const scale = Math.min(canvas.width, canvas.height) * 0.42;
             const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2 - 40;
+            const centerY = canvas.height / 2 - 30;
 
             let currentVolume = 0;
             if (isListening && analyser && dataArray) {
@@ -403,13 +395,13 @@
             smoothedVolume += (currentVolume - smoothedVolume) * 0.2;
             const volumeScale = smoothedVolume / 40;
 
-            const angleY = time * 0.25;
-            const angleX = Math.sin(time * 0.35) * 0.12;
+            const angleY = time * 0.22;
+            const angleX = Math.sin(time * 0.3) * 0.1;
             const sinY = Math.sin(angleY), cosY = Math.cos(angleY);
             const sinX = Math.sin(angleX), cosX = Math.cos(angleX);
 
             const projected = particles.map(p => {
-                const pulse = 1 + (Math.sin(time * 4 + p.baseX) * 0.03) + (volumeScale * 0.25);
+                const pulse = 1 + (Math.sin(time * 4 + p.baseX) * 0.025) + (volumeScale * 0.28);
                 const px = p.baseX * scale * pulse;
                 const py = p.baseY * scale * pulse;
                 const pz = p.baseZ * scale * pulse;
@@ -428,7 +420,7 @@
                 };
             });
 
-            // 1. Conexões Sinápticas (Raios elétricos ou fogo quando a voz ativa)
+            // Dualidade Cromática: Ciano (Repouso) vs Fogo/Raios Quânticos (Ativação de Voz)
             ctx.lineWidth = volumeScale > 0.3 ? 1.6 : 0.6;
             for (let i = 0; i < connections.length; i++) {
                 const p1 = projected[connections[i].a];
@@ -436,28 +428,27 @@
                 const avgP = (p1.perspective + p2.perspective) / 2;
                 if (avgP < 0.6) continue;
 
-                const isFireActive = volumeScale > 0.3;
+                const isQuantumFire = volumeScale > 0.3;
                 const alpha = Math.max(0.04, Math.min(0.45, (avgP - 0.6) * 0.8 + (volumeScale * 0.35)));
                 
                 ctx.beginPath();
                 ctx.moveTo(p1.projX, p1.projY);
                 ctx.lineTo(p2.projX, p2.projY);
-                ctx.strokeStyle = isFireActive ? `rgba(249, 115, 22, ${alpha * 1.5})` : `rgba(6, 182, 212, ${alpha})`;
+                ctx.strokeStyle = isQuantumFire ? `rgba(249, 115, 22, ${alpha * 1.5})` : `rgba(6, 182, 212, ${alpha})`;
                 ctx.stroke();
             }
 
-            // 2. Nós Neurais (Neurónios)
             projected.sort((a, b) => a.finalZ - b.finalZ);
             projected.forEach(p => {
                 if (p.perspective < 0.4) return;
-                const isFireActive = volumeScale > 0.3;
+                const isQuantumFire = volumeScale > 0.3;
                 const size = Math.max(0.4, p.size * p.perspective * (1 + volumeScale * 0.7));
                 
                 ctx.beginPath();
                 ctx.arc(p.projX, p.projY, size, 0, Math.PI * 2);
-                ctx.shadowBlur = isFireActive ? 22 : 8;
-                ctx.shadowColor = isFireActive ? '#f97316' : '#22d3ee';
-                ctx.fillStyle = isFireActive ? `rgba(251, 146, 60, ${Math.min(1, p.perspective)})` : `rgba(34, 211, 238, ${Math.min(1, p.perspective)})`;
+                ctx.shadowBlur = isQuantumFire ? 22 : 8;
+                ctx.shadowColor = isQuantumFire ? '#f97316' : '#22d3ee';
+                ctx.fillStyle = isQuantumFire ? `rgba(251, 146, 60, ${Math.min(1, p.perspective)})` : `rgba(34, 211, 238, ${Math.min(1, p.perspective)})`;
                 ctx.fill();
             });
 
@@ -465,7 +456,7 @@
         }
 
         animate();
-        updateAgentsUI();
+        refreshMatrixUI();
     </script>
 </body>
 </html>
