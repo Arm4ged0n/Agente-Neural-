@@ -20,7 +20,7 @@
     <!-- Vinheta e Máscara de Ecrã Cibernético -->
     <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,#010409_95%)] z-10"></div>
 
-    <!-- Interface Estilo Stark HUD (Margens com Telemetria) -->
+    <!-- Interface Estilo Stark HUD (Margens com Telemetria e Biblioteca de Voz/Idioma) -->
     <header class="relative z-20 px-8 py-6 flex items-center justify-between pointer-events-none">
         <!-- Canto Superior Esquerdo: Data / Hora / Sistema -->
         <div class="flex flex-col gap-1 bg-black/40 border border-[#00f2fe]/30 p-3 rounded-xl backdrop-blur-md pointer-events-auto shadow-[0_0_15px_rgba(0,242,254,0.15)] font-tech">
@@ -32,19 +32,33 @@
             <div class="text-[10px] text-gray-400">ATMOSPHERIC ANALYSIS: 30°C</div>
         </div>
 
-        <!-- Canto Superior Direito: Sub-Agentes Ativos -->
-        <div class="hidden sm:flex flex-col items-end gap-1 font-tech text-xs text-gray-300 pointer-events-auto bg-black/40 border border-[#00f2fe]/30 p-3 rounded-xl backdrop-blur-md">
-            <span class="text-[#00f2fe] font-bold">MULTI-AGENT MATRIX</span>
-            <span id="activeAgentState" class="text-emerald-400">● AGENTE ORQUESTRADOR: ATIVO</span>
+        <!-- Canto Superior Direito: Biblioteca de Voz e Idioma (Interativo) -->
+        <div class="flex flex-col gap-2 font-tech text-xs text-gray-300 pointer-events-auto bg-black/60 border border-[#00f2fe]/40 p-3.5 rounded-xl backdrop-blur-md shadow-lg">
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-[#00f2fe] font-bold text-[10px] uppercase">Biblioteca de Voz:</span>
+                <select id="voiceSelect" class="bg-black text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none cursor-pointer">
+                    <option value="jarvis">JARVIS (Grave PT-BR)</option>
+                    <option value="friday">FRIDAY (Voz Dinâmica)</option>
+                    <option value="ultron">ULTRON (Timbre Sintético)</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between gap-4 pt-1 border-t border-[#00f2fe]/20">
+                <span class="text-[#00f2fe] font-bold text-[10px] uppercase">Idioma do Sistema:</span>
+                <select id="langSelect" class="bg-black text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none cursor-pointer">
+                    <option value="pt-BR">Português (Brasil)</option>
+                    <option value="en-US">English (US)</option>
+                    <option value="es-ES">Español</option>
+                </select>
+            </div>
         </div>
     </header>
 
     <!-- Centro: Núcleo Holográfico Circundante & Resposta de Voz/Agente -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-6">
         <div class="text-center pointer-events-auto bg-black/80 border border-[#00f2fe]/40 px-8 py-5 rounded-3xl backdrop-blur-xl shadow-[0_0_40px_rgba(0,242,254,0.25)] max-w-lg w-full">
-            <div class="text-[10px] font-tech text-[#00f2fe] tracking-widest uppercase mb-1">JARVIS VOICE PROTOCOL</div>
+            <div id="protocolLabel" class="text-[10px] font-tech text-[#00f2fe] tracking-widest uppercase mb-1">JARVIS VOICE PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs md:text-sm font-light text-gray-200 tracking-wider font-tech leading-relaxed">
-                "Sistemas e sub-agentes integrados. Posso ler, criar e executar tarefas no código desta plataforma. O que deseja comandar, Sr. Stark?"
+                "Sistemas e sub-agentes integrados. Biblioteca de voz e idioma ativa. O que deseja comandar, Sr. Stark?"
             </p>
         </div>
     </main>
@@ -55,7 +69,7 @@
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Criar agente leitor', 'Mudar cor para vermelho')..." 
+                placeholder="Insira diretiva (ex: 'Criar agente', 'Mudar cor')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs font-tech outline-none flex-grow px-3"
             />
             <button id="micBtn" class="p-3 bg-[#00f2fe]/10 border border-[#00f2fe]/40 hover:bg-[#00f2fe]/20 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer" title="Ativar Microfone">
@@ -66,7 +80,7 @@
         </div>
     </footer>
 
-    <!-- Lógica do Agente Mestre com Controlo de Código e Voz pt-BR -->
+    <!-- Lógica de Controlo, Biblioteca de Voz e Tradução Dinâmica -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -75,19 +89,45 @@
         const micBtn = document.getElementById('micBtn');
         const voiceFeedback = document.getElementById('voiceFeedback');
         const clockDisplay = document.getElementById('clockDisplay');
-        const activeAgentState = document.getElementById('activeAgentState');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const langSelect = document.getElementById('langSelect');
+        const protocolLabel = document.getElementById('protocolLabel');
 
         let isListening = false;
         let speechRecognition = null;
         let speechSynth = window.speechSynthesis;
-        let audioCtx = null, analyser = null, dataArray = null, micStream = null;
-
         let hudEnergy = 0;
         let angleTicker = 0;
-        let internalAgents = [
-            { id: 1, name: "Orquestrador", role: "Gestão de Conversação e Sub-tarefas" },
-            { id: 2, name: "Executor de DOM", role: "Leitura, Modificação e Execução de Tarefas" }
-        ];
+        
+        let currentLang = 'pt-BR';
+        let currentVoiceProfile = 'jarvis';
+
+        const translations = {
+            'pt-BR': {
+                protocol: "JARVIS VOICE PROTOCOL",
+                welcome: "Sistemas e sub-agentes integrados. Biblioteca de voz e idioma ativa. O que deseja comandar, Sr. Stark?",
+                listening: "À sua escuta, Sr. Stark.",
+                executing: "Analisando diretiva. Executando rotinas.",
+                success: "Diretiva executada e processada pelos sub-agentes.",
+                placeholder: "Insira diretiva (ex: 'Criar agente leitor', 'Mudar cor')..."
+            },
+            'en-US': {
+                protocol: "JARVIS VOICE PROTOCOL",
+                welcome: "Systems and sub-agents integrated. Voice and language library active. What would you like to command, Mr. Stark?",
+                listening: "Listening, Mr. Stark.",
+                executing: "Analyzing directive. Executing routines.",
+                success: "Directive executed and processed by sub-agents.",
+                placeholder: "Enter directive (e.g., 'Create reader agent', 'Change color')..."
+            },
+            'es-ES': {
+                protocol: "JARVIS VOICE PROTOCOL",
+                welcome: "Sistemas y subagentes integrados. Biblioteca de voz e idioma activa. ¿Qué desea comandar, Sr. Stark?",
+                listening: "A la escucha, Sr. Stark.",
+                executing: "Analizando directiva. Ejecutando rutinas.",
+                success: "Directiva ejecutada y procesada por los subagentes.",
+                placeholder: "Ingrese directiva (ej: 'Crear agente lector', 'Cambiar color')..."
+            }
+        };
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -96,35 +136,45 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Relógio em tempo real
         setInterval(() => {
             const now = new Date();
             clockDisplay.innerText = now.toTimeString().split(' ')[0];
         }, 1000);
 
-        // Selecionar Voz Masculina Grave em Português do Brasil
-        let selectedVoice = null;
-        function loadVoices() {
-            const voices = speechSynth.getVoices();
-            // Tenta encontrar uma voz masculina ou em pt-BR
-            selectedVoice = voices.find(v => v.lang.includes('pt-BR') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('antonio') || v.name.toLowerCase().includes('lucas'))) 
-                         || voices.find(v => v.lang.includes('pt')) 
-                         || voices[0];
-        }
-        if (speechSynth.onvoiceschanged !== undefined) {
-            speechSynth.onvoiceschanged = loadVoices;
-        }
-        loadVoices();
+        // Atualizar textos com base no idioma selecionado
+        langSelect.addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            const t = translations[currentLang];
+            protocolLabel.innerText = t.protocol;
+            voiceFeedback.innerText = `"${t.welcome}"`;
+            textInput.placeholder = t.placeholder;
+            if (speechRecognition) speechRecognition.lang = currentLang;
+        });
 
+        voiceSelect.addEventListener('change', (e) => {
+            currentVoiceProfile = e.target.value;
+            speakJarvis(translations[currentLang].welcome);
+        });
+
+        // Gestão de Voz com Perfis (JARVIS, FRIDAY, ULTRON) e pitch ajustado
         function speakJarvis(text) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
                 const utter = new SpeechSynthesisUtterance(text);
-                if (selectedVoice) utter.voice = selectedVoice;
-                utter.lang = 'pt-BR';
-                utter.rate = 0.95;
-                utter.pitch = 0.5; // Tom grave forçado
+                utter.lang = currentLang;
+
+                if (currentVoiceProfile === 'jarvis') {
+                    utter.rate = 0.95;
+                    utter.pitch = 0.4; // Tom grave masculino
+                } else if (currentVoiceProfile === 'friday') {
+                    utter.rate = 1.05;
+                    utter.pitch = 1.2; // Tom dinâmico feminino
+                } else {
+                    utter.rate = 0.85;
+                    utter.pitch = 0.1; // Timbre robótico profundo
+                }
+
                 speechSynth.speak(utter);
             }
         }
@@ -132,7 +182,7 @@
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
-            speechRecognition.lang = 'pt-BR';
+            speechRecognition.lang = currentLang;
             speechRecognition.onresult = (e) => {
                 const query = e.results[0][0].transcript;
                 textInput.value = query;
@@ -141,6 +191,7 @@
             speechRecognition.onend = () => stopMic();
         }
 
+        let audioCtx = null, analyser = null, micStream = null;
         micBtn.addEventListener('click', async () => {
             if (isListening) {
                 stopMic();
@@ -153,11 +204,10 @@
                 analyser.fftSize = 128;
                 const source = audioCtx.createMediaStreamSource(micStream);
                 source.connect(analyser);
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                 isListening = true;
                 micBtn.classList.add('bg-cyan-500/20', 'border-cyan-500/40', 'text-cyan-300');
-                speakJarvis("À sua escuta, Sr. Stark.");
+                speakJarvis(translations[currentLang].listening);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro nos sensores de áudio.");
@@ -181,34 +231,16 @@
             }
         });
 
-        // --- SISTEMA DE CONTROLO AUTÓNOMO DE CÓDIGO E TAREFAS ---
         function executeAgentTask(directive) {
             hudEnergy = 100;
-            const lower = directive.toLowerCase();
-
-            activeAgentState.innerText = "● EXECUTANDO TAREFA NO CÓDIGO...";
-            speakJarvis(`Analisando diretiva: "${directive}". Executando rotinas.`);
+            const t = translations[currentLang];
+            speakJarvis(t.executing);
 
             setTimeout(() => {
-                if (lower.includes('criar agente') || lower.includes('novo agente')) {
-                    const agentName = `Sub-Agente ${internalAgents.length + 1}`;
-                    internalAgents.push({ id: internalAgents.length + 1, name: agentName, role: directive });
-                    activeAgentState.innerText = `● AGENTE CRIADO: ${agentName}`;
-                    speakJarvis(`Novo agente instanciado e integrado na matriz com sucesso.`);
-                } 
-                else if (lower.includes('cor') || lower.includes('vermelho') || lower.includes('estilo')) {
-                    document.body.style.filter = "hue-rotate(180deg)";
-                    activeAgentState.innerText = "● MUTAÇÃO DE DOM APLICADA";
-                    speakJarvis("Parâmetros visuais do código modificados conforme solicitado.");
-                } 
-                else {
-                    activeAgentState.innerText = "● TAREFA EXECUTADA COM SUCESSO";
-                    speakJarvis(`Diretiva executada e processada pelos sub-agentes.`);
-                }
-            }, 1500);
+                speakJarvis(t.success);
+            }, 1200);
         }
 
-        // Renderização do HUD Holográfico Circular
         function renderStarkHUD() {
             angleTicker += 0.015;
             ctx.globalCompositeOperation = 'source-over';
@@ -220,20 +252,9 @@
             const centerY = canvas.height / 2;
             const radius = Math.min(centerX, centerY) * 0.45;
 
-            let curVol = 0;
-            if (isListening && analyser && dataArray) {
-                analyser.getByteFrequencyData(dataArray);
-                let sum = 0;
-                for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-                curVol = sum / dataArray.length;
-            }
-
-            hudEnergy += (curVol - hudEnergy) * 0.2;
-            const energyScale = hudEnergy / 40;
-
             ctx.strokeStyle = '#00f2fe';
             ctx.lineWidth = 2;
-            ctx.shadowBlur = 15 + (energyScale * 10);
+            ctx.shadowBlur = 15;
             ctx.shadowColor = '#00f2fe';
 
             ctx.save();
@@ -256,7 +277,7 @@
             ctx.restore();
 
             ctx.beginPath();
-            ctx.arc(centerX, centerY, (radius * 0.3) * (1 + energyScale * 0.2), 0, Math.PI * 2);
+            ctx.arc(centerX, centerY, radius * 0.3, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(0, 242, 254, 0.25)';
             ctx.fill();
             ctx.strokeStyle = '#00f2fe';
