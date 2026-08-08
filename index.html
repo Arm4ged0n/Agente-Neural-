@@ -102,15 +102,29 @@
             clockDisplay.innerText = now.toTimeString().split(' ')[0];
         }, 1000);
 
-        // Sintetizador de Voz (Português do Brasil, Tom Grave tipo JARVIS)
+        // Selecionar Voz Masculina Grave em Português do Brasil
+        let selectedVoice = null;
+        function loadVoices() {
+            const voices = speechSynth.getVoices();
+            // Tenta encontrar uma voz masculina ou em pt-BR
+            selectedVoice = voices.find(v => v.lang.includes('pt-BR') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('antonio') || v.name.toLowerCase().includes('lucas'))) 
+                         || voices.find(v => v.lang.includes('pt')) 
+                         || voices[0];
+        }
+        if (speechSynth.onvoiceschanged !== undefined) {
+            speechSynth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
         function speakJarvis(text) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
                 const utter = new SpeechSynthesisUtterance(text);
+                if (selectedVoice) utter.voice = selectedVoice;
                 utter.lang = 'pt-BR';
-                utter.rate = 1.0;
-                utter.pitch = 0.7; // Voz masculina grave
+                utter.rate = 0.95;
+                utter.pitch = 0.5; // Tom grave forçado
                 speechSynth.speak(utter);
             }
         }
@@ -169,7 +183,7 @@
 
         // --- SISTEMA DE CONTROLO AUTÓNOMO DE CÓDIGO E TAREFAS ---
         function executeAgentTask(directive) {
-            hudEnergy = 100; // Pico visual no HUD
+            hudEnergy = 100;
             const lower = directive.toLowerCase();
 
             activeAgentState.innerText = "● EXECUTANDO TAREFA NO CÓDIGO...";
@@ -222,7 +236,6 @@
             ctx.shadowBlur = 15 + (energyScale * 10);
             ctx.shadowColor = '#00f2fe';
 
-            // Anel Externo Rotativo
             ctx.save();
             ctx.translate(centerX, centerY);
             ctx.rotate(angleTicker * 0.5);
@@ -232,7 +245,6 @@
             ctx.stroke();
             ctx.restore();
 
-            // Anel Central Inverso
             ctx.save();
             ctx.translate(centerX, centerY);
             ctx.rotate(-angleTicker * 0.8);
@@ -243,7 +255,6 @@
             ctx.stroke();
             ctx.restore();
 
-            // Núcleo Reator Central
             ctx.beginPath();
             ctx.arc(centerX, centerY, (radius * 0.3) * (1 + energyScale * 0.2), 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(0, 242, 254, 0.25)';
