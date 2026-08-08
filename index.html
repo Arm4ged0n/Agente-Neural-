@@ -68,7 +68,7 @@
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
             <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS QUANTUM PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Rede neuronal ativa. Anéis rotativos em sincronia. Como posso auxiliar, Fagundes?"
+                "Rede neuronal ativa. Sistema pronto para falar e executar comandos, Fagundes."
             </p>
         </div>
 
@@ -79,7 +79,7 @@
                     <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Neural Mesh Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Sub-agentes com permissões de execução de código e mutação DOM ativas.</p>
+                <p class="text-[11px] text-gray-300 font-light">Sub-agentes com permissões de voz, áudio ativo e mutação DOM ativas.</p>
             </div>
         </div>
     </main>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica do Motor Neural 60 FPS com Persistência em LocalStorage -->
+    <!-- Lógica de Controlo de Voz Integrada e Síntese Ativa -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -124,14 +124,13 @@
         let hudEnergy = 0;
         let angleTicker = 0;
 
-        // Carregar nome guardado ou usar 'Fagundes' por defeito
         let currentAdminName = localStorage.getItem('jarvis_admin_name') || "Fagundes";
         adminUserLabel.innerText = currentAdminName;
 
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Neural Mesh Sync", status: "Pronto" }
+            { id: 3, name: "Neural Voice Core", status: "Pronto" }
         ];
 
         const neuralNodes = [];
@@ -168,14 +167,26 @@
         }
         renderAgentsUI();
 
+        // --- SISTEMA DE SÍNTESE DE VOZ ATIVO (TEXT-TO-SPEECH) ---
+        let selectedVoice = null;
+        function loadVoices() {
+            const voices = speechSynth.getVoices();
+            selectedVoice = voices.find(v => v.lang.includes('pt') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('antonio') || v.name.toLowerCase().includes('lucas') || v.name.toLowerCase().includes('male'))) || voices.find(v => v.lang.includes('pt')) || voices[0];
+        }
+        if (speechSynth.onvoiceschanged !== undefined) {
+            speechSynth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
         function speakJarvis(text) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
                 const utter = new SpeechSynthesisUtterance(text);
+                if (selectedVoice) utter.voice = selectedVoice;
                 utter.lang = 'pt-BR';
-                utter.rate = 1.0;
-                utter.pitch = 0.5;
+                utter.rate = 0.95;
+                utter.pitch = 0.45; // Timbre grave e imponente de IA
                 speechSynth.speak(utter);
             }
         }
@@ -209,7 +220,7 @@
                 isListening = true;
                 micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_30px_#ff3d00]');
                 systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_15px_#ff3d00]";
-                speakJarvis(`Escutando frequências, ${currentAdminName}.`);
+                speakJarvis(`Escutando frequências, ${currentAdminName}. Pode falar.`);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro nos sensores de áudio.");
@@ -247,20 +258,20 @@
             internalAgents.push({ id: internalAgents.length + 1, name: cleanName, status: statusDesc });
             renderAgentsUI();
             spawnPlatformWidget(`Agente ${cleanName}`, `Sub-agente operacional instanciado com sucesso.`);
-            speakJarvis(`Sub-agente ${cleanName} criado e ativado.`);
+            speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase();
-            speakJarvis(`Executando diretiva: "${directive}"...`);
+            speakJarvis(`Executando diretiva: "${directive}".`);
 
             setTimeout(() => {
                 if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('para')) {
                     let parts = directive.split(/para|de/i);
                     if (parts[1]) {
                         currentAdminName = parts[1].trim().replace(/[.!]/g, '');
-                        localStorage.setItem('jarvis_admin_name', currentAdminName); // Persistir nome
+                        localStorage.setItem('jarvis_admin_name', currentAdminName);
                         adminUserLabel.innerText = currentAdminName;
                         spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
                         speakJarvis(`Nome atualizado e gravado na matriz. Olá, ${currentAdminName}.`);
@@ -277,7 +288,7 @@
                 } else if (lower.includes('cor') || lower.includes('vermelho') || lower.includes('estilo')) {
                     document.body.style.filter = "hue-rotate(150deg)";
                     spawnPlatformWidget("Mutação de UI", "Filtros de ecrã executados pela sandbox.");
-                    speakJarvis("Parâmetros visuais alterados com sucesso.");
+                    speakJarvis("Parâmetros visuais alterados com sucesso, chefe.");
                 } else {
                     spawnPlatformWidget("Tarefa Executada", directive);
                     speakJarvis(`Diretiva processada e concluída com sucesso.`);
