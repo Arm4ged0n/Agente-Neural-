@@ -3,92 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Stark Industries HUD</title>
+    <title>JARVIS // Autonomous Multi-Agent Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
-        body { font-family: 'Share Tech Mono', monospace; background: #010409; overflow: hidden; }
+        body { font-family: 'Share Tech Mono', monospace; background: #010409; overflow-x: hidden; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        ::-webkit-scrollbar { display: none; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(1, 4, 9, 0.9); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.4); border-radius: 2px; }
         
-        /* Estilo de recortes chanfrados tipo Stark HUD */
         .stark-panel {
             background: rgba(0, 242, 254, 0.03);
             border: 1px solid rgba(0, 242, 254, 0.4);
             box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.1), 0 0 20px rgba(0, 242, 254, 0.15);
-            backdrop-filter: blur(8px);
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            backdrop-filter: blur(10px);
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
         }
         
         .stark-input-panel {
-            background: rgba(1, 10, 20, 0.85);
-            border: 1px solid rgba(0, 242, 254, 0.5);
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.2);
-            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+            background: rgba(1, 10, 20, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.6);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.25);
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
+<body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
 
     <!-- Fundo Holográfico HUD Principal -->
-    <canvas id="hudCanvas" class="absolute inset-0 z-0 w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+    <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
 
-    <!-- Vinheta e Máscara de Ecrã Cibernético -->
-    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_25%,#010409_92%)] z-10"></div>
+    <!-- Vinheta e Máscara Cibernética -->
+    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,#010409_95%)] z-10"></div>
 
-    <!-- Interface Superior J.A.R.V.I.S. -->
-    <header class="relative z-20 px-8 py-6 flex items-center justify-between pointer-events-none">
-        <!-- Bloco Esquerdo: Relógio e Telemetria -->
-        <div class="stark-panel p-4 flex flex-col gap-1.5 pointer-events-auto min-w-[200px]">
+    <!-- Header Superior Responsivo -->
+    <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
+        <!-- Telemetria do Sistema -->
+        <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // V4.2.1</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // CORE</span>
                 <span class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_8px_#00f2fe]"></span>
             </div>
-            <div id="clockDisplay" class="text-xl font-orbitron font-bold text-white tracking-widest">22:29:57</div>
-            <div class="text-[9px] text-cyan-400/70 tracking-wider">ATMOSPHERIC ANALYSIS: 30°C</div>
+            <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
+            <div class="text-[9px] text-cyan-400/80 tracking-wider">STATUS: QUANTUM SYNC</div>
         </div>
 
-        <!-- Bloco Direito: Biblioteca de Voz e Idioma -->
-        <div class="stark-panel p-4 flex flex-col gap-2.5 pointer-events-auto min-w-[240px]">
-            <div class="flex items-center justify-between gap-3">
-                <span class="text-[10px] text-[#00f2fe] tracking-wider uppercase font-bold">BIBLIOTECA DE VOZ:</span>
-                <select id="voiceSelect" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none cursor-pointer">
-                    <option value="jarvis">JARVIS (Grave PT-BR)</option>
-                    <option value="friday">FRIDAY (Dinâmica)</option>
-                    <option value="ultron">ULTRON (Sintético)</option>
-                </select>
+        <!-- Painel de Controlo de Agentes Internos (Criar / Gerir) -->
+        <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
+            <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
+                <span class="text-[#00f2fe]">MATRIZ DE AGENTES INTERNOS</span>
+                <span id="agentCountBadge" class="text-emerald-400">2 ATIVOS</span>
             </div>
-            <div class="flex items-center justify-between gap-3 pt-1 border-t border-[#00f2fe]/20">
-                <span class="text-[10px] text-[#00f2fe] tracking-wider uppercase font-bold">IDIOMA DO SISTEMA:</span>
-                <select id="langSelect" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none cursor-pointer">
-                    <option value="pt-BR">Português (Brasil)</option>
-                    <option value="en-US">English (US)</option>
-                    <option value="es-ES">Español</option>
-                </select>
+            <div class="flex gap-2">
+                <input type="text" id="newAgentName" placeholder="Nome do Agente (ex: Analisador)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
+                <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
+            </div>
+            <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
+                <!-- Sub-agentes injetados aqui -->
             </div>
         </div>
     </header>
 
-    <!-- Centro: Caixa de Diálogo JARVIS Voice Protocol -->
-    <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-6">
-        <div class="stark-panel px-8 py-6 text-center pointer-events-auto max-w-md w-full shadow-[0_0_50px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-2">JARVIS VOICE PROTOCOL</div>
-            <p id="voiceFeedback" class="text-xs md:text-sm font-light text-gray-200 tracking-wider leading-relaxed">
-                "Diretiva executada e processada pelos sub-agentes."
+    <!-- Centro: Diálogo JARVIS Voice Protocol e Plataforma de Módulos Dinâmicos -->
+    <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
+        <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS VOICE & TEXT PROTOCOL</div>
+            <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
+                "Plataforma ativa. Atendo por voz e texto. Diga 'Criar agente [Nome]' para instanciar novos operacionais."
             </p>
+        </div>
+
+        <!-- Área de Trabalho Dinâmica (Módulos criados pelos Agentes Internos) -->
+        <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[30vh] overflow-y-auto pr-1">
+            <div class="stark-panel p-4 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Módulo Core V1</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                </div>
+                <p class="text-[11px] text-gray-300 font-light">Sub-agentes operacionais prontos para mutações de DOM em tempo real.</p>
+            </div>
         </div>
     </main>
 
-    <!-- Rodapé: Input & Mic com Design J.A.R.V.I.S. -->
-    <footer class="relative z-30 p-8 flex justify-center pointer-events-auto">
-        <div class="stark-input-panel w-full max-w-lg p-3 flex items-center gap-3">
+    <!-- Rodapé: Input de Texto e Botão de Voz Responsivos -->
+    <footer class="relative z-30 p-4 sm:p-8 flex justify-center pointer-events-auto w-full max-w-3xl mx-auto">
+        <div class="stark-input-panel w-full p-2.5 sm:p-3 flex items-center gap-3">
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Criar agente', 'Mudar cor')..." 
-                class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs outline-none flex-grow px-3 font-tech"
+                placeholder="Insira diretiva (ex: 'Criar agente de segurança', 'Mudar estilo')..." 
+                class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
-            <button id="micBtn" class="p-3 bg-[#00f2fe]/10 border border-[#00f2fe]/50 hover:bg-[#00f2fe]/25 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_15px_rgba(0,242,254,0.3)]" title="Ativar Microfone">
+            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_20px_rgba(0,242,254,0.4)] shrink-0" title="Ativar Microfone">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                 </svg>
@@ -96,7 +103,7 @@
         </div>
     </footer>
 
-    <!-- Lógica e Animação Holográfica 60 FPS -->
+    <!-- Lógica de Controlo de Agentes Internos, Voz e Visuais 60 FPS -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -105,45 +112,22 @@
         const micBtn = document.getElementById('micBtn');
         const voiceFeedback = document.getElementById('voiceFeedback');
         const clockDisplay = document.getElementById('clockDisplay');
-        const voiceSelect = document.getElementById('voiceSelect');
-        const langSelect = document.getElementById('langSelect');
-        const protocolLabel = document.getElementById('protocolLabel');
+        const newAgentName = document.getElementById('newAgentName');
+        const createAgentBtn = document.getElementById('createAgentBtn');
+        const agentsListContainer = document.getElementById('agentsListContainer');
+        const agentCountBadge = document.getElementById('agentCountBadge');
+        const dynamicPlatform = document.getElementById('dynamicPlatform');
 
         let isListening = false;
         let speechRecognition = null;
         let speechSynth = window.speechSynthesis;
         let hudEnergy = 0;
         let angleTicker = 0;
-        
-        let currentLang = 'pt-BR';
-        let currentVoiceProfile = 'jarvis';
 
-        const translations = {
-            'pt-BR': {
-                protocol: "JARVIS VOICE PROTOCOL",
-                welcome: "Diretiva executada e processada pelos sub-agentes.",
-                listening: "À sua escuta, Sr. Stark.",
-                executing: "Analisando diretiva. Executando rotinas.",
-                success: "Diretiva executada com sucesso.",
-                placeholder: "Insira diretiva (ex: 'Criar agente', 'Mudar cor')..."
-            },
-            'en-US': {
-                protocol: "JARVIS VOICE PROTOCOL",
-                welcome: "Directive executed and processed by sub-agents.",
-                listening: "Listening, Mr. Stark.",
-                executing: "Analyzing directive. Executing routines.",
-                success: "Directive executed successfully.",
-                placeholder: "Enter directive (e.g., 'Create agent', 'Change color')..."
-            },
-            'es-ES': {
-                protocol: "JARVIS VOICE PROTOCOL",
-                welcome: "Directiva ejecutada y procesada por los subagentes.",
-                listening: "A la escucha, Sr. Stark.",
-                executing: "Analizando directiva. Ejecutando rutinas.",
-                success: "Directiva ejecutada con éxito.",
-                placeholder: "Ingrese directiva (ej: 'Crear agente', 'Cambiar color')..."
-            }
-        };
+        let internalAgents = [
+            { id: 1, name: "Orquestrador Master", task: "Gestão Geral e Processamento NLP" },
+            { id: 2, name: "Executor de DOM", task: "Mutação Estrutural e Criação de UI" }
+        ];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -157,36 +141,25 @@
             clockDisplay.innerText = now.toTimeString().split(' ')[0];
         }, 1000);
 
-        langSelect.addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            const t = translations[currentLang];
-            protocolLabel.innerText = t.protocol;
-            voiceFeedback.innerText = `"${t.welcome}"`;
-            textInput.placeholder = t.placeholder;
-            if (speechRecognition) speechRecognition.lang = currentLang;
-        });
-
-        voiceSelect.addEventListener('change', (e) => {
-            currentVoiceProfile = e.target.value;
-            speakJarvis(translations[currentLang].welcome);
-        });
+        function renderAgentsUI() {
+            agentCountBadge.innerText = `${internalAgents.length} ATIVOS`;
+            agentsListContainer.innerHTML = internalAgents.map(a => `
+                <div class="flex justify-between items-center bg-black/60 p-1.5 rounded border border-cyan-500/20">
+                    <span class="text-cyan-300 font-bold">${a.name}</span>
+                    <span class="text-gray-400 text-[9px]">${a.task.substring(0, 18)}...</span>
+                </div>
+            `).join('');
+        }
+        renderAgentsUI();
 
         function speakJarvis(text) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
                 const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = currentLang;
-                if (currentVoiceProfile === 'jarvis') {
-                    utter.rate = 0.95;
-                    utter.pitch = 0.4;
-                } else if (currentVoiceProfile === 'friday') {
-                    utter.rate = 1.05;
-                    utter.pitch = 1.2;
-                } else {
-                    utter.rate = 0.85;
-                    utter.pitch = 0.1;
-                }
+                utter.lang = 'pt-BR';
+                utter.rate = 1.0;
+                utter.pitch = 0.5;
                 speechSynth.speak(utter);
             }
         }
@@ -194,11 +167,11 @@
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
-            speechRecognition.lang = currentLang;
+            speechRecognition.lang = 'pt-BR';
             speechRecognition.onresult = (e) => {
                 const query = e.results[0][0].transcript;
                 textInput.value = query;
-                executeAgentTask(query);
+                processAgentCommand(query);
             };
             speechRecognition.onend = () => stopMic();
         }
@@ -218,11 +191,11 @@
                 source.connect(analyser);
 
                 isListening = true;
-                micBtn.classList.add('bg-cyan-500/30', 'border-cyan-400', 'text-white');
-                speakJarvis(translations[currentLang].listening);
+                micBtn.classList.add('bg-cyan-500/40', 'border-cyan-300', 'text-white', 'shadow-[0_0_25px_#00f2fe]');
+                speakJarvis("À sua escuta, Sr. Stark. Fale a sua diretiva.");
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
-                speakJarvis("Erro nos sensores de áudio.");
+                speakJarvis("Erro ao aceder aos sensores de áudio.");
             }
         });
 
@@ -232,28 +205,78 @@
             if (speechRecognition) { try { speechRecognition.stop(); } catch(e){} }
             isListening = false;
             hudEnergy = 0;
-            micBtn.classList.remove('bg-cyan-500/30', 'border-cyan-400', 'text-white');
+            micBtn.classList.remove('bg-cyan-500/40', 'border-cyan-300', 'text-white', 'shadow-[0_0_25px_#00f2fe]');
         }
 
         textInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && textInput.value.trim() !== '') {
                 const val = textInput.value;
                 textInput.value = '';
-                executeAgentTask(val);
+                processAgentCommand(val);
             }
         });
 
-        function executeAgentTask(directive) {
+        createAgentBtn.addEventListener('click', () => {
+            const name = newAgentName.value.trim();
+            if (name) {
+                registerNewAgent(name, "Criado via painel de controlo manual");
+                newAgentName.value = '';
+            }
+        });
+
+        // --- SISTEMA DE PARSING E CRIAÇÃO AUTOMÁTICA DE AGENTES ---
+        function registerNewAgent(agentName, agentTask) {
+            const cleanName = agentName.replace(/["']/g, "").trim();
+            internalAgents.push({ id: internalAgents.length + 1, name: cleanName, task: agentTask });
+            renderAgentsUI();
+            spawnPlatformCard(`Agente: ${cleanName}`, `Operacional atribuído: ${agentTask}`);
+            speakJarvis(`Sub-agente ${cleanName} instanciado com sucesso na matriz interna.`);
+        }
+
+        function processAgentCommand(directive) {
             hudEnergy = 100;
-            const t = translations[currentLang];
-            speakJarvis(t.executing);
+            const lower = directive.toLowerCase();
+            speakJarvis(`Processando diretiva: "${directive}" via sub-agentes.`);
 
             setTimeout(() => {
-                speakJarvis(t.success);
+                // Detetar comando de voz/texto para criação de agente (ex: "criar agente de segurança" ou "criar agente Jarvis")
+                if (lower.includes('criar agente') || lower.includes('novo agente')) {
+                    let parts = directive.split(/agente/i);
+                    let extractedName = parts[1] ? parts[1].trim() : `Autónomo #${internalAgents.length + 1}`;
+                    if (!extractedName || extractedName.length < 2) {
+                        extractedName = `Sub-Agente #${internalAgents.length + 1}`;
+                    }
+                    registerNewAgent(extractedName, directive);
+                } 
+                else if (lower.includes('mudar cor') || lower.includes('vermelho')) {
+                    document.body.style.filter = "hue-rotate(140deg)";
+                    spawnPlatformCard("Mutação Visual", "Espectro de cores alterado com sucesso.");
+                    speakJarvis("Parâmetros visuais do ecossistema modificados.");
+                } 
+                else {
+                    spawnPlatformCard(`Tarefa: ${directive.substring(0, 18)}`, "Processado e validado pelos sub-agentes.");
+                    speakJarvis("Diretiva executada e integrada no ecossistema.");
+                }
             }, 1200);
         }
 
-        // Renderização do HUD Holográfico Circular Estilo Stark
+        function spawnPlatformCard(title, description) {
+            const card = document.createElement('div');
+            card.className = "stark-panel p-4 flex flex-col justify-between animate-[fadeIn_0.5s_ease-out]";
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">${title}</span>
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                </div>
+                <p class="text-[11px] text-gray-300 font-light">${description}</p>
+                <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
+                    <span>STATUS: OPERACIONAL</span>
+                    <span>SUB-AGENTE ATIVO</span>
+                </div>
+            `;
+            dynamicPlatform.prepend(card);
+        }
+
         function renderStarkHUD() {
             angleTicker += 0.015;
             ctx.globalCompositeOperation = 'source-over';
@@ -267,7 +290,6 @@
 
             hudEnergy *= 0.95;
 
-            // Anel Externo Tracejado Rotativo
             ctx.strokeStyle = '#00f2fe';
             ctx.lineWidth = 2;
             ctx.shadowBlur = 15;
@@ -277,26 +299,14 @@
             ctx.translate(centerX, centerY);
             ctx.rotate(angleTicker * 0.4);
             ctx.beginPath();
-            ctx.arc(0, 0, radius * 1.3, 0, Math.PI * 2);
-            ctx.setLineDash([8, 12, 4, 12]);
+            ctx.arc(0, 0, radius * 1.2, 0, Math.PI * 2);
+            ctx.setLineDash([10, 15, 5, 15]);
             ctx.stroke();
             ctx.restore();
 
-            // Anel Intermediário Inverso
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(-angleTicker * 0.6);
             ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.95, 0, Math.PI * 1.5);
-            ctx.setLineDash([3, 6]);
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-            ctx.restore();
-
-            // Núcleo Reator Central Pulsante
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, (radius * 0.28) * (1 + hudEnergy * 0.003), 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0, 242, 254, 0.2)';
+            ctx.arc(centerX, centerY, (radius * 0.3) * (1 + hudEnergy * 0.002), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 242, 254, 0.25)';
             ctx.fill();
             ctx.strokeStyle = '#00f2fe';
             ctx.lineWidth = 3.5;
