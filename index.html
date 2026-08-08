@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYNAPSE OS // Multi-Agent Neural Platform</title>
+    <title>SYNAPSE // Minimalist Neural Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -11,13 +11,12 @@
             theme: {
                 extend: {
                     colors: {
-                        synapse: {
-                            900: '#020408',
-                            800: '#080d16',
-                            700: '#111a2d',
+                        clean: {
+                            900: '#000205',
+                            800: '#060913',
+                            700: '#111726',
                             cyan: '#00f0ff',
-                            fire: '#ff5500',
-                            purple: '#9d00ff'
+                            fire: '#ff4500'
                         }
                     }
                 }
@@ -25,228 +24,177 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.6s ease; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #080d16; }
-        ::-webkit-scrollbar-thumb { background: #111a2d; border-radius: 2px; }
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
     </style>
 </head>
-<body class="bg-synapse-900 text-gray-100 h-screen w-screen overflow-hidden flex flex-col selection:bg-synapse-cyan selection:text-black">
+<body id="appBody" class="bg-clean-900 text-gray-100 h-screen w-screen overflow-hidden flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
 
-    <!-- Top Control Header -->
-    <header class="h-14 border-b border-gray-800/60 bg-synapse-800/60 backdrop-blur-md px-6 flex items-center justify-between z-30">
+    <!-- Minimal Header -->
+    <header class="w-full px-8 py-6 flex items-center justify-between z-30 pointer-events-auto">
         <div class="flex items-center gap-3">
-            <div class="w-3 h-3 rounded-full bg-synapse-cyan shadow-[0_0_12px_#00f0ff] animate-pulse"></div>
-            <span class="font-mono font-bold text-xs tracking-widest text-synapse-cyan">SYNAPSE OS // v1.0.0</span>
+            <div id="headerDot" class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_12px_#00f0ff] animate-pulse"></div>
+            <span class="font-mono text-xs tracking-widest uppercase text-gray-400 font-medium">SYNAPSE // CORE</span>
         </div>
-        <div class="flex items-center gap-3">
-            <button id="toggleTerminal" class="bg-synapse-700/50 hover:bg-synapse-700 border border-gray-700/50 px-3 py-1.5 rounded-lg text-xs font-mono text-gray-300 transition flex items-center gap-2">
-                <span>⚡ Neural Stream</span>
+        <div class="flex items-center gap-4 text-xs font-mono">
+            <button id="btnThemeToggle" class="text-gray-400 hover:text-white transition px-3 py-1 rounded-full border border-white/10 hover:border-white/30 bg-white/5">
+                Mudar Tema
             </button>
-            <button id="clearNodes" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 px-3 py-1.5 rounded-lg text-xs font-mono text-red-400 transition">
-                Reset Workspace
+            <button id="btnLogsToggle" class="text-gray-400 hover:text-white transition px-3 py-1 rounded-full border border-white/10 hover:border-white/30 bg-white/5">
+                Logs Multi-Agente
             </button>
         </div>
     </header>
 
-    <!-- Main Workspace -->
-    <main class="flex-grow flex relative overflow-hidden">
+    <!-- Center Immersive Workspace (Canvas + Floating Modules) -->
+    <main class="absolute inset-0 z-0 flex flex-col items-center justify-center pointer-events-none px-6">
         
-        <!-- Left Agent Management Sidebar -->
-        <aside class="w-80 border-r border-gray-800/60 bg-synapse-800/30 backdrop-blur-md flex flex-col z-20">
-            <div class="p-4 border-b border-gray-800/60 flex items-center justify-between">
-                <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Cluster de Agentes</span>
-                <span class="text-xs font-mono text-synapse-cyan bg-synapse-cyan/10 px-2 py-0.5 rounded">3 Ativos</span>
+        <!-- Canvas 3D Biomechanical Brain -->
+        <canvas id="neuralCanvas" class="absolute inset-0 z-0 w-full h-full cursor-grab active:cursor-grabbing pointer-events-auto"></canvas>
+
+        <!-- Clean Vignette Mask -->
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,#000205_85%)] z-10"></div>
+
+        <!-- Floating Agent HUD (Clean Minimalist) -->
+        <div class="relative z-20 text-center pointer-events-auto mb-6 transition-all duration-300">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3">
+                <span id="activeAgentBadge" class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                <span id="activeAgentName" class="text-[10px] font-mono tracking-wider uppercase text-cyan-400 font-bold">SUPERVISOR (PRIME)</span>
             </div>
-            
-            <div class="p-4 space-y-3 flex-grow overflow-y-auto">
-                <!-- Supervisor -->
-                <div class="bg-synapse-700/30 border border-gray-800 rounded-xl p-3.5 hover:border-synapse-cyan/50 transition">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold font-mono text-synapse-cyan">SUPERVISOR</span>
-                        <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
-                    </div>
-                    <p class="text-[11px] text-gray-400 font-light">Orquestrador central de diretivas e input sensorial.</p>
+            <h1 id="hudMainText" class="text-sm md:text-base font-light text-gray-300 max-w-md mx-auto tracking-wide">
+                Aguardando diretiva do arquiteto...
+            </h1>
+        </div>
+
+        <!-- Dynamic Autopoietic Grid (Constructed by Agents) -->
+        <div id="cleanGrid" class="relative z-25 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[28vh] overflow-y-auto pr-1">
+            <!-- Initial clean state node -->
+            <div class="bg-clean-800/60 border border-white/10 rounded-2xl p-4 backdrop-blur-xl shadow-2xl flex flex-col justify-between group hover:border-cyan-500/40 transition">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-[11px] font-mono font-bold text-gray-300 tracking-wider">NÚCLEO BASE</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                 </div>
-                <!-- Analista -->
-                <div class="bg-synapse-700/30 border border-gray-800 rounded-xl p-3.5 hover:border-synapse-purple/50 transition">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold font-mono text-synapse-purple">ANALISTA</span>
-                        <span class="w-2 h-2 rounded-full bg-synapse-purple"></span>
-                    </div>
-                    <p class="text-[11px] text-gray-400 font-light">Processamento lógico e mutação de elementos de UI.</p>
-                </div>
-                <!-- Auditor -->
-                <div class="bg-synapse-700/30 border border-gray-800 rounded-xl p-3.5 hover:border-synapse-fire/50 transition">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold font-mono text-synapse-fire">AUDITOR</span>
-                        <span class="w-2 h-2 rounded-full bg-synapse-fire"></span>
-                    </div>
-                    <p class="text-[11px] text-gray-400 font-light">Validação de integridade estrutural e segurança.</p>
-                </div>
+                <p class="text-xs text-gray-400 font-light">Matriz pronta para construir módulos via comandos.</p>
             </div>
+        </div>
 
-            <div class="p-4 border-t border-gray-800/60 bg-synapse-900/50">
-                <button id="btnAddNode" class="w-full bg-synapse-cyan/20 hover:bg-synapse-cyan/30 border border-synapse-cyan/40 text-synapse-cyan font-mono font-medium py-2 px-4 rounded-xl text-xs transition">
-                    + Instanciar Novo Nó
-                </button>
-            </div>
-        </aside>
-
-        <!-- Center Interactive Core Canvas & Generated Platform -->
-        <section class="flex-grow relative flex flex-col justify-between overflow-hidden bg-synapse-900">
-            
-            <!-- Background Neural Brain Canvas -->
-            <canvas id="synapseCanvas" class="absolute inset-0 z-0 w-full h-full cursor-grab"></canvas>
-
-            <!-- Radial Mask -->
-            <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,#020408_90%)] z-10"></div>
-
-            <!-- Header Status HUD -->
-            <div class="relative z-20 p-6 flex justify-center pointer-events-none">
-                <div class="bg-synapse-800/80 border border-gray-800 backdrop-blur-xl px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-4 max-w-md pointer-events-auto">
-                    <div id="statusIndicator" class="w-2.5 h-2.5 rounded-full bg-synapse-cyan animate-pulse"></div>
-                    <div>
-                        <div id="activeAgentLabel" class="text-[10px] font-mono tracking-widest uppercase text-synapse-cyan font-bold">SUPERVISOR (MATRIZ)</div>
-                        <div id="systemMessage" class="text-xs text-gray-300 font-light mt-0.5">Sistema neural pronto. Fale ou digite um comando.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Autopoietic Platform Grid -->
-            <div class="relative z-20 px-6 pb-6 pointer-events-none flex justify-center">
-                <div id="platformGrid" class="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
-                    <!-- Initial Workspace Node -->
-                    <div class="bg-synapse-800/90 border border-gray-800 rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-between group hover:border-synapse-cyan/40 transition">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-xs font-mono font-bold text-synapse-cyan uppercase">NÓ DE ORIGEM</span>
-                            <span class="w-2 h-2 rounded-full bg-synapse-cyan"></span>
-                        </div>
-                        <p class="text-xs text-gray-400 font-light">Núcleo autónomo inicializado com sucesso.</p>
-                        <div class="mt-3 flex justify-between items-center text-[10px] font-mono text-gray-500">
-                            <span>ESTADO: ATIVO</span>
-                            <span class="text-synapse-cyan">ID_001</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Input Dock -->
-            <div class="relative z-30 p-6 pt-0 flex justify-center pointer-events-auto">
-                <div class="w-full max-w-2xl bg-synapse-800/90 border border-gray-800 rounded-2xl p-2.5 flex items-center gap-3 backdrop-blur-xl shadow-2xl">
-                    <input 
-                        type="text" 
-                        id="userInput" 
-                        placeholder="Comande o ecossistema (ex: Crie painel de análises)..." 
-                        class="bg-transparent text-gray-100 placeholder-gray-500 text-xs font-mono outline-none flex-grow px-2"
-                    />
-                    <button id="micBtn" class="p-3 bg-synapse-cyan/10 border border-synapse-cyan/30 hover:bg-synapse-cyan/20 text-synapse-cyan rounded-xl transition flex items-center justify-center group" title="Ativar Voz">
-                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-        </section>
     </main>
 
-    <!-- Terminal Drawer / Modal -->
-    <div id="terminalModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-synapse-800 border border-gray-800 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh]">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-800">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-synapse-cyan"></span>
-                    <h3 class="text-xs font-mono font-bold text-gray-200 uppercase tracking-widest">Fluxo Sináptico Multi-Agente</h3>
-                </div>
-                <button id="closeTerminal" class="text-gray-400 hover:text-white text-xs font-bold px-2 py-1">✕</button>
+    <!-- Bottom Clean Input Dock -->
+    <footer class="w-full px-8 pb-8 flex justify-center z-30 pointer-events-auto">
+        <div class="w-full max-w-xl bg-clean-800/80 border border-white/10 rounded-2xl p-2 flex items-center gap-3 backdrop-blur-2xl shadow-2xl">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Comande os agentes (ex: 'Crie um painel de métricas', 'Mude para fogo')..." 
+                class="bg-transparent text-gray-100 placeholder-gray-500 text-xs font-mono outline-none flex-grow px-3"
+            />
+            <button id="micBtn" class="p-2.5 bg-white/5 border border-white/10 hover:border-white/30 text-cyan-400 rounded-xl transition flex items-center justify-center group" title="Ativar Voz">
+                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Minimal Logs Modal -->
+    <div id="logsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-clean-800 border border-white/10 rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                <span class="text-xs font-mono font-bold text-gray-300 uppercase tracking-widest">Logs de Sincronização Multi-Agente</span>
+                <button id="closeLogs" class="text-gray-400 hover:text-white text-xs font-bold px-2 py-1">✕</button>
             </div>
-            <div id="terminalLogs" class="flex-grow overflow-y-auto space-y-2 pr-1 font-mono text-[11px] text-gray-300">
+            <div id="logsList" class="flex-grow overflow-y-auto space-y-2 pr-1 font-mono text-[11px] text-gray-300">
                 <!-- Logs dinâmicos -->
             </div>
         </div>
     </div>
 
-    <!-- Script Principal SYNAPSE OS -->
+    <!-- Script Clean & Professional Minimalist Engine -->
     <script>
-        const canvas = document.getElementById('synapseCanvas');
+        const canvas = document.getElementById('neuralCanvas');
         const container = canvas.parentElement;
         const ctx = canvas.getContext('2d', { alpha: false });
 
         const userInput = document.getElementById('userInput');
         const micBtn = document.getElementById('micBtn');
-        const systemMessage = document.getElementById('systemMessage');
-        const activeAgentLabel = document.getElementById('activeAgentLabel');
-        const platformGrid = document.getElementById('platformGrid');
+        const hudMainText = document.getElementById('hudMainText');
+        const activeAgentName = document.getElementById('activeAgentName');
+        const activeAgentBadge = document.getElementById('activeAgentBadge');
+        const cleanGrid = document.getElementById('cleanGrid');
         
-        const toggleTerminal = document.getElementById('toggleTerminal');
-        const terminalModal = document.getElementById('terminalModal');
-        const closeTerminal = document.getElementById('closeTerminal');
-        const terminalLogs = document.getElementById('terminalLogs');
-        const btnAddNode = document.getElementById('btnAddNode');
-        const clearNodes = document.getElementById('clearNodes');
+        const btnLogsToggle = document.getElementById('btnLogsToggle');
+        const logsModal = document.getElementById('logsModal');
+        const closeLogs = document.getElementById('closeLogs');
+        const logsList = document.getElementById('logsList');
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const appBody = document.getElementById('appBody');
+        const headerDot = document.getElementById('headerDot');
 
         let isListening = false;
         let speechRecognition = null;
         let speechSynth = window.speechSynthesis;
         let audioCtx = null, analyser = null, dataArray = null, micStream = null;
 
-        let volumeLevel = 0;
-        let animationTime = 0;
+        let themeMode = 0; // 0 = Clean Cyan, 1 = Quantum Fire, 2 = Deep Purple
+        let intensityVol = 0;
+        let animTime = 0;
 
-        let logs = [
-            { time: new Date().toLocaleTimeString(), agent: "SUPERVISOR", text: "SYNAPSE OS kernel online. Agentes em escuta." }
+        let syncLogs = [
+            { time: new Date().toLocaleTimeString(), agent: "SUPERVISOR", text: "SYNAPSE Clean Matrix online. Agentes operacionais." }
         ];
 
         function resizeCanvas() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- CÉREBRO 3D BIOMECÂNICO (PARTÍCULAS E CONEXÕES) ---
-        const brainParticles = [];
-        const particleCount = 380;
+        // --- CÉREBRO 3D BIOMECÂNICO ---
+        const brainNodes = [];
+        const nodeCount = 380;
 
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < nodeCount; i++) {
             let x, y, z, valid = false;
             while (!valid) {
                 x = (Math.random() - 0.5) * 2.4;
-                y = (Math.random() - 0.5) * 1.6;
-                z = (Math.random() - 0.5) * 2.6;
-                const ellipsoid = (x * x) / 1.1 + (y * y) / 0.58 + (z * z) / 1.4;
-                if (ellipsoid <= 1.0) {
-                    if (Math.abs(x) < 0.1) continue; // Fissura interhemisférica
+                y = (Math.random() - 0.5) * 1.5;
+                z = (Math.random() - 0.5) * 2.5;
+                const eq = (x * x) / 1.1 + (y * y) / 0.58 + (z * z) / 1.4;
+                if (eq <= 1.0) {
+                    if (Math.abs(x) < 0.1) continue;
                     valid = true;
                 }
             }
             const depth = 0.6 + Math.random() * 0.4;
-            brainParticles.push({ baseX: x * depth, baseY: y * depth, baseZ: z * depth, radius: Math.random() * 1.5 + 0.5 });
+            brainNodes.push({ baseX: x * depth, baseY: y * depth, baseZ: z * depth, radius: Math.random() * 1.4 + 0.4 });
         }
 
-        const brainLinks = [];
-        for (let i = 0; i < brainParticles.length; i++) {
+        const brainEdges = [];
+        for (let i = 0; i < brainNodes.length; i++) {
             let links = 0;
-            for (let j = i + 1; j < brainParticles.length; j++) {
+            for (let j = i + 1; j < brainNodes.length; j++) {
                 if (links > 2) break;
-                const dx = brainParticles[i].baseX - brainParticles[j].baseX;
-                const dy = brainParticles[i].baseY - brainParticles[j].baseY;
-                const dz = brainParticles[i].baseZ - brainParticles[j].baseZ;
+                const dx = brainNodes[i].baseX - brainNodes[j].baseX;
+                const dy = brainNodes[i].baseY - brainNodes[j].baseY;
+                const dz = brainNodes[i].baseZ - brainNodes[j].baseZ;
                 const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
                 if (dist < 0.28) {
-                    brainLinks.push({ a: i, b: j });
+                    brainEdges.push({ a: i, b: j });
                     links++;
                 }
             }
         }
 
-        // --- SISTEMA DE VOZ & SENSOR ---
-        function speak(text, agent = "SUPERVISOR") {
-            systemMessage.innerText = text;
-            activeAgentLabel.innerText = `${agent} (MATRIZ)`;
+        // --- SISTEMA DE VOZ DO JARVIS ---
+        function speakClean(text, agent = "SUPERVISOR") {
+            hudMainText.innerText = text;
+            activeAgentName.innerText = `${agent} (PRIME)`;
             if (speechSynth) {
                 speechSynth.cancel();
                 const utter = new SpeechSynthesisUtterance(text);
@@ -262,9 +210,9 @@
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
             speechRecognition.onresult = (e) => {
-                const text = e.results[0][0].transcript;
-                userInput.value = text;
-                executePipeline(text);
+                const query = e.results[0][0].transcript;
+                userInput.value = query;
+                executePipeline(query);
             };
             speechRecognition.onend = () => stopMic();
         }
@@ -284,8 +232,8 @@
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                 isListening = true;
-                micBtn.classList.add('bg-synapse-fire/20', 'border-synapse-fire/40', 'text-synapse-fire');
-                speak("Sensores de voz ativos. Disparando impulsos quânticos.", "SUPERVISOR");
+                micBtn.classList.add('bg-clean-fire/20', 'border-clean-fire/40', 'text-clean-fire');
+                speak("Escutando comandos de voz...", "SUPERVISOR");
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speak("Erro ao aceder ao microfone.", "SUPERVISOR");
@@ -297,82 +245,101 @@
             if (audioCtx) audioCtx.close();
             if (speechRecognition) { try { speechRecognition.stop(); } catch(e){} }
             isListening = false;
-            volumeLevel = 0;
-            micBtn.classList.remove('bg-synapse-fire/20', 'border-synapse-fire/40', 'text-synapse-fire');
+            intensityVol = 0;
+            micBtn.classList.remove('bg-clean-fire/20', 'border-clean-fire/40', 'text-clean-fire');
         }
 
-        // --- PIPELINE MULTI-AGENTE & AUTOPOIESE ---
+        // --- PIPELINE MULTI-AGENTE & MUTAÇÕES ---
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && userInput.value.trim() !== '') {
-                const q = userInput.value;
+                const text = userInput.value;
                 userInput.value = '';
-                executePipeline(q);
+                executePipeline(text);
             }
         });
 
-        btnAddNode.addEventListener('click', () => {
-            executePipeline("criar novo nó autónomo");
+        btnThemeToggle.addEventListener('click', () => {
+            themeMode = (themeMode + 1) % 3;
+            applyTheme(themeMode);
         });
 
-        clearNodes.addEventListener('click', () => {
-            platformGrid.innerHTML = '';
-            recordLog("SUPERVISOR", "Workspace limpo. A reiniciar nós centrais.");
-            speak("Plataforma redefinida para o estado inicial.", "SUPERVISOR");
-        });
+        function applyTheme(mode) {
+            if (mode === 0) {
+                appBody.className = "bg-clean-900 text-gray-100 h-screen w-screen overflow-hidden flex flex-col justify-between selection:bg-cyan-500 selection:text-black";
+                headerDot.className = "w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_12px_#00f0ff] animate-pulse";
+                activeAgentBadge.className = "w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping";
+                speak("Tema Ciano Minimalista ativado.", "SUPERVISOR");
+                recordLog("ANALISTA", "Tema alterado para Clean Cyan.");
+            } else if (mode === 1) {
+                appBody.className = "bg-[#0a0301] text-gray-100 h-screen w-screen overflow-hidden flex flex-col justify-between selection:bg-orange-500 selection:text-black";
+                headerDot.className = "w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_15px_#ff4500] animate-pulse";
+                activeAgentBadge.className = "w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping";
+                speak("Tema Fogo Quântico ativado.", "ANALISTA");
+                recordLog("ANALISTA", "Tema alterado para Quantum Fire.");
+            } else {
+                appBody.className = "bg-[#04010a] text-gray-100 h-screen w-screen overflow-hidden flex flex-col justify-between selection:bg-purple-500 selection:text-black";
+                headerDot.className = "w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_15px_#b000ff] animate-pulse";
+                activeAgentBadge.className = "w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping";
+                speak("Tema Roxo Místico ativado.", "AUDITOR");
+                recordLog("AUDITOR", "Tema alterado para Mystic Purple.");
+            }
+        }
 
         function recordLog(agent, text) {
-            logs.push({ time: new Date().toLocaleTimeString(), agent, text });
+            syncLogs.push({ time: new Date().toLocaleTimeString(), agent, text });
             renderLogs();
         }
 
         function executePipeline(cmd) {
-            volumeLevel = 100; // Burst de fogo/raios
-            
-            recordLog("SUPERVISOR", `Comando recebido: "${cmd}". A delegar subtarefas.`);
+            intensityVol = 100; // Burst visual
+            const lower = cmd.toLowerCase();
+
+            recordLog("SUPERVISOR", `Input recebido: "${cmd}". A delegar subtarefas.`);
+            speak("Processando diretiva...", "SUPERVISOR");
 
             setTimeout(() => {
-                recordLog("ANALISTA", `[SUPERVISOR -> ANALISTA]: Desenhar estrutura e componentes para: ${cmd}`);
-                activeAgentLabel.innerText = "ANALISTA (DAEDALUS)";
-            }, 500);
-
-            setTimeout(() => {
-                recordLog("AUDITOR", `[ANALISTA -> AUDITOR]: Validação de segurança e integridade de DOM concluída.`);
-                activeAgentLabel.innerText = "AUDITOR (SENTINEL)";
-            }, 1100);
-
-            setTimeout(() => {
-                recordLog("SUPERVISOR", `[AUDITOR -> SUPERVISOR]: Mutação estrutural autorizada e executada.`);
-                activeAgentLabel.innerText = "SUPERVISOR (MATRIZ)";
+                recordLog("ANALISTA", `[SUPERVISOR -> ANALISTA]: Construção de componente em curso para: ${cmd}`);
+                activeAgentName.innerText = "ANALISTA (DAEDALUS)";
                 
-                spawnNodeCard(`Módulo: ${cmd.substring(0, 16)}`, `Criado pelo pipeline multi-agente em tempo de execução.`, "border-synapse-cyan/40 text-synapse-cyan");
-                speak(`Comando processado com sucesso. Plataforma atualizada.`, "SUPERVISOR");
-            }, 1700);
+                if (lower.includes('fogo') || lower.includes('quente')) applyTheme(1);
+                else if (lower.includes('roxo') || lower.includes('místico')) applyTheme(2);
+                else if (lower.includes('ciano') || lower.includes('azul')) applyTheme(0);
+            }, 600);
+
+            setTimeout(() => {
+                recordLog("AUDITOR", `[ANALISTA -> AUDITOR]: Validação de integridade e segurança estrutural.`);
+                activeAgentName.innerText = "AUDITOR (SENTINEL)";
+            }, 1200);
+
+            setTimeout(() => {
+                recordLog("SUPERVISOR", `[AUDITOR -> SUPERVISOR]: Sincronização concluída. Módulo injetado.`);
+                activeAgentName.innerText = "SUPERVISOR (PRIME)";
+                
+                spawnCleanCard(cmd);
+                speak("Módulo construído e integrado com sucesso.", "SUPERVISOR");
+            }, 1800);
         }
 
-        function spawnNodeCard(title, desc, colorClass) {
+        function spawnCleanCard(directive) {
             const card = document.createElement('div');
-            card.className = `bg-synapse-800/90 border rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-between group hover:border-synapse-cyan/60 transition animate-[fadeIn_0.4s_ease-out] ${colorClass}`;
+            card.className = "bg-clean-800/80 border border-white/10 rounded-2xl p-4 backdrop-blur-xl shadow-2xl flex flex-col justify-between group hover:border-cyan-500/40 transition animate-[fadeIn_0.4s_ease-out]";
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs font-mono font-bold uppercase tracking-wider">${title}</span>
-                    <span class="w-2 h-2 rounded-full bg-synapse-cyan animate-ping"></span>
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-[11px] font-mono font-bold text-gray-200 tracking-wider">MÓDULO: ${directive.substring(0, 16)}</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span>
                 </div>
-                <p class="text-xs text-gray-300 font-light">${desc}</p>
-                <div class="mt-3 flex justify-between items-center text-[10px] font-mono opacity-80 text-gray-500">
-                    <span>AGENTE: MULTI-SYNC</span>
-                    <span class="text-green-400">● ATIVO</span>
-                </div>
+                <p class="text-xs text-gray-400 font-light">Gerado autonomamente pelos agentes: "${directive}"</p>
             `;
-            platformGrid.prepend(card);
+            cleanGrid.prepend(card);
         }
 
-        toggleTerminal.addEventListener('click', () => { terminalModal.classList.remove('hidden'); renderLogs(); });
-        closeTerminal.addEventListener('click', () => terminalModal.classList.add('hidden'));
+        btnLogsToggle.addEventListener('click', () => { logsModal.classList.remove('hidden'); renderLogs(); });
+        closeLogs.addEventListener('click', () => logsModal.classList.add('hidden'));
 
         function renderLogs() {
-            terminalLogs.innerHTML = logs.slice().reverse().map(l => `
-                <div class="bg-synapse-900/80 p-2 rounded-lg border border-gray-800 flex flex-col gap-1">
-                    <div class="flex justify-between text-[10px] font-bold text-synapse-cyan">
+            logsList.innerHTML = syncLogs.slice().reverse().map(l => `
+                <div class="bg-black/40 p-2.5 rounded-xl border border-white/5 flex flex-col gap-1">
+                    <div class="flex justify-between text-[10px] font-mono font-bold text-cyan-400">
                         <span>[${l.agent}]</span>
                         <span class="text-gray-500">${l.time}</span>
                     </div>
@@ -381,17 +348,17 @@
             `).join('');
         }
 
-        // --- LOOP 3D DE RENDERIZAÇÃO ESTÁVEL 60 FPS ---
-        function render() {
-            animationTime += 0.02;
+        // --- RENDERIZAÇÃO 3D LIMPA (60 FPS) ---
+        function renderLoop() {
+            animTime += 0.02;
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = '#020408';
+            ctx.fillStyle = themeMode === 1 ? '#0a0301' : (themeMode === 2 ? '#04010a' : '#000205');
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
             const scale = Math.min(canvas.width, canvas.height) * 0.42;
             const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2 - 20;
+            const centerY = canvas.height / 2;
 
             let curVol = 0;
             if (isListening && analyser && dataArray) {
@@ -401,16 +368,16 @@
                 curVol = sum / dataArray.length;
             }
 
-            volumeLevel += (curVol - volumeLevel) * 0.2;
-            const volScale = volumeLevel / 40;
+            intensityVol += (curVol - intensityVol) * 0.2;
+            const volScale = intensityVol / 40;
 
-            const rotY = animationTime * 0.25;
-            const rotX = Math.sin(animationTime * 0.3) * 0.1;
+            const rotY = animTime * 0.22;
+            const rotX = Math.sin(animTime * 0.3) * 0.08;
             const sY = Math.sin(rotY), cY = Math.cos(rotY);
             const sX = Math.sin(rotX), cX = Math.cos(rotX);
 
-            const proj = brainParticles.map(p => {
-                const pulse = 1 + (Math.sin(animationTime * 4 + p.baseX) * 0.02) + (volScale * 0.25);
+            const proj = brainNodes.map(p => {
+                const pulse = 1 + (Math.sin(animTime * 4 + p.baseX) * 0.02) + (volScale * 0.25);
                 const px = p.baseX * scale * pulse;
                 const py = p.baseY * scale * pulse;
                 const pz = p.baseZ * scale * pulse;
@@ -428,42 +395,43 @@
                 };
             });
 
-            // Conexões sinápticas (Ciano vs Fogo Quântico)
-            ctx.lineWidth = volScale > 0.3 ? 1.5 : 0.6;
-            for (let i = 0; i < brainLinks.length; i++) {
-                const p1 = proj[brainLinks[i].a];
-                const p2 = proj[brainLinks[i].b];
+            let edgeCol = themeMode === 1 ? 'rgba(255, 69, 0, ' : (themeMode === 2 ? 'rgba(176, 0, 255, ' : 'rgba(0, 240, 255, ');
+            let nodeCol = themeMode === 1 ? 'rgba(255, 100, 0, ' : (themeMode === 2 ? 'rgba(200, 50, 255, ' : 'rgba(0, 240, 255, ');
+            let glowCol = themeMode === 1 ? '#ff4500' : (themeMode === 2 ? '#b000ff' : '#00f0ff');
+
+            ctx.lineWidth = volScale > 0.3 ? 1.4 : 0.5;
+            for (let i = 0; i < brainEdges.length; i++) {
+                const p1 = proj[brainEdges[i].a];
+                const p2 = proj[brainEdges[i].b];
                 const avgP = (p1.persp + p2.persp) / 2;
                 if (avgP < 0.6) continue;
 
-                const isFire = volScale > 0.3;
-                const alpha = Math.max(0.04, Math.min(0.45, (avgP - 0.6) * 0.8 + (volScale * 0.35)));
+                const alpha = Math.max(0.03, Math.min(0.4, (avgP - 0.6) * 0.8 + (volScale * 0.3)));
                 
                 ctx.beginPath();
                 ctx.moveTo(p1.projX, p1.projY);
                 ctx.lineTo(p2.projX, p2.projY);
-                ctx.strokeStyle = isFire ? `rgba(255, 85, 0, ${alpha * 1.5})` : `rgba(0, 240, 255, ${alpha})`;
+                ctx.strokeStyle = edgeCol + `${alpha * (volScale > 0.3 ? 1.5 : 1)})`;
                 ctx.stroke();
             }
 
             proj.sort((a, b) => a.z2 - b.z2);
             proj.forEach(p => {
                 if (p.persp < 0.4) return;
-                const isFire = volScale > 0.3;
-                const size = Math.max(0.4, p.radius * p.persp * (1 + volScale * 0.7));
+                const size = Math.max(0.3, p.radius * p.persp * (1 + volScale * 0.7));
                 
                 ctx.beginPath();
                 ctx.arc(p.projX, p.projY, size, 0, Math.PI * 2);
-                ctx.shadowBlur = isFire ? 20 : 6;
-                ctx.shadowColor = isFire ? '#ff5500' : '#00f0ff';
-                ctx.fillStyle = isFire ? `rgba(255, 85, 0, ${Math.min(1, p.persp)})` : `rgba(0, 240, 255, ${Math.min(1, p.persp)})`;
+                ctx.shadowBlur = volScale > 0.3 ? 18 : 5;
+                ctx.shadowColor = glowCol;
+                ctx.fillStyle = nodeCol + `${Math.min(1, p.persp)})`;
                 ctx.fill();
             });
 
-            requestAnimationFrame(render);
+            requestAnimationFrame(renderLoop);
         }
 
-        render();
+        renderLoop();
     </script>
 </body>
 </html>
