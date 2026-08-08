@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica de Controlo Universal e Acesso a Qualquer App -->
+    <!-- Lógica de Controlo Universal robusta para Voz e Texto -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -261,13 +261,13 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR UNIVERSAL DE INTENTS E APPS DO CELULAR ---
+        // --- MOTOR ROBUSTO DE COMANDOS E ABERTURA DE APPS/BUSCA ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
-            const lower = directive.toLowerCase();
+            const lower = directive.toLowerCase().trim();
 
             // 1. Mudar Nome do Administrador
-            if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('para')) {
+            if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('nome para')) {
                 let parts = directive.split(/para|de/i);
                 if (parts.length > 1) {
                     currentAdminName = parts[parts.length - 1].trim().replace(/[.!?,]/g, '');
@@ -290,56 +290,55 @@
                 return;
             }
 
-            // 3. Abertura Universal de Aplicativos e Consultas
-            if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar')) {
-                let target = directive.replace(/abrir|tocar|pesquisar|buscar/gi, '').trim();
-                
-                if (target.includes('spotify') || target.includes('música')) {
+            // 3. Abertura de Aplicativos Específicos ou Pesquisa Universal
+            if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar') || lower.includes('navegar')) {
+                let target = directive.replace(/abrir|tocar|pesquisar|buscar|navegar|no|o|a|os|as/gi, '').trim();
+
+                if (lower.includes('spotify') || lower.includes('música') || lower.includes('musica')) {
                     speakJarvis("A abrir o Spotify.");
                     spawnPlatformWidget("Mobile Intent", "Redirecionando para Spotify...");
-                    setTimeout(() => { window.location.href = "spotify:"; window.open("https://open.spotify.com", "_blank"); }, 800);
+                    setTimeout(() => { window.open("https://open.spotify.com", "_blank"); }, 800);
                     return;
                 }
-                if (target.includes('gmail') || target.includes('email')) {
+                if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
                     speakJarvis("A abrir o Gmail.");
                     spawnPlatformWidget("Mobile Intent", "Redirecionando para Gmail...");
-                    setTimeout(() => { window.location.href = "googlegmail://"; window.open("https://mail.google.com", "_blank"); }, 800);
+                    setTimeout(() => { window.open("https://mail.google.com", "_blank"); }, 800);
                     return;
                 }
-                if (target.includes('youtube')) {
+                if (lower.includes('youtube')) {
                     speakJarvis("A abrir o YouTube.");
                     spawnPlatformWidget("Mobile Intent", "Redirecionando para YouTube...");
-                    setTimeout(() => { window.location.href = "vnd.youtube:"; window.open("https://youtube.com", "_blank"); }, 800);
+                    setTimeout(() => { window.open("https://youtube.com", "_blank"); }, 800);
                     return;
                 }
-                if (target.includes('maps') || target.includes('gps') || target.includes('localização')) {
+                if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
                     speakJarvis("A abrir o Google Maps.");
                     spawnPlatformWidget("Mobile Intent", "Redirecionando para Google Maps...");
-                    setTimeout(() => { window.location.href = "geo:0,0?q="; window.open("https://maps.google.com", "_blank"); }, 800);
+                    setTimeout(() => { window.open("https://maps.google.com", "_blank"); }, 800);
                     return;
                 }
-                if (target.includes('whatsapp')) {
+                if (lower.includes('whatsapp')) {
                     speakJarvis("A abrir o WhatsApp.");
                     spawnPlatformWidget("Mobile Intent", "Redirecionando para WhatsApp...");
-                    setTimeout(() => { window.location.href = "whatsapp://"; window.open("https://web.whatsapp.com", "_blank"); }, 800);
+                    setTimeout(() => { window.open("https://web.whatsapp.com", "_blank"); }, 800);
                     return;
                 }
 
-                // Pesquisa Genérica Universal na Web para qualquer outra coisa dita
+                // Pesquisa genérica universal para qualquer outra coisa dita ou pedida
                 speakJarvis(`A pesquisar por ${target}.`);
-                spawnPlatformWidget(`Busca Universal: ${target}`, `Consultando rede global...`);
+                spawnPlatformWidget(`Busca Global: ${target}`, `Consultando rede...`);
                 setTimeout(() => {
                     window.open(`https://www.google.com/search?q=${encodeURIComponent(target)}`, "_blank");
-                }, 1000);
+                }, 800);
                 return;
             }
 
-            // Ação padrão
-            speakJarvis(`Executando diretiva: "${directive}".`);
+            // Ação genérica executada para qualquer outro comando de texto/voz
+            speakJarvis(`Diretiva processada: ${directive}.`);
             setTimeout(() => {
                 spawnPlatformWidget("Tarefa Executada", directive);
-                speakJarvis(`Diretiva processada com sucesso.`);
-            }, 800);
+            }, 500);
         }
 
         function spawnPlatformWidget(title, content) {
@@ -353,7 +352,7 @@
                 <p class="text-[11px] text-gray-300 font-light">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>UNIVERSAL BRIDGE</span>
+                    <span>BRIDGE ATIVA</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
