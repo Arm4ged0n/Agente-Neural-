@@ -90,7 +90,7 @@
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Mudar nome para Sandro', 'Criar gráfico')..." 
+                placeholder="Insira diretiva (ex: 'Mudar nome para Fagundes', 'Criar gráfico')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
             <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_20px_rgba(0,242,254,0.4)] shrink-0" title="Ativar Microfone">
@@ -167,7 +167,6 @@
         }
         renderAgentsUI();
 
-        // --- SISTEMA DE SÍNTESE DE VOZ ATIVO (TEXT-TO-SPEECH) ---
         let selectedVoice = null;
         function loadVoices() {
             const voices = speechSynth.getVoices();
@@ -186,7 +185,7 @@
                 if (selectedVoice) utter.voice = selectedVoice;
                 utter.lang = 'pt-BR';
                 utter.rate = 0.95;
-                utter.pitch = 0.45; // Timbre grave e imponente de IA
+                utter.pitch = 0.45;
                 speechSynth.speak(utter);
             }
         }
@@ -268,9 +267,10 @@
 
             setTimeout(() => {
                 if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('para')) {
+                    // Extração robusta para captar o nome completo sem truncar
                     let parts = directive.split(/para|de/i);
-                    if (parts[1]) {
-                        currentAdminName = parts[1].trim().replace(/[.!]/g, '');
+                    if (parts.length > 1) {
+                        currentAdminName = parts[parts.length - 1].trim().replace(/[.!]/g, '');
                         localStorage.setItem('jarvis_admin_name', currentAdminName);
                         adminUserLabel.innerText = currentAdminName;
                         spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
