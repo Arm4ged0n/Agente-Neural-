@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Universal Mobile Bridge</title>
+    <title>JARVIS // Fixed Voice Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -41,7 +41,7 @@
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // UNIVERSAL</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // VOICE FIX</span>
                 <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
@@ -50,7 +50,7 @@
 
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES UNIVERSAIS</span>
+                <span class="text-[#00f2fe]">SUB-AGENTES VOZ/TEXTO</span>
                 <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
             </div>
             <div class="flex gap-2">
@@ -66,9 +66,9 @@
     <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS UNIVERSAL BRIDGE</div>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS VOICE BRIDGE</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Pode pedir para abrir qualquer aplicação (YouTube, Maps, etc.) ou pesquisar o que quiser, Fagundes."
+                "Comandos de voz e texto sincronizados. Pode pedir para abrir qualquer app ou pesquisar, Fagundes."
             </p>
         </div>
 
@@ -76,10 +76,10 @@
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Universal Intent Engine</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Voice Intent Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Capacidade de abrir apps, realizar buscas e executar atalhos do sistema móvel.</p>
+                <p class="text-[11px] text-gray-300 font-light">Abertura de apps e buscas ativas por áudio e texto.</p>
             </div>
         </div>
     </main>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica de Controlo Universal robusta para Voz e Texto -->
+    <!-- Lógica Otimizada para Voz e Abertura Segura de Links -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -130,7 +130,7 @@
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Universal App Bridge", status: "Pronto" },
+            { id: 3, name: "Voice Intent Bridge", status: "Pronto" },
             { id: 4, name: "Neural Voice Core", status: "Ativo" }
         ];
 
@@ -178,7 +178,7 @@
         }
         loadVoices();
 
-        function speakJarvis(text) {
+        function speakJarvis(text, callback) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
@@ -187,7 +187,12 @@
                 utter.lang = 'pt-BR';
                 utter.rate = 0.95;
                 utter.pitch = 0.45;
+                if (callback) {
+                    utter.onend = callback;
+                }
                 speechSynth.speak(utter);
+            } else if (callback) {
+                callback();
             }
         }
 
@@ -220,7 +225,7 @@
                 isListening = true;
                 micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_30px_#ff3d00]');
                 systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_15px_#ff3d00]";
-                speakJarvis(`Escutando diretiva universal, ${currentAdminName}. Pode falar.`);
+                speakJarvis(`Escutando diretiva, ${currentAdminName}. Pode falar.`);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro nos sensores de áudio.");
@@ -261,7 +266,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR ROBUSTO DE COMANDOS E ABERTURA DE APPS/BUSCA ---
+        // --- MOTOR DE EXECUÇÃO SÍNCRONA PARA VOZ E TEXTO ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
@@ -290,55 +295,42 @@
                 return;
             }
 
-            // 3. Abertura de Aplicativos Específicos ou Pesquisa Universal
+            // 3. Abertura de Apps e Pesquisa Web (Funciona igulmente por Voz ou Texto com Botão Direto)
             if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar') || lower.includes('navegar')) {
                 let target = directive.replace(/abrir|tocar|pesquisar|buscar|navegar|no|o|a|os|as/gi, '').trim();
+                let url = "";
+                let appName = target;
 
                 if (lower.includes('spotify') || lower.includes('música') || lower.includes('musica')) {
-                    speakJarvis("A abrir o Spotify.");
-                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Spotify...");
-                    setTimeout(() => { window.open("https://open.spotify.com", "_blank"); }, 800);
-                    return;
-                }
-                if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
-                    speakJarvis("A abrir o Gmail.");
-                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Gmail...");
-                    setTimeout(() => { window.open("https://mail.google.com", "_blank"); }, 800);
-                    return;
-                }
-                if (lower.includes('youtube')) {
-                    speakJarvis("A abrir o YouTube.");
-                    spawnPlatformWidget("Mobile Intent", "Redirecionando para YouTube...");
-                    setTimeout(() => { window.open("https://youtube.com", "_blank"); }, 800);
-                    return;
-                }
-                if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
-                    speakJarvis("A abrir o Google Maps.");
-                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Google Maps...");
-                    setTimeout(() => { window.open("https://maps.google.com", "_blank"); }, 800);
-                    return;
-                }
-                if (lower.includes('whatsapp')) {
-                    speakJarvis("A abrir o WhatsApp.");
-                    spawnPlatformWidget("Mobile Intent", "Redirecionando para WhatsApp...");
-                    setTimeout(() => { window.open("https://web.whatsapp.com", "_blank"); }, 800);
-                    return;
+                    appName = "Spotify";
+                    url = "https://open.spotify.com";
+                } else if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
+                    appName = "Gmail";
+                    url = "https://mail.google.com";
+                } else if (lower.includes('youtube')) {
+                    appName = "YouTube";
+                    url = "https://youtube.com";
+                } else if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
+                    appName = "Google Maps";
+                    url = "https://maps.google.com";
+                } else if (lower.includes('whatsapp')) {
+                    appName = "WhatsApp";
+                    url = "https://web.whatsapp.com";
+                } else {
+                    appName = `Busca: ${target}`;
+                    url = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
                 }
 
-                // Pesquisa genérica universal para qualquer outra coisa dita ou pedida
-                speakJarvis(`A pesquisar por ${target}.`);
-                spawnPlatformWidget(`Busca Global: ${target}`, `Consultando rede...`);
-                setTimeout(() => {
-                    window.open(`https://www.google.com/search?q=${encodeURIComponent(target)}`, "_blank");
-                }, 800);
+                speakJarvis(`A abrir ${appName}.`, () => {
+                    window.open(url, "_blank");
+                });
+                spawnPlatformWidget(`Ação Executada`, `Redirecionando para ${appName}... <a href="${url}" target="_blank" class="text-cyan-300 underline font-bold">[Abrir Agora]</a>`);
                 return;
             }
 
-            // Ação genérica executada para qualquer outro comando de texto/voz
+            // Ação genérica
             speakJarvis(`Diretiva processada: ${directive}.`);
-            setTimeout(() => {
-                spawnPlatformWidget("Tarefa Executada", directive);
-            }, 500);
+            spawnPlatformWidget("Tarefa Executada", directive);
         }
 
         function spawnPlatformWidget(title, content) {
@@ -349,7 +341,7 @@
                     <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">${title}</span>
                     <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">${content}</p>
+                <div class="text-[11px] text-gray-300 font-light">${content}</div>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
                     <span>BRIDGE ATIVA</span>
