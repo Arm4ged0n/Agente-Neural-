@@ -1,287 +1,247 @@
-import React, { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="pt" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS // Stark Industries HUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #010409; overflow: hidden; }
+        .font-tech { font-family: 'Share Tech Mono', monospace; }
+        ::-webkit-scrollbar { display: none; }
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes spinReverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        .animate-spin-slow { animation: spinSlow 20s linear infinite; }
+        .animate-spin-reverse { animation: spinReverse 15s linear infinite; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('avatar');
-  const [isRecording, setIsRecording] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [currentAvatar, setCurrentAvatar] = useState({
-    name: 'Elena',
-    role: 'Atendimento & Dados',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60'
-  });
-  const [workflowStatus, setWorkflowStatus] = useState('Aguardando Tarefa');
-  const [activeLayer, setActiveLayer] = useState(null);
-  const [subAgentsCount, setSubAgentsCount] = useState(0);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [subtitle, setSubtitle] = useState('Olá! Sou a Elena. Como posso ajudar com a sua análise ou suporte hoje?');
-  const [chatLogs, setChatLogs] = useState([
-    { sender: 'Elena', text: 'Sistema inicializado com sucesso. Pronto para interagir.' }
-  ]);
+    <!-- Fundo Holográfico HUD Principal (Canvas Stark Industries) -->
+    <canvas id="hudCanvas" class="absolute inset-0 z-0 w-full h-full cursor-grab active:cursor-grabbing"></canvas>
 
-  const avatarsList = [
-    { name: 'Elena', role: 'Analista & Atendimento', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60' },
-    { name: 'Marcus', role: 'Engenheiro & DevOps', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60' },
-    { name: 'Sofia', role: 'Concierge & Vendas', image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop&q=60' }
-  ];
+    <!-- Vinheta e Máscara de Ecrã Cibernético -->
+    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,#010409_95%)] z-10"></div>
 
-  const handleSendMessage = (textToSend) => {
-    const query = textToSend || inputValue;
-    if (!query.trim()) return;
-
-    addChatLog('Você', query);
-    setInputValue('');
-    runWorkflow(query);
-  };
-
-  const addChatLog = (sender, text) => {
-    setChatLogs(prev => [...prev, { sender, text }]);
-  };
-
-  const runWorkflow = (query) => {
-    setWorkflowStatus('A processar...');
-    setActiveLayer('perception');
-    setIsSpeaking(false);
-
-    setTimeout(() => {
-      setActiveLayer('brain');
-      setSubAgentsCount(2);
-    }, 1000);
-
-    setTimeout(() => {
-      setActiveLayer('action');
-    }, 2000);
-
-    setTimeout(() => {
-      setActiveLayer('expression');
-      setWorkflowStatus('Concluído');
-      setIsSpeaking(true);
-      const responseText = `Compreendi o seu pedido: "${query}". Sub-agentes executados com sucesso!`;
-      setSubtitle(responseText);
-      addChatLog(currentAvatar.name, responseText);
-      speakText(responseText);
-
-      setTimeout(() => {
-        setIsSpeaking(false);
-        setActiveLayer(null);
-      }, 3000);
-    }, 3000);
-  };
-
-  const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'pt-PT';
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const toggleVoice = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      setTimeout(() => {
-        setIsRecording(false);
-        handleSendMessage('Executar análise automática do painel');
-      }, 2000);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white pb-20 md:pb-0">
-      
-      {/* Top Header */}
-      <header className="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-md">
-            <i className="fa-solid fa-robot text-white text-sm"></i>
-          </div>
-          <div>
-            <h1 className="font-bold text-sm tracking-tight text-white">OmniAvatar AI</h1>
-            <p className="text-[10px] text-slate-400">Digital Human Studio</p>
-          </div>
+    <!-- Interface Estilo Stark HUD (Margens com Telemetria) -->
+    <header class="relative z-20 px-8 py-6 flex items-center justify-between pointer-events-none">
+        <!-- Canto Superior Esquerdo: Data / Hora / Sistema -->
+        <div class="flex flex-col gap-1 bg-black/40 border border-[#00f2fe]/30 p-3 rounded-xl backdrop-blur-md pointer-events-auto shadow-[0_0_15px_rgba(0,242,254,0.15)] font-tech">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping"></span>
+                <span class="text-xs uppercase tracking-widest text-[#00f2fe]">Stark OS // v4.2.1</span>
+            </div>
+            <div id="clockDisplay" class="text-lg font-bold text-white tracking-wider">13:42:05</div>
+            <div class="text-[10px] text-gray-400">ATMOSPHERIC ANALYSIS: 30°C</div>
         </div>
-        <div className="bg-indigo-950/60 border border-indigo-500/30 px-2.5 py-1 rounded-full text-[11px] text-indigo-300 flex items-center space-x-1">
-          <i className="fa-solid fa-microchip text-[10px]"></i>
-          <span>GPT-4o</span>
+
+        <!-- Canto Superior Direito: Links e Status de Recursos -->
+        <div class="hidden sm:flex flex-col items-end gap-1 font-tech text-xs text-gray-300 pointer-events-auto bg-black/40 border border-[#00f2fe]/30 p-3 rounded-xl backdrop-blur-md">
+            <span class="text-[#00f2fe] font-bold">SYSTEM RESOURCES</span>
+            <span>CPU CORE USAGE: <strong class="text-white">42.8%</strong></span>
+            <span>MEMORY BUFFER: <strong class="text-white">14.2 GB / 32 GB</strong></span>
         </div>
-      </header>
+    </header>
 
-      {/* Main Workspace */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        
-        {/* Left Column: Avatar & Inputs */}
-        <section className="lg:col-span-7 flex flex-col space-y-4">
-          
-          {/* Avatar Stage */}
-          <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-indigo-500/20 aspect-video flex flex-col justify-between shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/20 via-slate-900/40 to-slate-950 pointer-events-none"></div>
+    <!-- Centro: Núcleo Holográfico Circundante & Resposta de Voz -->
+    <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-6">
+        <div class="text-center pointer-events-auto bg-black/70 border border-[#00f2fe]/40 px-8 py-4 rounded-3xl backdrop-blur-xl shadow-[0_0_40px_rgba(0,242,254,0.25)] max-w-md w-full">
+            <div class="text-[10px] font-tech text-[#00f2fe] tracking-widest uppercase mb-1">JARVIS VOICE PROTOCOL</div>
+            <p id="voiceFeedback" class="text-xs md:text-sm font-light text-gray-200 tracking-wider font-tech">
+                "Sistemas principais online. Pronto para receber instruções, Sr. Stark."
+            </p>
+        </div>
+    </main>
 
-            {/* Badge */}
-            <div className="relative z-10 p-3 flex justify-between items-center">
-              <div className="bg-slate-900/80 backdrop-blur px-3 py-1 rounded-lg border border-slate-800 text-xs text-slate-300 flex items-center space-x-2">
-                <i className="fa-solid fa-video text-emerald-400"></i>
-                <span>{currentAvatar.name} ({currentAvatar.role})</span>
-              </div>
-            </div>
-
-            {/* Avatar Image */}
-            <div className="relative z-10 flex-1 flex items-center justify-center">
-              <div className={`relative w-36 h-36 sm:w-48 sm:h-48 rounded-full overflow-hidden border-4 border-indigo-500/40 shadow-2xl transition-all duration-300 ${isSpeaking ? 'scale-105 border-indigo-400' : ''}`}>
-                <img src={currentAvatar.image} alt={currentAvatar.name} className="w-full h-full object-cover" />
-                <div className="absolute bottom-2 inset-x-0 flex justify-center">
-                  <div className="bg-slate-950/80 backdrop-blur px-2.5 py-0.5 rounded-full text-[10px] text-indigo-300 border border-indigo-500/30 flex items-center space-x-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${isSpeaking ? 'bg-indigo-400 animate-ping' : 'bg-emerald-400'}`}></span>
-                    <span>{isSpeaking ? 'A falar...' : 'A escutar...'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Subtitle */}
-            <div className="relative z-10 p-3 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
-              <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 backdrop-blur flex items-center space-x-3">
-                <div className="w-7 h-7 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center shrink-0">
-                  <i className={`fa-solid ${isSpeaking ? 'fa-volume-high text-indigo-400' : 'fa-microphone text-slate-400'}`}></i>
-                </div>
-                <p className="text-xs text-slate-200 font-medium italic line-clamp-2">
-                  "{subtitle}"
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Input Controls */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col space-y-2.5 shadow-xl">
-            <div className="flex items-center space-x-2">
-              <button 
-                onClick={toggleVoice} 
-                className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all shrink-0 ${isRecording ? 'bg-rose-600/20 border-rose-500 text-rose-400 animate-pulse' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
-              >
-                <i className={`fa-solid ${isRecording ? 'fa-microphone-slash' : 'fa-microphone'} text-sm`}></i>
-              </button>
-              <input 
+    <!-- Rodapé: Controlo por Voz e Texto Estilo Stark HUD -->
+    <footer class="relative z-30 p-8 flex justify-center pointer-events-auto">
+        <div class="w-full max-w-lg bg-black/85 border border-[#00f2fe]/40 rounded-2xl p-2.5 flex items-center gap-3 backdrop-blur-2xl shadow-[0_0_30px_rgba(0,242,254,0.2)]">
+            <input 
                 type="text" 
-                value={inputValue} 
-                onChange={(e) => setInputValue(e.target.value)} 
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Escreva uma instrução ao agente..." 
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
-              />
-              <button 
-                onClick={() => handleSendMessage()} 
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shrink-0 flex items-center space-x-1"
-              >
-                <span>Enviar</span>
-                <i className="fa-solid fa-paper-plane text-[10px]"></i>
-              </button>
-            </div>
+                id="textInput" 
+                placeholder="Insira diretiva para o sistema (ex: ativar escudos, análise)..." 
+                class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs font-tech outline-none flex-grow px-3"
+            />
+            <button id="micBtn" class="p-3 bg-[#00f2fe]/10 border border-[#00f2fe]/40 hover:bg-[#00f2fe]/20 text-[#00f2fe] rounded-xl transition flex items-center justify-center group" title="Ativar Microfone">
+                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+            </button>
+        </div>
+    </footer>
 
-            {/* Quick buttons */}
-            <div className="flex flex-wrap gap-1.5">
-              <button onClick={() => handleSendMessage('Gerar relatório financeiro')} className="text-[11px] bg-slate-950 border border-slate-800 px-2 py-1 rounded-lg text-slate-300 hover:bg-slate-800">
-                <i className="fa-solid fa-chart-pie text-indigo-400 mr-1"></i> Análise de Vendas
-              </button>
-              <button onClick={() => handleSendMessage('Verificar erros de API')} className="text-[11px] bg-slate-950 border border-slate-800 px-2 py-1 rounded-lg text-slate-300 hover:bg-slate-800">
-                <i className="fa-solid fa-terminal text-emerald-400 mr-1"></i> Debug API
-              </button>
-            </div>
-          </div>
-        </section>
+    <!-- Lógica e Animação HUD Stark Industries (60 FPS) -->
+    <script>
+        const canvas = document.getElementById('hudCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
 
-        {/* Right Column: Workflow, Logs & Avatars */}
-        <section className="lg:col-span-5 flex flex-col space-y-3">
-          
-          {/* Navigation Tabs */}
-          <div className="flex space-x-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
-            <button onClick={() => setActiveTab('workflow')} className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'workflow' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Arquitetura</button>
-            <button onClick={() => setActiveTab('chat')} className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'chat' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Logs</button>
-            <button onClick={() => setActiveTab('avatars')} className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'avatars' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}>Avatares</button>
-          </div>
+        const textInput = document.getElementById('textInput');
+        const micBtn = document.getElementById('micBtn');
+        const voiceFeedback = document.getElementById('voiceFeedback');
+        const clockDisplay = document.getElementById('clockDisplay');
 
-          {/* Tab 1: Workflow */}
-          {activeTab === 'workflow' && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col space-y-3 shadow-xl">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <h3 className="font-semibold text-xs text-slate-200">Fluxo de Execução</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">{workflowStatus}</span>
-              </div>
+        let isListening = false;
+        let speechRecognition = null;
+        let speechSynth = window.speechSynthesis;
+        let audioCtx = null, analyser = null, dataArray = null, micStream = null;
 
-              <div className="space-y-2.5">
-                <div className={`p-2.5 rounded-xl border ${activeLayer === 'perception' ? 'bg-indigo-950/40 border-indigo-500' : 'bg-slate-950/50 border-slate-850'}`}>
-                  <span className="text-xs font-bold text-indigo-300">1. Percepção & STT</span>
-                </div>
-                <div className={`p-2.5 rounded-xl border ${activeLayer === 'brain' ? 'bg-violet-950/40 border-violet-500' : 'bg-slate-950/50 border-slate-850'}`}>
-                  <span className="text-xs font-bold text-violet-300">2. Cérebro & Sub-Agentes ({subAgentsCount})</span>
-                </div>
-                <div className={`p-2.5 rounded-xl border ${activeLayer === 'action' ? 'bg-emerald-950/40 border-emerald-500' : 'bg-slate-950/50 border-slate-850'}`}>
-                  <span className="text-xs font-bold text-emerald-300">3. Ação & Function Calling</span>
-                </div>
-                <div className={`p-2.5 rounded-xl border ${activeLayer === 'expression' ? 'bg-pink-950/40 border-pink-500' : 'bg-slate-950/50 border-slate-850'}`}>
-                  <span className="text-xs font-bold text-pink-300">4. Expressão & Voz Realista</span>
-                </div>
-              </div>
-            </div>
-          )}
+        let hudEnergy = 0;
+        let angleTicker = 0;
 
-          {/* Tab 2: Logs */}
-          {activeTab === 'chat' && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col space-y-3 shadow-xl">
-              <h3 className="font-semibold text-xs text-slate-200 border-b border-slate-800 pb-2">Histórico</h3>
-              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                {chatLogs.map((log, idx) => (
-                  <div key={idx} className={`p-2 rounded-xl border text-xs ${log.sender === 'Você' ? 'bg-slate-950 border-slate-800' : 'bg-indigo-950/30 border-indigo-500/20'}`}>
-                    <span className="font-semibold text-indigo-400">{log.sender}:</span>
-                    <p className="text-slate-300 mt-0.5">{log.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-          {/* Tab 3: Avatars */}
-          {activeTab === 'avatars' && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col space-y-3 shadow-xl">
-              <h3 className="font-semibold text-xs text-slate-200 border-b border-slate-800 pb-2">Escolher Avatar</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {avatarsList.map((av, idx) => (
-                  <div 
-                    key={idx}
-                    onClick={() => {
-                      setCurrentAvatar(av);
-                      setActiveTab('workflow');
-                      addChatLog(av.name, `Avatar alterado para ${av.name}.`);
-                    }}
-                    className={`bg-slate-950 border rounded-xl p-2.5 cursor-pointer text-center flex flex-col items-center space-y-1.5 ${currentAvatar.name === av.name ? 'border-indigo-500 bg-indigo-950/20' : 'border-slate-800'}`}
-                  >
-                    <img src={av.image} alt={av.name} className="w-12 h-12 rounded-full object-cover border border-indigo-500/50" />
-                    <h4 className="text-[11px] font-bold text-slate-200">{av.name}</h4>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+        // Atualizar Relógio em Tempo Real
+        setInterval(() => {
+            const now = new Date();
+            clockDisplay.innerText = now.toTimeString().split(' ')[0];
+        }, 1000);
 
-        </section>
+        // Sintetizador de Voz JARVIS
+        function speakJarvis(text) {
+            voiceFeedback.innerText = `"${text}"`;
+            if (speechSynth) {
+                speechSynth.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'pt-PT';
+                utter.rate = 1.05;
+                utter.pitch = 0.75; // Tom grave JARVIS
+                speechSynth.speak(utter);
+            }
+        }
 
-      </main>
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            speechRecognition = new SR();
+            speechRecognition.lang = 'pt-PT';
+            speechRecognition.onresult = (e) => {
+                const query = e.results[0][0].transcript;
+                textInput.value = query;
+                processCommand(query);
+            };
+            speechRecognition.onend = () => stopMic();
+        }
 
-      {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 px-4 py-2 z-50 flex justify-around">
-        <button onClick={() => setActiveTab('workflow')} className={`flex flex-col items-center text-[10px] ${activeTab === 'workflow' ? 'text-indigo-400' : 'text-slate-400'}`}>
-          <i className="fa-solid fa-network-wired text-sm"></i>
-          <span>Fluxo</span>
-        </button>
-        <button onClick={() => setActiveTab('chat')} className={`flex flex-col items-center text-[10px] ${activeTab === 'chat' ? 'text-indigo-400' : 'text-slate-400'}`}>
-          <i className="fa-solid fa-comments text-sm"></i>
-          <span>Logs</span>
-        </button>
-        <button onClick={() => setActiveTab('avatars')} className={`flex flex-col items-center text-[10px] ${activeTab === 'avatars' ? 'text-indigo-400' : 'text-slate-400'}`}>
-          <i className="fa-solid fa-users text-sm"></i>
-          <span>Avatares</span>
-        </button>
-      </nav>
+        micBtn.addEventListener('click', async () => {
+            if (isListening) {
+                stopMic();
+                return;
+            }
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 128;
+                const source = audioCtx.createMediaStreamSource(micStream);
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-    </div>
-  );
-}
+                isListening = true;
+                micBtn.classList.add('bg-cyan-500/20', 'border-cyan-500/40', 'text-cyan-300');
+                speakJarvis("A escutar comandos, chefe.");
+                if (speechRecognition) speechRecognition.start();
+            } catch (err) {
+                speakJarvis("Erro nos sensores de áudio.");
+            }
+        });
+
+        function stopMic() {
+            if (micStream) micStream.getTracks().forEach(t => t.stop());
+            if (audioCtx) audioCtx.close();
+            if (speechRecognition) { try { speechRecognition.stop(); } catch(e){} }
+            isListening = false;
+            hudEnergy = 0;
+            micBtn.classList.remove('bg-cyan-500/20', 'border-cyan-500/40', 'text-cyan-300');
+        }
+
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && textInput.value.trim() !== '') {
+                const val = textInput.value;
+                textInput.value = '';
+                processCommand(val);
+            }
+        });
+
+        function processCommand(cmd) {
+            hudEnergy = 100; // Efeito de pico no HUD holográfico
+            speakJarvis(`Diretiva executada: ${cmd}`);
+        }
+
+        // Renderização do HUD Holográfico Circular (Estilo Stark Industries)
+        function renderStarkHUD() {
+            angleTicker += 0.015;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = '#010409';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) * 0.45;
+
+            let curVol = 0;
+            if (isListening && analyser && dataArray) {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+                curVol = sum / dataArray.length;
+            }
+
+            hudEnergy += (curVol - hudEnergy) * 0.2;
+            const energyScale = hudEnergy / 40;
+
+            // Desenhar Anéis Concêntricos Cibernéticos
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 15 + (energyScale * 10);
+            ctx.shadowColor = '#00f2fe';
+
+            // Anel Externo Rotativo com Marcações
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angleTicker * 0.5);
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 1.2, 0, Math.PI * 2);
+            ctx.setLineDash([10, 15, 5, 15]);
+            ctx.stroke();
+            ctx.restore();
+
+            // Anel Central Inverso
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(-angleTicker * 0.8);
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.85, 0, Math.PI * 1.5);
+            ctx.setLineDash([4, 8]);
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.restore();
+
+            // Núcleo Reator Central Pulsante
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, (radius * 0.3) * (1 + energyScale * 0.2), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 242, 254, 0.25)';
+            ctx.fill();
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            requestAnimationFrame(renderStarkHUD);
+        }
+
+        renderStarkHUD();
+    </script>
+</body>
+</html>
 
