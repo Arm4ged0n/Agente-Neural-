@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Autonomous Multi-Agent Core</title>
+    <title>JARVIS // Autonomous Admin Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -37,26 +37,26 @@
     <!-- Vinheta e Máscara Cibernética -->
     <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,#010409_95%)] z-10"></div>
 
-    <!-- Header Superior Responsivo -->
+    <!-- Header Superior Responsivo com Admin Controls -->
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
-        <!-- Telemetria do Sistema -->
+        <!-- Telemetria do Sistema & Identidade Admin -->
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // CORE</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // ADMIN</span>
                 <span class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_8px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
-            <div class="text-[9px] text-cyan-400/80 tracking-wider">STATUS: QUANTUM SYNC</div>
+            <div class="text-[9px] text-cyan-400/80 tracking-wider">ADMIN USER: <strong id="adminUserLabel" class="text-white">Sr. Stark</strong></div>
         </div>
 
-        <!-- Painel de Controlo de Agentes Internos (Criar / Gerir) -->
+        <!-- Matriz de Agentes Internos com Controlo Total -->
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">MATRIZ DE AGENTES INTERNOS</span>
+                <span class="text-[#00f2fe]">MATRIZ DE AGENTES ADMIN</span>
                 <span id="agentCountBadge" class="text-emerald-400">2 ATIVOS</span>
             </div>
             <div class="flex gap-2">
-                <input type="text" id="newAgentName" placeholder="Nome do Agente (ex: Analisador)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
+                <input type="text" id="newAgentName" placeholder="Novo Agente (ex: UI Mutch)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
                 <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
             </div>
             <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
@@ -65,34 +65,34 @@
         </div>
     </header>
 
-    <!-- Centro: Diálogo JARVIS Voice Protocol e Plataforma de Módulos Dinâmicos -->
+    <!-- Centro: Diálogo JARVIS Voice Protocol & Módulos Dinâmicos -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS VOICE & TEXT PROTOCOL</div>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS ADMIN PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Plataforma ativa. Atendo por voz e texto. Diga 'Criar agente [Nome]' para instanciar novos operacionais."
+                "Controlo administrativo total ativado. Dige 'Mudar nome para Sandro' ou 'Criar agente [Nome]'."
             </p>
         </div>
 
-        <!-- Área de Trabalho Dinâmica (Módulos criados pelos Agentes Internos) -->
+        <!-- Área de Trabalho Dinâmica -->
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[30vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Módulo Core V1</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Painel Admin Core</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Sub-agentes operacionais prontos para mutações de DOM em tempo real.</p>
+                <p class="text-[11px] text-gray-300 font-light">Sub-agentes com permissões root para mutações de DOM e estado.</p>
             </div>
         </div>
     </main>
 
-    <!-- Rodapé: Input de Texto e Botão de Voz Responsivos -->
+    <!-- Rodapé: Input de Texto e Botão de Voz -->
     <footer class="relative z-30 p-4 sm:p-8 flex justify-center pointer-events-auto w-full max-w-3xl mx-auto">
         <div class="stark-input-panel w-full p-2.5 sm:p-3 flex items-center gap-3">
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Criar agente de segurança', 'Mudar estilo')..." 
+                placeholder="Insira diretiva admin (ex: 'Mudar nome para Sandro', 'Criar agente')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
             <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_20px_rgba(0,242,254,0.4)] shrink-0" title="Ativar Microfone">
@@ -103,7 +103,7 @@
         </div>
     </footer>
 
-    <!-- Lógica de Controlo de Agentes Internos, Voz e Visuais 60 FPS -->
+    <!-- Lógica de Controlo Admin Total e NLP Local -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -117,16 +117,18 @@
         const agentsListContainer = document.getElementById('agentsListContainer');
         const agentCountBadge = document.getElementById('agentCountBadge');
         const dynamicPlatform = document.getElementById('dynamicPlatform');
+        const adminUserLabel = document.getElementById('adminUserLabel');
 
         let isListening = false;
         let speechRecognition = null;
         let speechSynth = window.speechSynthesis;
         let hudEnergy = 0;
         let angleTicker = 0;
+        let currentAdminName = "Sr. Stark";
 
         let internalAgents = [
-            { id: 1, name: "Orquestrador Master", task: "Gestão Geral e Processamento NLP" },
-            { id: 2, name: "Executor de DOM", task: "Mutação Estrutural e Criação de UI" }
+            { id: 1, name: "Orquestrador Root", task: "Controlo Administrativo Global" },
+            { id: 2, name: "Executor de DOM", task: "Mutação Dinâmica de UI e Estado" }
         ];
 
         function resizeCanvas() {
@@ -171,7 +173,7 @@
             speechRecognition.onresult = (e) => {
                 const query = e.results[0][0].transcript;
                 textInput.value = query;
-                processAgentCommand(query);
+                processAdminDirective(query);
             };
             speechRecognition.onend = () => stopMic();
         }
@@ -192,7 +194,7 @@
 
                 isListening = true;
                 micBtn.classList.add('bg-cyan-500/40', 'border-cyan-300', 'text-white', 'shadow-[0_0_25px_#00f2fe]');
-                speakJarvis("À sua escuta, Sr. Stark. Fale a sua diretiva.");
+                speakJarvis(`À sua escuta, ${currentAdminName}. Fale sua diretiva.`);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro ao aceder aos sensores de áudio.");
@@ -212,50 +214,64 @@
             if (e.key === 'Enter' && textInput.value.trim() !== '') {
                 const val = textInput.value;
                 textInput.value = '';
-                processAgentCommand(val);
+                processAdminDirective(val);
             }
         });
 
         createAgentBtn.addEventListener('click', () => {
             const name = newAgentName.value.trim();
             if (name) {
-                registerNewAgent(name, "Criado via painel de controlo manual");
+                registerNewAgent(name, "Criado via painel admin");
                 newAgentName.value = '';
             }
         });
 
-        // --- SISTEMA DE PARSING E CRIAÇÃO AUTOMÁTICA DE AGENTES ---
         function registerNewAgent(agentName, agentTask) {
             const cleanName = agentName.replace(/["']/g, "").trim();
             internalAgents.push({ id: internalAgents.length + 1, name: cleanName, task: agentTask });
             renderAgentsUI();
             spawnPlatformCard(`Agente: ${cleanName}`, `Operacional atribuído: ${agentTask}`);
-            speakJarvis(`Sub-agente ${cleanName} instanciado com sucesso na matriz interna.`);
+            speakJarvis(`Sub-agente ${cleanName} instanciado com privilégios root.`);
         }
 
-        function processAgentCommand(directive) {
+        // --- MOTOR DE PROCESSAMENTO ADMIN (TOTAL CONTROL) ---
+        function processAdminDirective(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase();
-            speakJarvis(`Processando diretiva: "${directive}" via sub-agentes.`);
+            speakJarvis(`Processando diretiva admin: "${directive}"`);
 
             setTimeout(() => {
-                // Detetar comando de voz/texto para criação de agente (ex: "criar agente de segurança" ou "criar agente Jarvis")
-                if (lower.includes('criar agente') || lower.includes('novo agente')) {
+                // 1. Alterar Nome de Admin (ex: "mudar nome para Sandro" ou "me chame de Sandro")
+                if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('para')) {
+                    let parts = directive.split(/para|de/i);
+                    if (parts[1]) {
+                        currentAdminName = parts[1].trim().replace(/[.!]/g, '');
+                        adminUserLabel.innerText = currentAdminName;
+                        spawnPlatformCard("Perfil Atualizado", `Nome de administrador alterado para ${currentAdminName}`);
+                        speakJarvis(`Entendido. A partir de agora, o senhor é o ${currentAdminName}.`);
+                    } else {
+                        speakJarvis("Não consegui identificar o novo nome na diretiva.");
+                    }
+                } 
+                // 2. Criar Agente (ex: "criar agente financeiro")
+                else if (lower.includes('criar agente') || lower.includes('novo agente')) {
                     let parts = directive.split(/agente/i);
-                    let extractedName = parts[1] ? parts[1].trim() : `Autónomo #${internalAgents.length + 1}`;
+                    let extractedName = parts[1] ? parts[1].trim() : `Root #${internalAgents.length + 1}`;
                     if (!extractedName || extractedName.length < 2) {
                         extractedName = `Sub-Agente #${internalAgents.length + 1}`;
                     }
                     registerNewAgent(extractedName, directive);
                 } 
-                else if (lower.includes('mudar cor') || lower.includes('vermelho')) {
-                    document.body.style.filter = "hue-rotate(140deg)";
-                    spawnPlatformCard("Mutação Visual", "Espectro de cores alterado com sucesso.");
+                // 3. Alteração Visual de DOM
+                else if (lower.includes('cor') || lower.includes('vermelho') || lower.includes('estilo')) {
+                    document.body.style.filter = "hue-rotate(150deg)";
+                    spawnPlatformCard("Mutação Root UI", "Espectro de cores alterado com sucesso.");
                     speakJarvis("Parâmetros visuais do ecossistema modificados.");
                 } 
+                // 4. Ação genérica admin
                 else {
-                    spawnPlatformCard(`Tarefa: ${directive.substring(0, 18)}`, "Processado e validado pelos sub-agentes.");
-                    speakJarvis("Diretiva executada e integrada no ecossistema.");
+                    spawnPlatformCard(`Admin Task: ${directive.substring(0, 18)}`, "Executado com privilégios root pelos sub-agentes.");
+                    speakJarvis(`Diretiva executada com sucesso, ${currentAdminName}.`);
                 }
             }, 1200);
         }
@@ -270,13 +286,14 @@
                 </div>
                 <p class="text-[11px] text-gray-300 font-light">${description}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
-                    <span>STATUS: OPERACIONAL</span>
-                    <span>SUB-AGENTE ATIVO</span>
+                    <span>STATUS: ROOT ADMIN</span>
+                    <span>MUTADO COM SUCESSO</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
         }
 
+        // Renderização 60 FPS HUD Holográfico
         function renderStarkHUD() {
             angleTicker += 0.015;
             ctx.globalCompositeOperation = 'source-over';
