@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Mobile Integration Engine</title>
+    <title>JARVIS // Universal Mobile Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -41,7 +41,7 @@
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // MOBILE</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // UNIVERSAL</span>
                 <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
@@ -50,7 +50,7 @@
 
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES MOBILE</span>
+                <span class="text-[#00f2fe]">SUB-AGENTES UNIVERSAIS</span>
                 <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
             </div>
             <div class="flex gap-2">
@@ -66,9 +66,9 @@
     <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS MOBILE DEEP LINK</div>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS UNIVERSAL BRIDGE</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Integração móvel ativa. Peça para abrir o Gmail, Spotify ou tocar música, Fagundes."
+                "Pode pedir para abrir qualquer aplicação (YouTube, Maps, etc.) ou pesquisar o que quiser, Fagundes."
             </p>
         </div>
 
@@ -76,10 +76,10 @@
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Mobile Bridge Engine</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Universal Intent Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Protocolos de acesso a apps e atalhos de sistema prontos.</p>
+                <p class="text-[11px] text-gray-300 font-light">Capacidade de abrir apps, realizar buscas e executar atalhos do sistema móvel.</p>
             </div>
         </div>
     </main>
@@ -90,7 +90,7 @@
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Abrir Spotify', 'Abrir Gmail')..." 
+                placeholder="Insira diretiva (ex: 'Abrir YouTube', 'Pesquisar notícias')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
             <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_20px_rgba(0,242,254,0.4)] shrink-0" title="Ativar Microfone">
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica de Integração Móvel e Deep Linking -->
+    <!-- Lógica de Controlo Universal e Acesso a Qualquer App -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -130,7 +130,7 @@
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Mobile Deep Linker", status: "Pronto" },
+            { id: 3, name: "Universal App Bridge", status: "Pronto" },
             { id: 4, name: "Neural Voice Core", status: "Ativo" }
         ];
 
@@ -220,7 +220,7 @@
                 isListening = true;
                 micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_30px_#ff3d00]');
                 systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_15px_#ff3d00]";
-                speakJarvis(`Escutando diretivas móveis, ${currentAdminName}. Pode falar.`);
+                speakJarvis(`Escutando diretiva universal, ${currentAdminName}. Pode falar.`);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro nos sensores de áudio.");
@@ -261,7 +261,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR DE DEEP LINKING E ACESSO A APPS DO CELULAR ---
+        // --- MOTOR UNIVERSAL DE INTENTS E APPS DO CELULAR ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase();
@@ -279,47 +279,7 @@
                 }
             }
 
-            // 2. Abrir o Spotify / Tocar Música
-            if (lower.includes('spotify') || lower.includes('tocar música') || lower.includes('tocar musica') || lower.includes('ouvir')) {
-                speakJarvis("A abrir o Spotify no seu dispositivo móvel.");
-                spawnPlatformWidget("Mobile Intent", "Redirecionando para aplicação Spotify...");
-                setTimeout(() => {
-                    window.location.href = "spotify:";
-                    // Fallback para web caso o app não esteja instalado
-                    setTimeout(() => {
-                        window.open("https://open.spotify.com", "_blank");
-                    }, 1000);
-                }, 1000);
-                return;
-            }
-
-            // 3. Abrir o Gmail
-            if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
-                speakJarvis("A abrir o Gmail no seu telemóvel.");
-                spawnPlatformWidget("Mobile Intent", "Redirecionando para Gmail...");
-                setTimeout(() => {
-                    window.location.href = "googlegmail://";
-                    setTimeout(() => {
-                        window.open("https://mail.google.com", "_blank");
-                    }, 1000);
-                }, 1000);
-                return;
-            }
-
-            // 4. WhatsApp
-            if (lower.includes('whatsapp') || lower.includes('mensagem')) {
-                speakJarvis("A abrir o WhatsApp.");
-                spawnPlatformWidget("Mobile Intent", "Redirecionando para WhatsApp...");
-                setTimeout(() => {
-                    window.location.href = "whatsapp://";
-                    setTimeout(() => {
-                        window.open("https://web.whatsapp.com", "_blank");
-                    }, 1000);
-                }, 1000);
-                return;
-            }
-
-            // 5. Criar Agente
+            // 2. Criar Agente
             if (lower.includes('criar agente') || lower.includes('novo agente')) {
                 let parts = directive.split(/agente/i);
                 let extractedName = parts[1] ? parts[1].trim() : `Auto #${internalAgents.length + 1}`;
@@ -327,6 +287,50 @@
                     extractedName = `Executor #${internalAgents.length + 1}`;
                 }
                 registerNewAgent(extractedName, "Em Operação");
+                return;
+            }
+
+            // 3. Abertura Universal de Aplicativos e Consultas
+            if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar')) {
+                let target = directive.replace(/abrir|tocar|pesquisar|buscar/gi, '').trim();
+                
+                if (target.includes('spotify') || target.includes('música')) {
+                    speakJarvis("A abrir o Spotify.");
+                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Spotify...");
+                    setTimeout(() => { window.location.href = "spotify:"; window.open("https://open.spotify.com", "_blank"); }, 800);
+                    return;
+                }
+                if (target.includes('gmail') || target.includes('email')) {
+                    speakJarvis("A abrir o Gmail.");
+                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Gmail...");
+                    setTimeout(() => { window.location.href = "googlegmail://"; window.open("https://mail.google.com", "_blank"); }, 800);
+                    return;
+                }
+                if (target.includes('youtube')) {
+                    speakJarvis("A abrir o YouTube.");
+                    spawnPlatformWidget("Mobile Intent", "Redirecionando para YouTube...");
+                    setTimeout(() => { window.location.href = "vnd.youtube:"; window.open("https://youtube.com", "_blank"); }, 800);
+                    return;
+                }
+                if (target.includes('maps') || target.includes('gps') || target.includes('localização')) {
+                    speakJarvis("A abrir o Google Maps.");
+                    spawnPlatformWidget("Mobile Intent", "Redirecionando para Google Maps...");
+                    setTimeout(() => { window.location.href = "geo:0,0?q="; window.open("https://maps.google.com", "_blank"); }, 800);
+                    return;
+                }
+                if (target.includes('whatsapp')) {
+                    speakJarvis("A abrir o WhatsApp.");
+                    spawnPlatformWidget("Mobile Intent", "Redirecionando para WhatsApp...");
+                    setTimeout(() => { window.location.href = "whatsapp://"; window.open("https://web.whatsapp.com", "_blank"); }, 800);
+                    return;
+                }
+
+                // Pesquisa Genérica Universal na Web para qualquer outra coisa dita
+                speakJarvis(`A pesquisar por ${target}.`);
+                spawnPlatformWidget(`Busca Universal: ${target}`, `Consultando rede global...`);
+                setTimeout(() => {
+                    window.open(`https://www.google.com/search?q=${encodeURIComponent(target)}`, "_blank");
+                }, 1000);
                 return;
             }
 
@@ -349,7 +353,7 @@
                 <p class="text-[11px] text-gray-300 font-light">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>BRIDGE ATIVA</span>
+                    <span>UNIVERSAL BRIDGE</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
