@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Mobile Voice Bridge</title>
+    <title>JARVIS // Complete Voice & Action Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -41,7 +41,7 @@
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // KERNEL</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // COMPLETE</span>
                 <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
@@ -50,11 +50,11 @@
 
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES EXECUTORES</span>
+                <span class="text-[#00f2fe]">SUB-AGENTES VOZ E AÇÃO</span>
                 <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
             </div>
             <div class="flex gap-2">
-                <input type="text" id="newAgentName" placeholder="Nome (ex: Analisador de UI)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
+                <input type="text" id="newAgentName" placeholder="Nome (ex: Linker App)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
                 <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
             </div>
             <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
@@ -66,9 +66,9 @@
     <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS QUANTUM PROTOCOL</div>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS VOICE AND ACTION PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Rede neuronal ativa. Sistema pronto para voz e texto, Fagundes."
+                "Sistemas de voz e ação ativos. Converse comigo e abra aplicações de imediato, Fagundes."
             </p>
         </div>
 
@@ -76,10 +76,10 @@
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Neural Mesh Engine</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Neural Voice & Action Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Sub-agentes com permissões de voz, áudio ativo e mutação DOM ativas.</p>
+                <p class="text-[11px] text-gray-300 font-light">Comunicação vocal síncrona e abertura direta automática de apps ativas.</p>
             </div>
         </div>
     </main>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica de Controlo de Voz com Resolução de Bloqueio Móvel -->
+    <!-- Lógica Completa de Voz Ativa e Abertura Automática -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -130,8 +130,8 @@
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Voice Intent Core", status: "Pronto" },
-            { id: 4, name: "Neural Voice Bridge", status: "Ativo" }
+            { id: 3, name: "Voice & Action Bridge", status: "Pronto" },
+            { id: 4, name: "Neural Speech Core", status: "Ativo" }
         ];
 
         const neuralNodes = [];
@@ -178,7 +178,7 @@
         }
         loadVoices();
 
-        function speakJarvis(text, onFinish) {
+        function speakJarvis(text) {
             voiceFeedback.innerText = `"${text}"`;
             if (speechSynth) {
                 speechSynth.cancel();
@@ -187,12 +187,7 @@
                 utter.lang = 'pt-BR';
                 utter.rate = 0.95;
                 utter.pitch = 0.45;
-                if (onFinish) {
-                    utter.onend = onFinish;
-                }
                 speechSynth.speak(utter);
-            } else if (onFinish) {
-                onFinish();
             }
         }
 
@@ -269,7 +264,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR DE EXECUÇÃO DE DIRETIVAS (VOZ E TEXTO) ---
+        // --- MOTOR SÍNCRONO DE VOZ E AÇÃO AUTOMÁTICA ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
@@ -298,7 +293,7 @@
                 return;
             }
 
-            // 3. Abertura Automática de Apps ou Busca Web
+            // 3. Abertura Automática de Apps ou Busca Web com Voz Ativa
             if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar') || lower.includes('navegar')) {
                 let target = directive.replace(/abrir|tocar|pesquisar|buscar|navegar|no|o|a|os|as/gi, '').trim();
                 let url = "";
@@ -324,29 +319,17 @@
                     url = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
                 }
 
-                speakJarvis(`A abrir ${appName}.`, () => {
+                speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
+                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} automaticamente...`);
+                
+                // Disparo de abertura imediata com suporte para navegador móvel
+                setTimeout(() => {
                     window.open(url, "_blank");
-                });
-
-                // Criação automática do widget com botão de disparo direto de toque para mobile
-                spawnPlatformWidget(`Ação Automática`, `
-                    Redirecionando para ${appName}...
-                    <div class="mt-2">
-                        <a href="${url}" target="_blank" class="inline-block bg-[#00f2fe]/20 border border-[#00f2fe] text-white px-3 py-1.5 rounded text-[11px] font-bold shadow-[0_0_10px_#00f2fe] hover:bg-[#00f2fe]/40 transition">
-                            Abrir ${appName} Imediatamente
-                        </a>
-                    </div>
-                `);
-
-                // Tenta forçar a abertura por script direto caso o browser permita
-                try {
-                    window.location.href = url;
-                } catch(e) {}
-
+                }, 600);
                 return;
             }
 
-            // Ação padrão
+            // Ação padrão com resposta em voz
             speakJarvis(`Diretiva processada: ${directive}.`);
             spawnPlatformWidget("Tarefa Executada", directive);
         }
@@ -359,10 +342,10 @@
                     <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">${title}</span>
                     <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 </div>
-                <div class="text-[11px] text-gray-300 font-light">${content}</div>
+                <p class="text-[11px] text-gray-300 font-light">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>AUTOMATIC BRIDGE</span>
+                    <span>VOICE ACTIVE</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
