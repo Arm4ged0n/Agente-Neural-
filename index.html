@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Complete Voice & Action Bridge</title>
+    <title>JARVIS // Ultimate Neural Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
-        body { font-family: 'Share Tech Mono', monospace; background: #000205; overflow-x: hidden; }
+        body { font-family: 'Share Tech Mono', monospace; background: #000406; overflow-x: hidden; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: rgba(1, 4, 9, 0.9); }
@@ -15,46 +15,46 @@
         
         .stark-panel {
             background: rgba(0, 242, 254, 0.04);
-            border: 1px solid rgba(0, 242, 254, 0.5);
-            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.12), 0 0 25px rgba(0, 242, 254, 0.2);
+            border: 1px solid rgba(0, 242, 254, 0.6);
+            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.15), 0 0 30px rgba(0, 242, 254, 0.25);
             backdrop-filter: blur(12px);
-            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
         
         .stark-input-panel {
-            background: rgba(1, 10, 20, 0.95);
-            border: 1px solid rgba(0, 242, 254, 0.7);
-            box-shadow: 0 0 35px rgba(0, 242, 254, 0.35);
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 15px 100%, 0 calc(100% - 12px));
+            background: rgba(1, 12, 24, 0.95);
+            border: 1px solid rgba(0, 242, 254, 0.8);
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
         }
     </style>
 </head>
 <body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
 
-    <!-- Canvas HUD Neural com Fundo de Rede Neuronal Viva -->
+    <!-- Canvas HUD Neural com Fundo de Rede Neuronal Viva e Alta Intensidade -->
     <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
 
     <!-- Vinheta Cinemática -->
-    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_15%,#000205_92%)] z-10"></div>
+    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,#000406_94%)] z-10"></div>
 
     <!-- Header Superior com Controlo Admin -->
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // COMPLETE</span>
-                <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]"></span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // ULTIMATE</span>
+                <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_12px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
-            <div class="text-[9px] text-cyan-400/80 tracking-wider">CHEFIA: <strong id="adminUserLabel" class="text-white">Fagundes</strong></div>
+            <div class="text-[9px] text-cyan-400/90 tracking-wider">CHEFIA: <strong id="adminUserLabel" class="text-white">Fagundes</strong></div>
         </div>
 
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES VOZ E AÇÃO</span>
+                <span class="text-[#00f2fe]">SUB-AGENTES EXECUTORES</span>
                 <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
             </div>
             <div class="flex gap-2">
-                <input type="text" id="newAgentName" placeholder="Nome (ex: Linker App)" class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
+                <input type="text" id="newAgentName" placeholder="Nome do Agente..." class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
                 <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
             </div>
             <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
@@ -65,10 +65,10 @@
 
     <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
-        <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_40px_rgba(0,242,254,0.2)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS VOICE AND ACTION PROTOCOL</div>
+        <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS NEURAL QUANTUM PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Sistemas de voz e ação ativos. Converse comigo e abra aplicações de imediato, Fagundes."
+                "Matriz quântica ativa. Converse comigo por voz ou texto e abra qualquer aplicação, Fagundes."
             </p>
         </div>
 
@@ -76,10 +76,10 @@
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Neural Voice & Action Engine</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Ultimate Core Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Comunicação vocal síncrona e abertura direta automática de apps ativas.</p>
+                <p class="text-[11px] text-gray-300 font-light">Sistemas de voz síncrona, abertura automática de apps e IA reativa prontos.</p>
             </div>
         </div>
     </main>
@@ -90,10 +90,10 @@
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva (ex: 'Abrir YouTube', 'Pesquisar notícias')..." 
+                placeholder="Insira diretiva (ex: 'Abrir Spotify', 'Abrir YouTube')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
-            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_20px_rgba(0,242,254,0.4)] shrink-0" title="Ativar Microfone">
+            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_25px_rgba(0,242,254,0.5)] shrink-0" title="Ativar Microfone">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                 </svg>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica Completa de Voz Ativa e Abertura Automática -->
+    <!-- Lógica de Controlo de Voz Ativa e Efeitos Visuais Aprimorados -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -130,18 +130,18 @@
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Voice & Action Bridge", status: "Pronto" },
-            { id: 4, name: "Neural Speech Core", status: "Ativo" }
+            { id: 3, name: "Neural Matrix Bridge", status: "Pronto" },
+            { id: 4, name: "Voice & Speech Core", status: "Ativo" }
         ];
 
         const neuralNodes = [];
-        for (let i = 0; i < 45; i++) {
+        for (let i = 0; i < 65; i++) {
             neuralNodes.push({
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 0.8,
-                vy: (Math.random() - 0.5) * 0.8,
-                radius: Math.random() * 2 + 1.5
+                vx: (Math.random() - 0.5) * 1.0,
+                vy: (Math.random() - 0.5) * 1.0,
+                radius: Math.random() * 2.5 + 1.2
             });
         }
 
@@ -221,9 +221,9 @@
                 source.connect(analyser);
 
                 isListening = true;
-                micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_30px_#ff3d00]');
-                systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_15px_#ff3d00]";
-                speakJarvis(`A escutar, ${currentAdminName}. Pode falar.`);
+                micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
+                systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
+                speakJarvis(`A escutar frequências, ${currentAdminName}. Pode falar.`);
                 if (speechRecognition) speechRecognition.start();
             } catch (err) {
                 speakJarvis("Erro nos sensores de áudio.");
@@ -236,7 +236,7 @@
             if (speechRecognition) { try { speechRecognition.stop(); } catch(e){} }
             isListening = false;
             hudEnergy = 0;
-            micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_30px_#ff3d00]');
+            micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
             systemPulseDot.className = "w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]";
         }
 
@@ -251,7 +251,7 @@
         createAgentBtn.addEventListener('click', () => {
             const name = newAgentName.value.trim();
             if (name) {
-                registerNewAgent(name, "Em Execução");
+                registerNewAgent(name, "Em Operação");
                 newAgentName.value = '';
             }
         });
@@ -264,7 +264,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR SÍNCRONO DE VOZ E AÇÃO AUTOMÁTICA ---
+        // --- MOTOR DE EXECUÇÃO SÍNCRONA E DIRETA (VOZ E TEXTO) ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
@@ -293,7 +293,7 @@
                 return;
             }
 
-            // 3. Abertura Automática de Apps ou Busca Web com Voz Ativa
+            // 3. Abertura Automática de Apps ou Busca Web
             if (lower.includes('abrir') || lower.includes('tocar') || lower.includes('pesquisar') || lower.includes('buscar') || lower.includes('navegar')) {
                 let target = directive.replace(/abrir|tocar|pesquisar|buscar|navegar|no|o|a|os|as/gi, '').trim();
                 let url = "";
@@ -320,16 +320,15 @@
                 }
 
                 speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
-                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} automaticamente...`);
+                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
                 
-                // Disparo de abertura imediata com suporte para navegador móvel
                 setTimeout(() => {
                     window.open(url, "_blank");
-                }, 600);
+                }, 500);
                 return;
             }
 
-            // Ação padrão com resposta em voz
+            // Ação padrão com voz ativa
             speakJarvis(`Diretiva processada: ${directive}.`);
             spawnPlatformWidget("Tarefa Executada", directive);
         }
@@ -345,23 +344,26 @@
                 <p class="text-[11px] text-gray-300 font-light">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>VOICE ACTIVE</span>
+                    <span>QUANTUM MESH</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
         }
 
+        // Renderização 60 FPS HUD com Círculo Central Maior e Efeito de Matriz Neuronal Avançada
         function renderStarkHUD() {
             angleTicker += 0.02;
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = '#000205';
+            ctx.fillStyle = '#000406';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
+            // Cores dinâmicas: Ciano Stark vs Vermelho Alerta ao falar
             const primaryColor = isListening ? '255, 61, 0' : '0, 242, 254';
             const secondaryGlow = isListening ? '#ff3d00' : '#00f2fe';
 
-            ctx.lineWidth = 0.8;
+            // 1. Rede Neuronal de Fundo Mais Viva
+            ctx.lineWidth = 0.9;
             for (let i = 0; i < neuralNodes.length; i++) {
                 let n = neuralNodes[i];
                 n.x += n.vx;
@@ -375,57 +377,61 @@
                     let dx = n.x - n2.x;
                     let dy = n.y - n2.y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 130) {
+                    if (dist < 150) {
                         ctx.beginPath();
                         ctx.moveTo(n.x, n.y);
                         ctx.lineTo(n2.x, n2.y);
-                        ctx.strokeStyle = `rgba(${primaryColor}, ${1 - dist / 130})`;
+                        ctx.strokeStyle = `rgba(${primaryColor}, ${1 - dist / 150})`;
                         ctx.stroke();
                     }
                 }
 
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${primaryColor}, 0.7)`;
+                ctx.fillStyle = `rgba(${primaryColor}, 0.8)`;
                 ctx.fill();
             }
 
+            // 2. Anéis Holográficos Maiores e Reator Central Imponente (Estilo Referência)
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) * 0.42;
+            const radius = Math.min(centerX, centerY) * 0.52; // Círculo maior conforme solicitado
 
             hudEnergy *= 0.95;
 
             ctx.strokeStyle = `rgb(${primaryColor})`;
-            ctx.lineWidth = 2.5;
-            ctx.shadowBlur = isListening ? 25 : 15;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = isListening ? 35 : 20;
             ctx.shadowColor = secondaryGlow;
 
+            // Anel Externo Rotativo de Alta Precisão
             ctx.save();
             ctx.translate(centerX, centerY);
-            ctx.rotate(angleTicker * 0.6);
+            ctx.rotate(angleTicker * 0.5);
             ctx.beginPath();
-            ctx.arc(0, 0, radius * 1.3, 0, Math.PI * 2);
-            ctx.setLineDash([12, 18, 6, 18]);
+            ctx.arc(0, 0, radius * 1.35, 0, Math.PI * 2);
+            ctx.setLineDash([15, 20, 8, 20]);
             ctx.stroke();
             ctx.restore();
 
+            // Anel Intermediário Inverso
             ctx.save();
             ctx.translate(centerX, centerY);
-            ctx.rotate(-angleTicker * 0.9);
+            ctx.rotate(-angleTicker * 0.8);
             ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.95, 0, Math.PI * 1.6);
-            ctx.setLineDash([5, 10]);
-            ctx.lineWidth = 3;
+            ctx.arc(0, 0, radius * 1.05, 0, Math.PI * 1.6);
+            ctx.setLineDash([6, 12]);
+            ctx.lineWidth = 3.5;
             ctx.stroke();
             ctx.restore();
 
+            // Núcleo Reator Central Maior com Efeito Quântico Pulsante
             ctx.beginPath();
-            ctx.arc(centerX, centerY, (radius * 0.3) * (1 + (isListening ? Math.sin(angleTicker * 8) * 0.15 : 0)), 0, Math.PI * 2);
-            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.35)' : 'rgba(0, 242, 254, 0.25)';
+            ctx.arc(centerX, centerY, (radius * 0.38) * (1 + (isListening ? Math.sin(angleTicker * 10) * 0.2 : 0)), 0, Math.PI * 2);
+            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.4)' : 'rgba(0, 242, 254, 0.3)';
             ctx.fill();
             ctx.strokeStyle = `rgb(${primaryColor})`;
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 5;
             ctx.stroke();
 
             requestAnimationFrame(renderStarkHUD);
