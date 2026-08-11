@@ -25,7 +25,7 @@
             background: rgba(1, 12, 24, 0.95);
             border: 1px solid rgba(0, 242, 254, 0.8);
             box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
-            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 12px));
+            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
         }
     </style>
 </head>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica Integrada de IA (Gemini API) + Execução Direta por Voz e Texto -->
+    <!-- Lógica Integrada de IA Corrigida e Reconhecimento de Voz Estável -->
     <script>
         const apiKey = "";
         const canvas = document.getElementById('hudCanvas');
@@ -192,19 +192,37 @@
             }
         }
 
-        // Configuração Estável de Reconhecimento de Voz (Disparo Imediato ao Concluir)
+        // Configuração Robusta de Reconhecimento de Voz para evitar corte de letras
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
             speechRecognition.continuous = false;
-            speechRecognition.interimResults = false;
+            speechRecognition.interimResults = true;
+
+            let finalTranscript = '';
 
             speechRecognition.onresult = (e) => {
-                const query = e.results[0][0].transcript.trim();
-                textInput.value = query;
-                stopMic();
-                executeAutonomousCommand(query);
+                let interim = '';
+                for (let i = e.resultIndex; i < e.results.length; ++i) {
+                    if (e.results[i].isFinal) {
+                        finalTranscript += e.results[i][0].transcript;
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                const fullText = (finalTranscript + interim).trim();
+                textInput.value = fullText;
+
+                if (e.results[e.results.length - 1].isFinal) {
+                    const spokenQuery = finalTranscript.trim();
+                    stopMic();
+                    if (spokenQuery) {
+                        textInput.value = spokenQuery;
+                        executeAutonomousCommand(spokenQuery);
+                    }
+                    finalTranscript = '';
+                }
             };
 
             speechRecognition.onerror = () => stopMic();
@@ -265,7 +283,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR DE IA GEMINI + ABERTURA DE APPS E PESQUISAS (TIPO SIRI) ---
+        // --- MOTOR DE EXECUÇÃO DE DIRETIVAS E IA GEMINI ---
         async function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
@@ -343,12 +361,12 @@
             }
         }
 
-        // Chamada à API Gemini com Exponential Backoff e Grounding Search
+        // Chamada à API Gemini com payload corrigido
         async function callGeminiAPI(promptText) {
             const systemPrompt = `Tu és o J.A.R.V.I.S., o assistente de inteligência artificial de elite de Fagundes (baseado em Stark Industries). Responde sempre em português de Portugal ou PT-BR natural, de forma direta, concisa (máximo 2 a 3 frases curtas, ideal para leitura em voz alta estilo Siri), inteligente e prestativa.`;
             
             const payload = {
-                contents: [{ parts: [{ text: promptText }] }],
+                contents: [{ role: "user", parts: [{ text: promptText }] }],
                 systemInstruction: { parts: [{ text: systemPrompt }] },
                 tools: [{ "google_search": {} }]
             };
