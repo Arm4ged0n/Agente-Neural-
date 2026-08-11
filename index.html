@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Optimized Neural Matrix</title>
+    <title>JARVIS // Final Voice Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -41,7 +41,7 @@
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // OPTIMIZED</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // STABLE</span>
                 <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_12px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
@@ -66,9 +66,9 @@
     <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS NEURAL QUANTUM PROTOCOL</div>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS STABLE VOICE PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Sistemas otimizados. Fale sem pressa ou digite para abrir apps e pesquisar, Fagundes."
+                "Sistema de voz estabilizado. Fale ou digite para interagir, Fagundes."
             </p>
         </div>
 
@@ -76,10 +76,10 @@
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Optimized Engine</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Stable Voice Bridge</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Capacidade de escuta fluida e abertura direta otimizada.</p>
+                <p class="text-[11px] text-gray-300 font-light">Captura de áudio direta, sem cortes, integrada com abertura automática de apps.</p>
             </div>
         </div>
     </main>
@@ -101,7 +101,7 @@
         </div>
     </footer>
 
-    <!-- Lógica Otimizada de Reconhecimento de Voz sem Cortes e Sem Travamentos -->
+    <!-- Lógica Estável de Voz e Texto -->
     <script>
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -130,18 +130,18 @@
         let internalAgents = [
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Optimized Matrix Core", status: "Pronto" },
+            { id: 3, name: "Stable Voice Bridge", status: "Pronto" },
             { id: 4, name: "Neural Voice Core", status: "Ativo" }
         ];
 
         const neuralNodes = [];
-        for (let i = 0; i < 40; i++) { // Reduzido ligeiramente para 100% de fluidez em mobile
+        for (let i = 0; i < 45; i++) {
             neuralNodes.push({
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 0.6,
-                vy: (Math.random() - 0.5) * 0.6,
-                radius: Math.random() * 2 + 1
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                radius: Math.random() * 2 + 1.2
             });
         }
 
@@ -191,68 +191,49 @@
             }
         }
 
-        // Configuração Otimizada de Reconhecimento de Voz sem cortes
+        // Configuração Estável do Reconhecimento de Voz
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
-            speechRecognition.continuous = true; // Permite captar a frase inteira sem cortar
-            speechRecognition.interimResults = true; // Mostra resultados em tempo real
-
-            let finalTranscript = '';
+            speechRecognition.continuous = false; // Fecha ao terminar a frase para garantir precisão total
+            speechRecognition.interimResults = false;
 
             speechRecognition.onresult = (e) => {
-                let interim = '';
-                for (let i = e.resultIndex; i < e.results.length; ++i) {
-                    if (e.results[i].isFinal) {
-                        finalTranscript += e.results[i][0].transcript;
-                    } else {
-                        interim += e.results[i][0].transcript;
-                    }
-                }
-                const fullText = (finalTranscript + interim).trim();
-                textInput.value = fullText;
-
-                // Se houver resultado final consolidado, executa a diretiva
-                if (e.results[e.results.length - 1].isFinal) {
-                    stopMic();
-                    executeAutonomousCommand(fullText);
-                    finalTranscript = '';
-                }
+                const query = e.results[0][0].transcript.trim();
+                textInput.value = query;
+                stopMic();
+                executeAutonomousCommand(query);
             };
 
             speechRecognition.onerror = () => stopMic();
             speechRecognition.onend = () => stopMic();
         }
 
-        let audioCtx = null, analyser = null, micStream = null;
-        micBtn.addEventListener('click', async () => {
+        micBtn.addEventListener('click', () => {
             if (isListening) {
                 stopMic();
                 return;
             }
-            try {
-                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 128;
-                const source = audioCtx.createMediaStreamSource(micStream);
-                source.connect(analyser);
-
-                isListening = true;
-                micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
-                systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
-                speakJarvis(`A escutar, ${currentAdminName}. Pode falar.`);
-                if (speechRecognition) speechRecognition.start();
-            } catch (err) {
-                speakJarvis("Erro nos sensores de áudio.");
+            if (speechRecognition) {
+                try {
+                    speechRecognition.start();
+                    isListening = true;
+                    micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
+                    systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
+                    speakJarvis(`A escutar, ${currentAdminName}. Pode falar.`);
+                } catch(err) {
+                    stopMic();
+                }
+            } else {
+                speakJarvis("Reconhecimento de voz não suportado neste navegador.");
             }
         });
 
         function stopMic() {
-            if (speechRecognition) { try { speechRecognition.stop(); } catch(e){} }
-            if (micStream) micStream.getTracks().forEach(t => t.stop());
-            if (audioCtx) audioCtx.close();
+            if (speechRecognition) {
+                try { speechRecognition.stop(); } catch(e){}
+            }
             isListening = false;
             hudEnergy = 0;
             micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
@@ -283,7 +264,7 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR ROBUSTO DE EXECUÇÃO (VOZ E TEXTO) ---
+        // --- MOTOR UNIFICADO DE EXECUÇÃO (VOZ E TEXTO) ---
         function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
@@ -366,13 +347,12 @@
                 <p class="text-[11px] text-gray-300 font-light">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>OPTIMIZED CORE</span>
+                    <span>STABLE CORE</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
         }
 
-        // Renderização Fluida 60 FPS Sem Sobrecorrega
         function renderStarkHUD() {
             angleTicker += 0.015;
             ctx.globalCompositeOperation = 'source-over';
