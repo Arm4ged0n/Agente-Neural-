@@ -94,7 +94,7 @@
     </footer>
 
     <script>
-        const apiKey = ""; // Configurar aqui sua API key do Gemini (https://makersuite.google.com/app/apikeys)
+        const apiKey = "";
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
 
@@ -115,6 +115,7 @@
         let speechSynth = window.speechSynthesis;
         let hudEnergy = 0;
         let angleTicker = 0;
+        let lastVoiceCommand = ''; // ✅ GUARDAR ÚLTIMO COMANDO DE VOZ
 
         let currentAdminName = localStorage.getItem('neural_admin_name') || "Fagundes";
         adminUserLabel.innerText = currentAdminName;
@@ -183,13 +184,12 @@
             }
         }
 
-        // ✅ RECONHECIMENTO DE VOZ PRECISO
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
             speechRecognition.continuous = false;
-            speechRecognition.interimResults = false; // CRÍTICO: false para evitar duplicação
+            speechRecognition.interimResults = false;
 
             speechRecognition.onresult = (e) => {
                 let finalTranscript = '';
@@ -202,7 +202,8 @@
                 const spokenQuery = finalTranscript.trim();
                 if (spokenQuery) {
                     textInput.value = spokenQuery;
-                    console.log('[VOICE INPUT]', spokenQuery);
+                    lastVoiceCommand = spokenQuery; // ✅ GUARDAR PARA EXECUTAR NO ONEND
+                    console.log('[VOICE CAPTURED]', spokenQuery);
                 }
             };
 
@@ -211,7 +212,17 @@
                 stopMic();
             };
 
-            speechRecognition.onend = () => stopMic();
+            // ✅ EXECUTAR AQUI - QUANDO O RECONHECIMENTO TERMINA
+            speechRecognition.onend = () => {
+                console.log('[SPEECH ENDED]', lastVoiceCommand);
+                if (lastVoiceCommand && lastVoiceCommand.length > 0) {
+                    console.log('[AUTO EXECUTE NOW]', lastVoiceCommand);
+                    executeAutonomousCommand(lastVoiceCommand);
+                    lastVoiceCommand = '';
+                    textInput.value = '';
+                }
+                stopMic();
+            };
         }
 
         micBtn.addEventListener('click', () => {
@@ -221,6 +232,7 @@
             }
             if (speechRecognition) {
                 try {
+                    lastVoiceCommand = '';
                     speechRecognition.start();
                     isListening = true;
                     micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
@@ -271,46 +283,37 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // ✅ FUNÇÃO DE RESPOSTAS INTELIGENTES - SEM NECESSIDADE DE API
         function getSmartResponse(directive) {
             const lower = directive.toLowerCase().trim();
-            console.log('[SMART RESPONSE CHECK]', lower);
 
-            // Perguntas sobre hora
             if (lower.match(/que horas?|qual.*hora|me diz.*hora|me dis.*hora|horário/i)) {
                 const now = new Date();
                 const hora = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 return `São ${hora}, ${currentAdminName}.`;
             }
 
-            // Perguntas sobre data
             if (lower.match(/qual.*data|que dia|me diz.*data|me dis.*data|hoje/i)) {
                 const now = new Date();
                 const data = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 return `Hoje é ${data}.`;
             }
 
-            // Saudações
             if (lower.match(/^(oi|olá|opa|e aí|tudo bem|como vai|bom dia|boa tarde|boa noite)/i)) {
                 return `Olá, ${currentAdminName}. Aqui está o NEURAL IA. Como posso ajudar?`;
             }
 
-            // Perguntas sobre quem é
             if (lower.match(/quem é você|o que você é|qual é seu nome|quem você é/i)) {
                 return `Sou NEURAL IA, seu assistente inteligente criado por Sandro Fagundes. Posso abrir apps, responder perguntas e executar suas ordens.`;
             }
 
-            // Agradecimentos
             if (lower.match(/obrigado|valeu|thanks|muito bem|legal/i)) {
                 return `Ao seu dispor sempre, ${currentAdminName}.`;
             }
 
-            // Adeus
             if (lower.match(/^(adeus|tchau|até logo|até mais|falou|bye)/i)) {
                 return `Até logo, ${currentAdminName}. Sempre pronto para servir.`;
             }
 
-            // Perguntas matemáticas simples
             const mathMatch = directive.match(/(\d+)\s*([+\-*\/])\s*(\d+)/);
             if (mathMatch && lower.includes('quanto')) {
                 const [, n1, op, n2] = mathMatch;
@@ -324,29 +327,23 @@
                 return `${n1} ${op} ${n2} é igual a ${result}.`;
             }
 
-            // Perguntas sobre clima
             if (lower.match(/como está o tempo|qual é o tempo|está chovendo|vai chover|clima|previsão/i)) {
                 return `Para informações de clima em tempo real, abra um navegador e procure pelo clima da sua região.`;
             }
 
-            // Perguntas sobre criador
             if (lower.match(/quem.*criou|quem.*fez|criador|desenvolvedor|sandro|fagundes/i)) {
                 return `Fui criado por Sandro Fagundes, um entrepreneur e desenvolvedor de IA aplicada a negócios.`;
             }
 
-            // Sem resposta local disponível
-            console.log('[NO LOCAL RESPONSE]');
             return null;
         }
 
-        // ✅ EXECUÇÃO DE COMANDOS E CONVERSAÇÃO
         async function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
             
-            console.log('[COMMAND PARSE]', { directive, lower });
+            console.log('[EXECUTING]', { directive, lower });
 
-            // 1️⃣ MUDAR NOME DO ADMINISTRADOR
             if ((lower.includes('mudar nome') || lower.includes('chame') || lower.includes('nome para')) && lower.length < 60) {
                 const patterns = [
                     /mudar nome (?:para |de )?(.+)/i,
@@ -367,7 +364,6 @@
                 }
             }
 
-            // 2️⃣ CRIAR AGENTE
             if (lower.includes('criar agente') || lower.includes('novo agente')) {
                 const patterns = [
                     /criar agente (.+)/i,
@@ -391,7 +387,6 @@
                 return;
             }
 
-            // 3️⃣ ABERTURA DE APLICATIVOS
             if (lower.startsWith('abrir ') || lower.startsWith('tocar ') || lower.includes('abrir ') || lower.includes('tocar ')) {
                 let target = directive
                     .replace(/^(abrir|tocar)\s+/i, '')
@@ -441,23 +436,16 @@
                 }
             }
 
-            // 4️⃣ CONVERSAÇÃO INTELIGENTE - PRIMEIRO TENTA RESPOSTA LOCAL
-            console.log('[CONVERSATION MODE]', directive);
-
-            // ✅ TENTA RESPOSTA LOCAL PRIMEIRO (SEM API)
             const localResponse = getSmartResponse(directive);
             if (localResponse) {
-                console.log('[LOCAL RESPONSE FOUND]', localResponse);
                 speakJarvis(localResponse);
-                spawnPlatformWidget(`NEURAL IA Resposta`, localResponse);
+                spawnPlatformWidget(`NEURAL IA`, localResponse);
                 return;
             }
 
-            // ✅ SE NÃO HOUVER RESPOSTA LOCAL, USA API SE CONFIGURADA
             if (apiKey) {
-                console.log('[USING GEMINI API]');
                 speakJarvis(`A processar, ${currentAdminName}...`);
-                spawnPlatformWidget(`Processando IA Avançada`, `A consultar a rede neural para: "${directive}"`);
+                spawnPlatformWidget(`IA Avançada`, `Consultando rede neural para: "${directive}"`);
 
                 try {
                     let responseText = await callGeminiAPI(directive);
@@ -467,19 +455,17 @@
                     console.error('[API ERROR]', err);
                     let fallbackMsg = "Não consegui processar essa pergunta neste momento.";
                     speakJarvis(fallbackMsg);
-                    spawnPlatformWidget("Processamento Limitado", fallbackMsg);
+                    spawnPlatformWidget("Erro", fallbackMsg);
                 }
             } else {
-                // ✅ SEM API, RESPONDE COM AJUDA
-                console.log('[NO API - FALLBACK]');
-                const suggestions = "Posso responder sobre hora, data, saudações e abrir apps. Para perguntas complexas, configure a API do Gemini em makersuite.google.com.";
+                const suggestions = "Posso responder sobre hora, data, abrir apps e criar agentes. Para perguntas complexas, configure a API do Gemini.";
                 speakJarvis(suggestions);
                 spawnPlatformWidget("Modo Limitado", suggestions);
             }
         }
 
         async function callGeminiAPI(promptText) {
-            const systemPrompt = `Tu és o NEURAL IA, o assistente de inteligência artificial de elite de Fagundes. Responde sempre em português de Portugal ou PT-BR natural, de forma direta, concisa (máximo 2 a 3 frases curtas, ideal para leitura em voz alta estilo Siri), inteligente e prestativa.`;
+            const systemPrompt = `Tu és o NEURAL IA, assistente de elite de Fagundes. Responde em PT-BR natural, de forma direta e concisa (máximo 2-3 frases curtas, ideal para voz).`;
             
             const payload = {
                 contents: [{ role: "user", parts: [{ text: promptText }] }],
@@ -496,11 +482,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    if (!response.ok) throw new Error('Falha na resposta da API');
+                    if (!response.ok) throw new Error('Falha API');
                     const result = await response.json();
                     const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
                     if (text) return text;
-                    throw new Error('Texto vazio');
+                    throw new Error('Vazio');
                 } catch (e) {
                     if (attempt === 2) throw e;
                     await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
@@ -519,7 +505,7 @@
                 <p class="text-[11px] text-gray-300 font-light leading-relaxed">${content}</p>
                 <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
                     <span>STATUS: EXECUTADO</span>
-                    <span>NEURAL AI CORE</span>
+                    <span>NEURAL AI</span>
                 </div>
             `;
             dynamicPlatform.prepend(card);
