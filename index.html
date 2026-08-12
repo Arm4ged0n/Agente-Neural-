@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Siri Neural Core</title>
+    <title>NEURAL IA // Siri Neural Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -31,13 +31,9 @@
 </head>
 <body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
 
-    <!-- Canvas HUD Neural Otimizado -->
     <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
-
-    <!-- Vinheta Cinemática -->
     <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,#000406_94%)] z-10"></div>
 
-    <!-- Header Superior com Controlo Admin -->
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
@@ -58,12 +54,10 @@
                 <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
             </div>
             <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
-                <!-- Injetado dinamicamente -->
             </div>
         </div>
     </header>
 
-    <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
             <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS SIRI PROTOCOL</div>
@@ -72,7 +66,6 @@
             </p>
         </div>
 
-        <!-- Área de Trabalho Dinâmica Gerida pelos Agentes -->
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
@@ -84,7 +77,6 @@
         </div>
     </main>
 
-    <!-- Rodapé: Controlo de Voz e Texto -->
     <footer class="relative z-30 p-4 sm:p-8 flex justify-center pointer-events-auto w-full max-w-3xl mx-auto">
         <div class="stark-input-panel w-full p-2.5 sm:p-3 flex items-center gap-3">
             <input 
@@ -101,9 +93,8 @@
         </div>
     </footer>
 
-    <!-- Lógica Integrada de IA Corrigida e Reconhecimento de Voz Estável -->
     <script>
-        const apiKey = "";
+        const apiKey = ""; // Configurar aqui sua API key do Gemini
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
 
@@ -192,40 +183,35 @@
             }
         }
 
-        // Configuração Robusta de Reconhecimento de Voz para evitar corte de letras
+        // ⭐ RECONHECIMENTO DE VOZ CORRIGIDO - SEM ALTERAÇÃO DE TEXTO
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
             speechRecognition.continuous = false;
-            speechRecognition.interimResults = true;
-
-            let finalTranscript = '';
+            speechRecognition.interimResults = false; // ✅ CRÍTICO: false para evitar duplicação
 
             speechRecognition.onresult = (e) => {
-                let interim = '';
+                // ✅ Só pega o resultado FINAL, sem concatenação destrutiva
+                let finalTranscript = '';
                 for (let i = e.resultIndex; i < e.results.length; ++i) {
                     if (e.results[i].isFinal) {
                         finalTranscript += e.results[i][0].transcript;
-                    } else {
-                        interim += e.results[i][0].transcript;
                     }
                 }
-                const fullText = (finalTranscript + interim).trim();
-                textInput.value = fullText;
-
-                if (e.results[e.results.length - 1].isFinal) {
-                    const spokenQuery = finalTranscript.trim();
-                    stopMic();
-                    if (spokenQuery) {
-                        textInput.value = spokenQuery;
-                        executeAutonomousCommand(spokenQuery);
-                    }
-                    finalTranscript = '';
+                
+                const spokenQuery = finalTranscript.trim();
+                if (spokenQuery) {
+                    textInput.value = spokenQuery; // ✅ Texto EXATO do que foi falado
+                    console.log('[VOICE INPUT]', spokenQuery); // Debug
                 }
             };
 
-            speechRecognition.onerror = () => stopMic();
+            speechRecognition.onerror = (e) => {
+                console.error('[SPEECH ERROR]', e.error);
+                stopMic();
+            };
+
             speechRecognition.onend = () => stopMic();
         }
 
@@ -242,6 +228,7 @@
                     systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
                     speakJarvis(`A escutar, ${currentAdminName}.`);
                 } catch(err) {
+                    console.error('[MIC ERROR]', err);
                     stopMic();
                 }
             } else {
@@ -261,7 +248,8 @@
 
         textInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && textInput.value.trim() !== '') {
-                const val = textInput.value;
+                const val = textInput.value.trim();
+                console.log('[TEXT INPUT]', val);
                 textInput.value = '';
                 executeAutonomousCommand(val);
             }
@@ -277,34 +265,59 @@
 
         function registerNewAgent(agentName, statusDesc) {
             const cleanName = agentName.replace(/["']/g, "").trim();
+            if (!cleanName || cleanName.length < 2) return;
             internalAgents.push({ id: internalAgents.length + 1, name: cleanName, status: statusDesc });
             renderAgentsUI();
             spawnPlatformWidget(`Agente ${cleanName}`, `Sub-agente operacional instanciado com sucesso.`);
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR DE EXECUÇÃO DE DIRETIVAS E IA GEMINI ---
+        // ⭐ PARSER DE COMANDOS RIGOROSO - SEM ALTERAÇÃO DO TEXTO ORIGINAL
         async function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
+            
+            console.log('[COMMAND PARSE]', { directive, lower });
 
-            // 1. Mudar Nome do Administrador
-            if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('nome para')) {
-                let parts = directive.split(/para|de/i);
-                if (parts.length > 1) {
-                    currentAdminName = parts[parts.length - 1].trim().replace(/[.!?,]/g, '');
-                    localStorage.setItem('jarvis_admin_name', currentAdminName);
-                    adminUserLabel.innerText = currentAdminName;
-                    spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
-                    speakJarvis(`Nome atualizado para ${currentAdminName}. Pronto, chefe.`);
-                    return;
+            // 1️⃣ MUDAR NOME DO ADMINISTRADOR
+            // Padrões: "mudar nome para João" OU "chame-me de Maria" OU "nome Sandro"
+            if ((lower.includes('mudar nome') || lower.includes('chame') || lower.includes('nome para')) && lower.length < 60) {
+                const patterns = [
+                    /mudar nome (?:para |de )?(.+)/i,
+                    /chame(?:-me)? (?:de )?(.+)/i,
+                    /nome (?:para )?(.+)/i
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = directive.match(pattern);
+                    if (match && match[1]) {
+                        currentAdminName = match[1].replace(/[.!?,]/g, '').trim();
+                        localStorage.setItem('jarvis_admin_name', currentAdminName);
+                        adminUserLabel.innerText = currentAdminName;
+                        spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
+                        speakJarvis(`Nome atualizado para ${currentAdminName}. Pronto, chefe.`);
+                        return;
+                    }
                 }
             }
 
-            // 2. Criar Agente
+            // 2️⃣ CRIAR AGENTE
             if (lower.includes('criar agente') || lower.includes('novo agente')) {
-                let parts = directive.split(/agente/i);
-                let extractedName = parts[1] ? parts[1].trim() : `Auto #${internalAgents.length + 1}`;
+                const patterns = [
+                    /criar agente (.+)/i,
+                    /novo agente (.+)/i,
+                    /criar (?:um )?agente/i
+                ];
+                
+                let extractedName = null;
+                for (const pattern of patterns) {
+                    const match = directive.match(pattern);
+                    if (match && match[1]) {
+                        extractedName = match[1].replace(/[.!?,]/g, '').trim();
+                        break;
+                    }
+                }
+                
                 if (!extractedName || extractedName.length < 2) {
                     extractedName = `Executor #${internalAgents.length + 1}`;
                 }
@@ -312,56 +325,74 @@
                 return;
             }
 
-            // 3. Abertura Automática de Aplicativos
-            if (lower.includes('abrir') || lower.includes('tocar')) {
-                let target = directive.replace(/abrir|tocar|no|o|a|os|as/gi, '').trim();
-                let url = "";
-                let appName = target;
+            // 3️⃣ ABERTURA DE APLICATIVOS - PARSING PRECISO
+            if (lower.startsWith('abrir ') || lower.startsWith('tocar ') || lower.includes('abrir ') || lower.includes('tocar ')) {
+                // Remove prefixos com precision
+                let target = directive
+                    .replace(/^(abrir|tocar)\s+/i, '')
+                    .replace(/^(o|a|os|as)\s+/i, '')
+                    .toLowerCase()
+                    .trim();
 
-                if (lower.includes('spotify') || lower.includes('música') || lower.includes('musica')) {
-                    appName = "Spotify";
-                    url = "https://open.spotify.com";
-                } else if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
-                    appName = "Gmail";
-                    url = "https://mail.google.com";
-                } else if (lower.includes('youtube')) {
-                    appName = "YouTube";
-                    url = "https://youtube.com";
-                } else if (lower.includes('bloco de notas') || lower.includes('notas')) {
-                    appName = "Bloco de Notas";
-                    url = "https://keep.google.com";
-                } else if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
-                    appName = "Google Maps";
-                    url = "https://maps.google.com";
-                } else if (lower.includes('whatsapp')) {
-                    appName = "WhatsApp";
-                    url = "https://web.whatsapp.com";
-                } else {
-                    url = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
+                const appDatabase = {
+                    'spotify': { name: 'Spotify', url: 'https://open.spotify.com' },
+                    'música': { name: 'Spotify', url: 'https://open.spotify.com' },
+                    'musica': { name: 'Spotify', url: 'https://open.spotify.com' },
+                    'gmail': { name: 'Gmail', url: 'https://mail.google.com' },
+                    'email': { name: 'Gmail', url: 'https://mail.google.com' },
+                    'e-mail': { name: 'Gmail', url: 'https://mail.google.com' },
+                    'youtube': { name: 'YouTube', url: 'https://youtube.com' },
+                    'bloco de notas': { name: 'Bloco de Notas', url: 'https://keep.google.com' },
+                    'notas': { name: 'Google Keep', url: 'https://keep.google.com' },
+                    'maps': { name: 'Google Maps', url: 'https://maps.google.com' },
+                    'gps': { name: 'Google Maps', url: 'https://maps.google.com' },
+                    'localização': { name: 'Google Maps', url: 'https://maps.google.com' },
+                    'whatsapp': { name: 'WhatsApp', url: 'https://web.whatsapp.com' }
+                };
+
+                let app = null;
+                for (const [key, appInfo] of Object.entries(appDatabase)) {
+                    if (target === key || target.includes(key)) {
+                        app = appInfo;
+                        break;
+                    }
                 }
 
-                speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
-                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
-                setTimeout(() => { window.open(url, "_blank"); }, 500);
-                return;
+                if (app) {
+                    speakJarvis(`A abrir ${app.name}, ${currentAdminName}.`);
+                    spawnPlatformWidget(`Ação Automática`, `Abrindo ${app.name} diretamente...`);
+                    setTimeout(() => { window.open(app.url, "_blank"); }, 500);
+                    return;
+                } else {
+                    // Fallback: Google Search
+                    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
+                    speakJarvis(`A pesquisar ${target}, ${currentAdminName}.`);
+                    spawnPlatformWidget(`Busca Google`, `Pesquisando: "${target}"`);
+                    setTimeout(() => { window.open(searchUrl, "_blank"); }, 500);
+                    return;
+                }
             }
 
-            // 4. Conversação Inteligente com Pesquisa Web em Tempo Real (Estilo Siri / Gemini)
-            speakJarvis(`A processar, ${currentAdminName}...`);
-            spawnPlatformWidget(`Processando IA`, `A consultar a rede global para: "${directive}"`);
+            // 4️⃣ CONVERSAÇÃO COM IA (se houver API key)
+            if (apiKey) {
+                speakJarvis(`A processar, ${currentAdminName}...`);
+                spawnPlatformWidget(`Processando IA`, `A consultar a rede global para: "${directive}"`);
 
-            try {
-                let responseText = await callGeminiAPI(directive);
-                speakJarvis(responseText);
-                spawnPlatformWidget(`J.A.R.V.I.S. AI`, responseText);
-            } catch (err) {
-                let fallbackMsg = "Não foi possível contactar a matriz quântica no momento.";
-                speakJarvis(fallbackMsg);
-                spawnPlatformWidget("Erro de Rede", fallbackMsg);
+                try {
+                    let responseText = await callGeminiAPI(directive);
+                    speakJarvis(responseText);
+                    spawnPlatformWidget(`J.A.R.V.I.S. AI`, responseText);
+                } catch (err) {
+                    console.error('[API ERROR]', err);
+                    let fallbackMsg = "Não foi possível contactar a matriz quântica no momento.";
+                    speakJarvis(fallbackMsg);
+                    spawnPlatformWidget("Erro de Rede", fallbackMsg);
+                }
+            } else {
+                speakJarvis("Nenhuma API configurada. Configure apiKey para ativar respostas inteligentes.");
             }
         }
 
-        // Chamada à API Gemini com payload corrigido
         async function callGeminiAPI(promptText) {
             const systemPrompt = `Tu és o J.A.R.V.I.S., o assistente de inteligência artificial de elite de Fagundes (baseado em Stark Industries). Responde sempre em português de Portugal ou PT-BR natural, de forma direta, concisa (máximo 2 a 3 frases curtas, ideal para leitura em voz alta estilo Siri), inteligente e prestativa.`;
             
@@ -373,7 +404,7 @@
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-            for (let attempt = 0; attempt < 5; attempt++) {
+            for (let attempt = 0; attempt < 3; attempt++) {
                 try {
                     const response = await fetch(url, {
                         method: 'POST',
@@ -386,9 +417,8 @@
                     if (text) return text;
                     throw new Error('Texto vazio');
                 } catch (e) {
-                    if (attempt === 4) throw e;
-                    const delay = Math.pow(2, attempt) * 1000;
-                    await new Promise(r => setTimeout(r, delay));
+                    if (attempt === 2) throw e;
+                    await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
                 }
             }
         }
@@ -492,4 +522,3 @@
     </script>
 </body>
 </html>
-
