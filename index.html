@@ -115,7 +115,7 @@
         let speechSynth = window.speechSynthesis;
         let hudEnergy = 0;
         let angleTicker = 0;
-        let lastVoiceCommand = ''; // ✅ GUARDAR ÚLTIMO COMANDO DE VOZ
+        let lastVoiceCommand = '';
 
         let currentAdminName = localStorage.getItem('neural_admin_name') || "Fagundes";
         adminUserLabel.innerText = currentAdminName;
@@ -202,7 +202,7 @@
                 const spokenQuery = finalTranscript.trim();
                 if (spokenQuery) {
                     textInput.value = spokenQuery;
-                    lastVoiceCommand = spokenQuery; // ✅ GUARDAR PARA EXECUTAR NO ONEND
+                    lastVoiceCommand = spokenQuery;
                     console.log('[VOICE CAPTURED]', spokenQuery);
                 }
             };
@@ -212,7 +212,6 @@
                 stopMic();
             };
 
-            // ✅ EXECUTAR AQUI - QUANDO O RECONHECIMENTO TERMINA
             speechRecognition.onend = () => {
                 console.log('[SPEECH ENDED]', lastVoiceCommand);
                 if (lastVoiceCommand && lastVoiceCommand.length > 0) {
@@ -283,8 +282,49 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
+        // ✅ BANCO DE PERGUNTAS E RESPOSTAS EMBUTIDO
+        const bancoDePerguntas = [
+            { q: "O que é computação quântica?", a: "É uma área da computação que utiliza os princípios da mecânica quântica, como superposição e emaranhamento, para processar dados de forma exponencialmente mais rápida que computadores clássicos." },
+            { q: "Como funciona a tecnologia Blockchain?", a: "É um sistema de registro distribuído e descentralizado que armazena transações em blocos encadeados cryptographicamente, garantindo imutabilidade e transparência." },
+            { q: "Qual a diferença entre Inteligência Artificial e Machine Learning?", a: "Inteligência Artificial é o conceito amplo de máquinas imitarem a inteligência humana, enquanto Machine Learning é um subcampo da IA focado em algoritmos que aprendem padrões a partir de dados." },
+            { q: "O que é a Teoria da Relatividade Geral?", a: "É uma teoria geométrica da gravitação que descreve a gravidade como a curvatura do espaço-tempo causada pela massa e energia." },
+            { q: "Como os painéis solares convertem luz em eletricidade?", a: "Utilizam o efeito fotovoltaico, onde materiais semicondutores absorvem fótons da luz solar, liberando elétrons e gerando corrente elétrica." },
+            { q: "O que é a matéria escura?", a: "É uma forma hipotética de matéria que não emite, absorve ou reflete luz, sendo detectada apenas por seus efeitos gravitacionais." },
+            { q: "Como funcionam as redes neurais artificiais?", a: "São modelos computacionais inspirados no cérebro humano, compostos por camadas de nós interconectados que processam dados e ajustam pesos para reconhecer padrões." },
+            { q: "Qual a utilidade do grafeno?", a: "É uma forma alotrópica do carbono com espessura de apenas um átomo, extremamente resistente, leve e excelente condutor térmico e elétrico." },
+            { q: "O que é computação em nuvem?", a: "É a entrega sob demanda de recursos de computação pela internet, como armazenamento, servidores e bancos de dados, eliminando a necessidade de infraestrutura local." },
+            { q: "O que é a expansão acelerada do universo?", a: "É o fenômeno em que as galáxias estão se afastando umas das outras a uma taxa cada vez maior, impulsionadas pela energia escura." },
+            { q: "O que é inflação?", a: "É o aumento generalizado e contínuo dos preços de bens e serviços. Suas causas incluem excesso de moeda em circulação e choques de oferta." },
+            { q: "Como funcionam as taxas de juros?", a: "São ferramentas de política monetária utilizadas pelos bancos centrais para controlar a liquidez da economia, combatendo inflação ou estimulando crescimento." },
+            { q: "O que é o PIB?", a: "É a soma de todos os bens e serviços finais produzidos em um país durante um período, servindo como principal indicador de atividade econômica." },
+            { q: "Qual a diferença entre ação e renda fixa?", a: "Ação representa uma fração do capital de uma empresa com renda variável, enquanto renda fixa é um empréstimo com remuneração previamente definida." },
+            { q: "O que é globalização econômica?", a: "É a integração crescente das economias nacionais através do fluxo de capitais, mercadorias, serviços e tecnologia em escala global." },
+            { q: "O que é custo de oportunidade?", a: "Representa o benefício a que se renuncia ao escolher uma alternativa em detrimento de outra." },
+            { q: "Como funciona o DNA?", a: "É o processo semiconservativo onde a molécula de DNA se desenrola e enzimas sintetizam fitas complementares a partir dos nucleotídeos originais." },
+            { q: "O que é seleção natural?", a: "É o mecanismo pelo qual organismos mais bem adaptados têm maior probabilidade de sobreviver e transmitir seus traços genéticos às gerações seguintes." },
+            { q: "Qual é a função das mitocôndrias?", a: "Realizam a respiração celular aeróbica para produzir ATP, a molécula que armazena energia para as funções metabólicas." },
+            { q: "O que é fotossíntese?", a: "É o processo bioquímico pelo qual plantas convertem energia solar, água e gás carbônico em glicose e oxigênio." },
+            { q: "Qual a diferença entre vírus e bactérias?", a: "Bactérias são organismos unicelulares vivos com metabolismo próprio; vírus são agentes acelulares que dependem de uma célula hospedeira para se replicar." },
+            { q: "O que é o Teorema de Pitágoras?", a: "Em qualquer triângulo retângulo, o quadrado da hipotenusa é igual à soma dos quadrados dos catetos." },
+            { q: "O que é Pi?", a: "É a razão entre o perímetro de uma circunferência e seu diâmetro, sendo um número irracional fundamental na geometria." },
+            { q: "O que diz a Primeira Lei de Newton?", a: "Um corpo em repouso tende a permanecer em repouso, e um corpo em movimento tende a continuar em movimento retilíneo uniforme, a menos que uma força externa atue." },
+            { q: "Como funciona fissão nuclear?", a: "É a divisão de um núcleo atômico pesado em núcleos menores, liberando uma imensa quantidade de energia térmica." },
+            { q: "O que são números primos?", a: "Números inteiros maiores do que 1 que possuem apenas dois divisores positivos distintos: 1 e ele mesmo." },
+            { q: "O que diz a Teoria da Relatividade Restrita?", a: "Postula que as leis da física são as mesmas para todos os observadores inerciais e que a velocidade da luz no vácuo é constante." },
+            { q: "O que é entropia?", a: "É uma grandeza física que mede o grau de desordem ou a indisponibilidade de energia em um sistema termodinâmico." },
+            { q: "O que é uma função matemática?", a: "Uma relação entre dois conjuntos onde cada elemento do domínio está associado a exatamente um elemento do contradomínio." },
+            { q: "O que é a dualidade onda-partícula?", a: "O princípio que afirma que entidades subatômicas exibem tanto propriedades corpusculares quanto ondulatórias dependendo do experimento." }
+        ];
+
         function getSmartResponse(directive) {
             const lower = directive.toLowerCase().trim();
+
+            // ✅ PRIMEIRO: CONSULTA O BANCO DE PERGUNTAS
+            for (let item of bancoDePerguntas) {
+                if (lower.includes(item.q.toLowerCase())) {
+                    return item.a;
+                }
+            }
 
             if (lower.match(/que horas?|qual.*hora|me diz.*hora|me dis.*hora|horário/i)) {
                 const now = new Date();
@@ -465,32 +505,43 @@
         }
 
         async function callGeminiAPI(promptText) {
-            const systemPrompt = `Tu és o NEURAL IA, assistente de elite de Fagundes. Responde em PT-BR natural, de forma direta e concisa (máximo 2-3 frases curtas, ideal para voz).`;
-            
             const payload = {
-                contents: [{ role: "user", parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                tools: [{ "google_search": {} }]
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: promptText }]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 200,
+                    topK: 40,
+                    topP: 0.95
+                }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-            for (let attempt = 0; attempt < 3; attempt++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error('Falha API');
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (text) return text;
-                    throw new Error('Vazio');
-                } catch (e) {
-                    if (attempt === 2) throw e;
-                    await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'Erro na API');
                 }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (!text) throw new Error('Resposta vazia');
+                return text.substring(0, 500);
+            } catch (e) {
+                console.error('[GEMINI ERROR]', e);
+                throw new Error(`API Gemini: ${e.message}`);
             }
         }
 
