@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL IA // Siri Neural Core</title>
+    <title>JARVIS // Hybrid Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
@@ -12,6 +12,7 @@
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: rgba(1, 4, 9, 0.9); }
         ::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.4); border-radius: 2px; }
+        
         .stark-panel {
             background: rgba(0, 242, 254, 0.04);
             border: 1px solid rgba(0, 242, 254, 0.6);
@@ -19,142 +20,119 @@
             backdrop-filter: blur(12px);
             clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
+        
         .stark-input-panel {
             background: rgba(1, 12, 24, 0.95);
             border: 1px solid rgba(0, 242, 254, 0.8);
             box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
             clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
         }
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
     </style>
 </head>
 <body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
-    
-    <div id="keyModal" class="modal-backdrop">
-        <div class="stark-panel p-8 w-96 flex flex-col gap-4">
-            <div class="text-[#00f2fe] text-xl font-bold font-orbitron mb-2">CONFIGURAR API GEMINI</div>
-            <p class="text-sm text-gray-300 mb-4">Insira sua API Key (salva localmente, nunca é enviada para servidor)</p>
-            <input type="password" id="apiKeyInput" placeholder="AQ.Ab8RN6K8lJcMye0BvB_5ckuP4D..." class="w-full bg-black/80 text-[#00f2fe] border border-[#00f2fe] p-3 rounded outline-none text-sm" />
-            <button id="saveKeyBtn" class="w-full bg-[#00f2fe] text-black font-bold p-3 rounded hover:bg-cyan-400 transition cursor-pointer">✓ CONFIRMAR E INICIAR</button>
-        </div>
-    </div>
 
+    <!-- Canvas HUD Neural Otimizado -->
     <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
+
+    <!-- Vinheta Cinemática -->
     <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,#000406_94%)] z-10"></div>
-    
+
+    <!-- Header Superior com Controlo Admin -->
     <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">NEURAL AI // SIRI CORE</span>
+                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // HYBRID CORE</span>
                 <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_12px_#00f2fe]"></span>
             </div>
             <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
             <div class="text-[9px] text-cyan-400/90 tracking-wider">CHEFIA: <strong id="adminUserLabel" class="text-white">Fagundes</strong></div>
         </div>
+
         <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
             <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES</span>
+                <span class="text-[#00f2fe]">SUB-AGENTES EXECUTORES</span>
                 <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
             </div>
-            <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1"></div>
+            <div class="flex gap-2">
+                <input type="text" id="newAgentName" placeholder="Nome do Agente..." class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
+                <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
+            </div>
+            <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
+                <!-- Injetado dinamicamente -->
+            </div>
         </div>
     </header>
-    
+
+    <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
     <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">NEURAL IA PROTOCOL</div>
-            <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">"Motor ativo. Fale comigo, Fagundes."</p>
+            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS HYBRID INTELLIGENCE PROTOCOL</div>
+            <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
+                "Pronto para abrir aplicações ou responder a qualquer questão, Fagundes."
+            </p>
         </div>
+
+        <!-- Área de Trabalho Dinâmica Gerida pelos Agentes -->
         <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
             <div class="stark-panel p-4 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Siri AI Bridge</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Hybrid Core Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Respostas com IA real.</p>
+                <p class="text-[11px] text-gray-300 font-light">Abertura direta de apps e assistente de IA conversacional ativos.</p>
             </div>
         </div>
     </main>
-    
+
+    <!-- Rodapé: Controlo de Voz e Texto -->
     <footer class="relative z-30 p-4 sm:p-8 flex justify-center pointer-events-auto w-full max-w-3xl mx-auto">
         <div class="stark-input-panel w-full p-2.5 sm:p-3 flex items-center gap-3">
-            <input type="text" id="textInput" placeholder="Insira diretiva ou faça uma pergunta..." class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3" />
-            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition cursor-pointer shadow-[0_0_25px_rgba(0,242,254,0.5)]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <input 
+                type="text" 
+                id="textInput" 
+                placeholder="Insira diretiva ou faça uma pergunta..." 
+                class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
+            />
+            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_25px_rgba(0,242,254,0.5)] shrink-0" title="Ativar Microfone">
+                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                 </svg>
             </button>
         </div>
     </footer>
 
+    <!-- Lógica Híbrida Unificada (Voz, Texto, Apps e IA) -->
     <script>
-        let apiKey = localStorage.getItem('neural_ia_api_key') || '';
-        const keyModal = document.getElementById('keyModal');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const saveKeyBtn = document.getElementById('saveKeyBtn');
-
-        if (!apiKey) {
-            keyModal.style.display = 'flex';
-        } else {
-            keyModal.style.display = 'none';
-        }
-
-        saveKeyBtn.addEventListener('click', () => {
-            const key = apiKeyInput.value.trim();
-            if (key.length > 10) {
-                localStorage.setItem('neural_ia_api_key', key);
-                apiKey = key;
-                keyModal.style.display = 'none';
-            } else {
-                alert('Chave inválida!');
-            }
-        });
-
-        apiKeyInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') saveKeyBtn.click();
-        });
-
-        const codeChars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        const codeLines = [];
-        for (let i = 0; i < 15; i++) {
-            codeLines.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                speed: Math.random() * 2 + 0.5,
-                opacity: Math.random() * 0.5 + 0.3
-            });
-        }
-
+        const apiKey = "";
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
+
         const textInput = document.getElementById('textInput');
         const micBtn = document.getElementById('micBtn');
         const voiceFeedback = document.getElementById('voiceFeedback');
         const clockDisplay = document.getElementById('clockDisplay');
+        const newAgentName = document.getElementById('newAgentName');
+        const createAgentBtn = document.getElementById('createAgentBtn');
         const agentsListContainer = document.getElementById('agentsListContainer');
         const agentCountBadge = document.getElementById('agentCountBadge');
         const dynamicPlatform = document.getElementById('dynamicPlatform');
         const adminUserLabel = document.getElementById('adminUserLabel');
         const systemPulseDot = document.getElementById('systemPulseDot');
 
-        let isListening = false, speechRecognition = null, speechSynth = window.speechSynthesis;
+        let isListening = false;
+        let speechRecognition = null;
+        let speechSynth = window.speechSynthesis;
+        let hudEnergy = 0;
         let angleTicker = 0;
-        let currentAdminName = localStorage.getItem('neural_admin_name') || "Fagundes";
+
+        let currentAdminName = localStorage.getItem('jarvis_admin_name') || "Fagundes";
         adminUserLabel.innerText = currentAdminName;
 
         let internalAgents = [
-            { id: 1, name: "Orquestrador", status: "Ativo" },
-            { id: 2, name: "Executor DOM", status: "Ativo" },
-            { id: 3, name: "Siri Bridge", status: "Ativo" },
-            { id: 4, name: "Gemini Core", status: "Ativo" }
+            { id: 1, name: "Orquestrador Kernel", status: "Executando" },
+            { id: 2, name: "Executor de DOM", status: "Ativo" },
+            { id: 3, name: "Hybrid Core Bridge", status: "Pronto" },
+            { id: 4, name: "Gemini Neural Bridge", status: "Ativo" }
         ];
 
         const neuralNodes = [];
@@ -194,9 +172,11 @@
         let selectedVoice = null;
         function loadVoices() {
             const voices = speechSynth.getVoices();
-            selectedVoice = voices.find(v => v.lang.includes('pt')) || voices[0];
+            selectedVoice = voices.find(v => v.lang.includes('pt') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('antonio') || v.name.toLowerCase().includes('lucas') || v.name.toLowerCase().includes('male'))) || voices.find(v => v.lang.includes('pt')) || voices[0];
         }
-        speechSynth.onvoiceschanged = loadVoices;
+        if (speechSynth.onvoiceschanged !== undefined) {
+            speechSynth.onvoiceschanged = loadVoices;
+        }
         loadVoices();
 
         function speakJarvis(text) {
@@ -212,6 +192,7 @@
             }
         }
 
+        // Reconhecimento de Voz Unificado e Otimizado
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             speechRecognition = new SR();
@@ -220,18 +201,12 @@
             speechRecognition.interimResults = false;
 
             speechRecognition.onresult = (e) => {
-                let finalTranscript = '';
-                for (let i = e.resultIndex; i < e.results.length; ++i) {
-                    if (e.results[i].isFinal) {
-                        finalTranscript += e.results[i][0].transcript;
-                    }
-                }
-                
-                const spokenQuery = finalTranscript.trim();
-                if (spokenQuery && e.results[e.results.length - 1].isFinal) {
-                    textInput.value = spokenQuery;
-                    stopMic();
-                    setTimeout(() => executeAutonomousCommand(spokenQuery), 100);
+                const query = e.results[0][0].transcript.trim();
+                textInput.value = query;
+                stopMic();
+                if (query) {
+                    textInput.value = "";
+                    executeAutonomousCommand(query);
                 }
             };
 
@@ -242,167 +217,268 @@
         micBtn.addEventListener('click', () => {
             if (isListening) {
                 stopMic();
-            } else if (speechRecognition) {
-                speechRecognition.start();
-                isListening = true;
-                micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white');
-                systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping";
-                speakJarvis(`Escutando, ${currentAdminName}.`);
+                return;
+            }
+            if (speechRecognition) {
+                try {
+                    speechRecognition.start();
+                    isListening = true;
+                    micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
+                    systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
+                    speakJarvis(`A escutar, ${currentAdminName}.`);
+                } catch(err) {
+                    stopMic();
+                }
+            } else {
+                speakJarvis("Reconhecimento de voz não suportado neste navegador.");
             }
         });
 
         function stopMic() {
-            if (speechRecognition) speechRecognition.stop();
+            if (speechRecognition) {
+                try { speechRecognition.stop(); } catch(e){}
+            }
             isListening = false;
-            micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white');
-            systemPulseDot.className = "w-2 h-2 rounded-full bg-[#00f2fe] animate-ping";
+            hudEnergy = 0;
+            micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
+            systemPulseDot.className = "w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]";
         }
 
         textInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && textInput.value.trim()) {
-                const val = textInput.value.trim();
+            if (e.key === 'Enter' && textInput.value.trim() !== '') {
+                const val = textInput.value;
                 textInput.value = '';
                 executeAutonomousCommand(val);
             }
         });
 
-        const appDatabase = {
-            'spotify': 'https://open.spotify.com',
-            'gmail': 'https://mail.google.com',
-            'youtube': 'https://youtube.com',
-            'maps': 'https://maps.google.com',
-            'whatsapp': 'https://web.whatsapp.com',
-            'instagram': 'https://instagram.com',
-            'facebook': 'https://facebook.com'
-        };
+        createAgentBtn.addEventListener('click', () => {
+            const name = newAgentName.value.trim();
+            if (name) {
+                registerNewAgent(name, "Em Execução");
+                newAgentName.value = '';
+            }
+        });
 
+        function registerNewAgent(agentName, statusDesc) {
+            const cleanName = agentName.replace(/["']/g, "").trim();
+            internalAgents.push({ id: internalAgents.length + 1, name: cleanName, status: statusDesc });
+            renderAgentsUI();
+            spawnPlatformWidget(`Agente ${cleanName}`, `Sub-agente operacional instanciado com sucesso.`);
+            speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
+        }
+
+        // --- MOTOR HÍBRIDO (APLICAÇÕES BÁSICAS + IA GEMINI) ---
         async function executeAutonomousCommand(directive) {
+            hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
 
-            if (lower.startsWith('abrir ') || lower.startsWith('tocar ')) {
-                let target = directive.replace(/^(abrir|tocar)\s+(o|a|os|as)?\s*/i, '').toLowerCase();
-                for (const [key, url] of Object.entries(appDatabase)) {
-                    if (target.includes(key)) {
-                        speakJarvis(`Abrindo ${key}.`);
-                        setTimeout(() => window.open(url, "_blank"), 500);
-                        return;
-                    }
+            // 1. Mudar Nome do Administrador
+            if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('nome para')) {
+                let parts = directive.split(/para|de/i);
+                if (parts.length > 1) {
+                    currentAdminName = parts[parts.length - 1].trim().replace(/[.!?,]/g, '');
+                    localStorage.setItem('jarvis_admin_name', currentAdminName);
+                    adminUserLabel.innerText = currentAdminName;
+                    spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
+                    speakJarvis(`Nome atualizado para ${currentAdminName}. Pronto, chefe.`);
+                    return;
                 }
             }
 
-            if (!apiKey) {
-                speakJarvis("Erro: API key não configurada.");
+            // 2. Criar Agente
+            if (lower.includes('criar agente') || lower.includes('novo agente')) {
+                let parts = directive.split(/agente/i);
+                let extractedName = parts[1] ? parts[1].trim() : `Auto #${internalAgents.length + 1}`;
+                if (!extractedName || extractedName.length < 2) {
+                    extractedName = `Executor #${internalAgents.length + 1}`;
+                }
+                registerNewAgent(extractedName, "Em Operação");
                 return;
             }
 
-            speakJarvis(`Processando...`);
+            // 3. Abertura Automática de Aplicativos Básicos (YouTube, Spotify, Calculadora, etc.)
+            let appName = "";
+            let appUrl = "";
+
+            if (lower.includes('spotify') || lower.includes('música') || lower.includes('musica')) {
+                appName = "Spotify";
+                appUrl = "https://open.spotify.com";
+            } else if (lower.includes('youtube')) {
+                appName = "YouTube";
+                appUrl = "https://youtube.com";
+            } else if (lower.includes('calculadora')) {
+                appName = "Calculadora";
+                appUrl = "https://www.google.com/search?q=calculadora";
+            } else if (lower.includes('bloco de notas') || lower.includes('notas')) {
+                appName = "Bloco de Notas";
+                appUrl = "https://keep.google.com";
+            } else if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
+                appName = "Gmail";
+                appUrl = "https://mail.google.com";
+            } else if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
+                appName = "Google Maps";
+                appUrl = "https://maps.google.com";
+            } else if (lower.includes('whatsapp')) {
+                appName = "WhatsApp";
+                appUrl = "https://web.whatsapp.com";
+            } else if (lower.startsWith('abrir ') || lower.startsWith('tocar ')) {
+                let target = directive.replace(/abrir|tocar|no|o|a|os|as/gi, '').trim();
+                appName = target;
+                appUrl = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
+            }
+
+            if (appUrl) {
+                speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
+                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
+                setTimeout(() => { window.open(appUrl, "_blank"); }, 400);
+                return;
+            }
+
+            // 4. Se não for comando de app, envia para a IA responder a qualquer pergunta em tempo real
+            speakJarvis(`A processar, ${currentAdminName}...`);
+            spawnPlatformWidget(`Processando IA`, `A consultar a rede global para: "${directive}"`);
+
             try {
-                const response = await callGeminiAPI(directive);
-                speakJarvis(response);
-                spawnPlatformWidget(`NEURAL IA`, response);
+                let responseText = await callGeminiAPI(directive);
+                speakJarvis(responseText);
+                spawnPlatformWidget(`J.A.R.V.I.S. AI`, responseText);
             } catch (err) {
-                speakJarvis("Erro ao processar.");
+                let fallbackMsg = "Não foi possível aceder à matriz quântica no momento.";
+                speakJarvis(fallbackMsg);
+                spawnPlatformWidget("Erro de Rede", fallbackMsg);
             }
         }
 
+        // Chamada à API Gemini com suporte a buscas e perguntas gerais
         async function callGeminiAPI(promptText) {
+            const systemPrompt = `Tu és o J.A.R.V.I.S., o assistente de inteligência artificial de elite de Fagundes (baseado em Stark Industries). Responde sempre em português de Portugal ou PT-BR natural, de forma direta, concisa (máximo 2 a 3 frases curtas, ideal para leitura em voz alta), inteligente e prestativa a qualquer pergunta feita.`;
+            
             const payload = {
-                contents: [{role: "user", parts: [{text: promptText}]}],
-                generationConfig: {temperature: 0.7, maxOutputTokens: 300}
+                contents: [{ role: "user", parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                tools: [{ "google_search": {} }]
             };
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-            if (!response.ok) throw new Error('API Error');
-            const result = await response.json();
-            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!text) throw new Error('Resposta vazia');
-            return text.substring(0, 500);
+            for (let attempt = 0; attempt < 5; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error('Falha na resposta da API');
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text) return text;
+                    throw new Error('Texto vazio');
+                } catch (e) {
+                    if (attempt === 4) throw e;
+                    const delay = Math.pow(2, attempt) * 1000;
+                    await new Promise(r => setTimeout(r, delay));
+                }
+            }
         }
 
         function spawnPlatformWidget(title, content) {
             const card = document.createElement('div');
-            card.className = "stark-panel p-4";
+            card.className = "stark-panel p-4 flex flex-col justify-between animate-[fadeIn_0.4s_ease-out]";
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase">${title}</span>
+                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">${title}</span>
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">${content}</p>
+                <p class="text-[11px] text-gray-300 font-light leading-relaxed">${content}</p>
+                <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
+                    <span>STATUS: EXECUTADO</span>
+                    <span>HYBRID CORE</span>
+                </div>
             `;
             dynamicPlatform.prepend(card);
         }
 
         function renderStarkHUD() {
             angleTicker += 0.015;
+            ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#000406';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = isListening ? 'rgba(255, 61, 0, 0.03)' : 'rgba(0, 242, 254, 0.03)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.height; i += 4) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
+            ctx.globalCompositeOperation = 'lighter';
 
             const primaryColor = isListening ? '255, 61, 0' : '0, 242, 254';
-            const primaryColorHex = isListening ? '#ff3d00' : '#00f2fe';
+            const secondaryGlow = isListening ? '#ff3d00' : '#00f2fe';
 
-            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.15)' : 'rgba(0, 242, 254, 0.15)';
-            ctx.font = '12px monospace';
-            for (let line of codeLines) {
-                ctx.globalAlpha = line.opacity;
-                ctx.fillText(codeChars[Math.floor(Math.random() * codeChars.length)], line.x, line.y);
-                line.y += line.speed;
-                if (line.y > canvas.height) {
-                    line.y = -20;
-                    line.x = Math.random() * canvas.width;
-                }
-            }
-            ctx.globalAlpha = 1;
-
+            ctx.lineWidth = 0.8;
             for (let i = 0; i < neuralNodes.length; i++) {
                 let n = neuralNodes[i];
                 n.x += n.vx;
                 n.y += n.vy;
+
                 if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
                 if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
 
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.radius * 2.5, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(${primaryColor}, ${0.3 * (1 + Math.sin(angleTicker * 2))})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
+                for (let j = i + 1; j < neuralNodes.length; j++) {
+                    let n2 = neuralNodes[j];
+                    let dx = n.x - n2.x;
+                    let dy = n.y - n2.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(n2.x, n2.y);
+                        ctx.strokeStyle = `rgba(${primaryColor}, ${1 - dist / 120})`;
+                        ctx.stroke();
+                    }
+                }
 
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${primaryColor}, 0.9)`;
+                ctx.fillStyle = `rgba(${primaryColor}, 0.7)`;
                 ctx.fill();
             }
 
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = Math.min(centerX, centerY) * 0.52;
-            const pulse = 1 + Math.sin(angleTicker * 3) * 0.1;
 
             ctx.strokeStyle = `rgb(${primaryColor})`;
-            ctx.lineWidth = 2;
-            ctx.globalAlpha = 0.8;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = isListening ? 30 : 18;
+            ctx.shadowColor = secondaryGlow;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angleTicker * 0.5);
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius * pulse * 1.35, 0, Math.PI * 2);
+            ctx.arc(0, 0, radius * 1.35, 0, Math.PI * 2);
             ctx.setLineDash([15, 20, 8, 20]);
             ctx.stroke();
+            ctx.restore();
 
-            ctx.setLineDash([]);
-            ctx.lineWidth = 2.5;
-            ctx.globalAlpha = 0.6;
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(-angleTicker * 0.8);
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius * pulse * 1.05, 0, Math.PI * 1.6);
+            ctx.arc(0, 0, radius * 1.05, 0, Math.PI * 1.6);
+            ctx.setLineDash([6, 12]);
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, (radius * 0.38) * (1 + (isListening ? Math.sin(angleTicker * 10) * 0.2 : 0)), 0, Math.PI * 2);
+            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.4)' : 'rgba(0, 242, 254, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = `rgb(${primaryColor})`;
+            ctx.lineWidth = 5;
             ctx.stroke();
 
-            ctx.globalAlpha
+            requestAnimationFrame(renderStarkHUD);
+        }
+
+        renderStarkHUD();
+    </script>
+</body>
+</html>
+
