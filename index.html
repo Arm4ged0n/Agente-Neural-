@@ -27,29 +27,9 @@
             box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
             clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
         }
-
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
     </style>
 </head>
 <body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
-
-    <!-- MODAL DE CONFIGURAÇÃO DA API KEY -->
-    <div id="keyModal" class="modal-backdrop">
-        <div class="stark-panel p-8 w-96 flex flex-col gap-4">
-            <div class="text-[#00f2fe] text-xl font-bold font-orbitron mb-2">CONFIGURAR API GEMINI</div>
-            <p class="text-sm text-gray-300 mb-4">Insira sua API Key (salva localmente, nunca é enviada para servidor)</p>
-            <input type="password" id="apiKeyInput" placeholder="AQ.Ab8RN6K8lJcMye0BvB_5ckuP4D..." class="w-full bg-black/80 text-[#00f2fe] border border-[#00f2fe] p-3 rounded outline-none text-sm" />
-            <button id="saveKeyBtn" class="w-full bg-[#00f2fe] text-black font-bold p-3 rounded hover:bg-cyan-400 transition cursor-pointer">✓ CONFIRMAR E INICIAR</button>
-        </div>
-    </div>
 
     <!-- Canvas HUD Neural Otimizado -->
     <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
@@ -88,7 +68,7 @@
         <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
             <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">JARVIS HYBRID INTELLIGENCE PROTOCOL</div>
             <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Pronto para abrir aplicações ou responder a qualquer questão, Fagundes."
+                "Pronto para abrir aplicações ou pesquisar, Fagundes."
             </p>
         </div>
 
@@ -99,7 +79,7 @@
                     <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Hybrid Core Engine</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                 </div>
-                <p class="text-[11px] text-gray-300 font-light">Abertura direta de apps e assistente de IA conversacional ativos.</p>
+                <p class="text-[11px] text-gray-300 font-light">Abertura direta de apps e sistema de voz ativos.</p>
             </div>
         </div>
     </main>
@@ -110,7 +90,7 @@
             <input 
                 type="text" 
                 id="textInput" 
-                placeholder="Insira diretiva ou faça uma pergunta..." 
+                placeholder="Insira diretiva (ex: 'Abrir YouTube', 'Spotify')..." 
                 class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
             />
             <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_25px_rgba(0,242,254,0.5)] shrink-0" title="Ativar Microfone">
@@ -121,45 +101,8 @@
         </div>
     </footer>
 
-    <!-- Lógica Híbrida Unificada (Voz, Texto, Apps e IA) -->
+    <!-- Lógica Híbrida Unificada (Voz, Texto e Abertura de Apps) -->
     <script>
-        let apiKey = localStorage.getItem('jarvis_api_key') || '';
-        const keyModal = document.getElementById('keyModal');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const saveKeyBtn = document.getElementById('saveKeyBtn');
-
-        if (!apiKey) {
-            keyModal.style.display = 'flex';
-        } else {
-            keyModal.style.display = 'none';
-        }
-
-        saveKeyBtn.addEventListener('click', () => {
-            const key = apiKeyInput.value.trim();
-            if (key.length > 10) {
-                localStorage.setItem('jarvis_api_key', key);
-                apiKey = key;
-                keyModal.style.display = 'none';
-            } else {
-                alert('Chave inválida!');
-            }
-        });
-
-        apiKeyInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') saveKeyBtn.click();
-        });
-
-        const codeChars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        const codeLines = [];
-        for (let i = 0; i < 15; i++) {
-            codeLines.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                speed: Math.random() * 2 + 0.5,
-                opacity: Math.random() * 0.5 + 0.3
-            });
-        }
-
         const canvas = document.getElementById('hudCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
 
@@ -188,7 +131,7 @@
             { id: 1, name: "Orquestrador Kernel", status: "Executando" },
             { id: 2, name: "Executor de DOM", status: "Ativo" },
             { id: 3, name: "Hybrid Core Bridge", status: "Pronto" },
-            { id: 4, name: "Gemini Neural Bridge", status: "Ativo" }
+            { id: 4, name: "Voice Speech Core", status: "Ativo" }
         ];
 
         const neuralNodes = [];
@@ -324,8 +267,8 @@
             speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
         }
 
-        // --- MOTOR HÍBRIDO (APLICAÇÕES BÁSICAS + IA GEMINI) ---
-        async function executeAutonomousCommand(directive) {
+        // --- MOTOR HÍBRIDO (APLICAÇÕES BÁSICAS E BUSCA WEB) ---
+        function executeAutonomousCommand(directive) {
             hudEnergy = 100;
             const lower = directive.toLowerCase().trim();
 
@@ -353,7 +296,7 @@
                 return;
             }
 
-            // 3. Abertura Automática de Aplicativos
+            // 3. Abertura Automática de Aplicativos e Pesquisas
             let appName = "";
             let appUrl = "";
 
@@ -378,67 +321,15 @@
             } else if (lower.includes('whatsapp')) {
                 appName = "WhatsApp";
                 appUrl = "https://web.whatsapp.com";
-            } else if (lower.startsWith('abrir ') || lower.startsWith('tocar ')) {
-                let target = directive.replace(/abrir|tocar|no|o|a|os|as/gi, '').trim();
-                appName = target;
-                appUrl = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
+            } else {
+                let target = directive.replace(/abrir|tocar|pesquisar|buscar|no|o|a|os|as/gi, '').trim();
+                appName = target || directive;
+                appUrl = `https://www.google.com/search?q=${encodeURIComponent(appName)}`;
             }
 
-            if (appUrl) {
-                speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
-                spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
-                setTimeout(() => { window.open(appUrl, "_blank"); }, 400);
-                return;
-            }
-
-            // 4. IA Gemini
-            if (!apiKey) {
-                speakJarvis("Erro: API key não configurada.");
-                return;
-            }
-
-            speakJarvis(`A processar, ${currentAdminName}...`);
-            spawnPlatformWidget(`Processando IA`, `A consultar a rede global para: "${directive}"`);
-
-            try {
-                let responseText = await callGeminiAPI(directive);
-                speakJarvis(responseText);
-                spawnPlatformWidget(`J.A.R.V.I.S. AI`, responseText);
-            } catch (err) {
-                let fallbackMsg = "Não foi possível aceder à matriz quântica no momento.";
-                speakJarvis(fallbackMsg);
-                spawnPlatformWidget("Erro de Rede", fallbackMsg);
-            }
-        }
-
-        async function callGeminiAPI(promptText) {
-            const systemPrompt = `Tu és o J.A.R.V.I.S., o assistente de inteligência artificial de elite de Fagundes (baseado em Stark Industries). Responde sempre em português de Portugal ou PT-BR natural, de forma direta, concisa (máximo 2 a 3 frases curtas, ideal para leitura em voz alta), inteligente e prestativa a qualquer pergunta feita.`;
-            
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-            for (let attempt = 0; attempt < 3; attempt++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error('Falha na resposta da API');
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (text) return text.substring(0, 500);
-                    throw new Error('Texto vazio');
-                } catch (e) {
-                    if (attempt === 2) throw e;
-                    const delay = Math.pow(2, attempt) * 1000;
-                    await new Promise(r => setTimeout(r, delay));
-                }
-            }
+            speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
+            spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
+            setTimeout(() => { window.open(appUrl, "_blank"); }, 400);
         }
 
         function spawnPlatformWidget(title, content) {
@@ -467,30 +358,6 @@
 
             const primaryColor = isListening ? '255, 61, 0' : '0, 242, 254';
             const secondaryGlow = isListening ? '#ff3d00' : '#00f2fe';
-
-            // Scanlines
-            ctx.strokeStyle = isListening ? 'rgba(255, 61, 0, 0.03)' : 'rgba(0, 242, 254, 0.03)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.height; i += 4) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
-
-            // Código Matrix
-            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.15)' : 'rgba(0, 242, 254, 0.15)';
-            ctx.font = '12px monospace';
-            for (let line of codeLines) {
-                ctx.globalAlpha = line.opacity;
-                ctx.fillText(codeChars[Math.floor(Math.random() * codeChars.length)], line.x, line.y);
-                line.y += line.speed;
-                if (line.y > canvas.height) {
-                    line.y = -20;
-                    line.x = Math.random() * canvas.width;
-                }
-            }
-            ctx.globalAlpha = 1;
 
             ctx.lineWidth = 0.8;
             for (let i = 0; i < neuralNodes.length; i++) {
@@ -564,3 +431,4 @@
     </script>
 </body>
 </html>
+
