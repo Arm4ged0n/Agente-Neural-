@@ -1,438 +1,459 @@
 <!DOCTYPE html>
-<html lang="pt-PT" class="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS // Autonomous Voice Core</title>
+    <title>JARVIS // NextGen Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700&display=swap');
-        body { font-family: 'Share Tech Mono', monospace; background: #000406; overflow-x: hidden; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(1, 4, 9, 0.9); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.4); border-radius: 2px; }
-        
-        .stark-panel {
-            background: rgba(0, 242, 254, 0.04);
-            border: 1px solid rgba(0, 242, 254, 0.6);
-            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.15), 0 0 30px rgba(0, 242, 254, 0.25);
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --core-idle: #0ea5e9;    /* Azul Cyber */
+            --core-listen: #f97316;  /* Laranja Quente */
+            --core-speak: #10b981;   /* Verde Esmeralda */
+            --bg-color: #030712;     /* Preto profundo */
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: #e2e8f0;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+
+        .font-mono { font-family: 'Space Mono', monospace; }
+
+        /* ---------------------------------- */
+        /* ANIMAÇÕES DO NÚCLEO (ORB)          */
+        /* ---------------------------------- */
+        .core-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.5s ease;
+        }
+
+        /* Anel Externo */
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            border-top-color: var(--core-color, var(--core-idle));
+            border-bottom-color: var(--core-color, var(--core-idle));
+            opacity: 0.3;
+            animation: spin 8s linear infinite;
+        }
+
+        /* Anel Intermediário */
+        .ring-2 {
+            width: 80%;
+            height: 80%;
+            border-left-color: var(--core-color, var(--core-idle));
+            border-right-color: var(--core-color, var(--core-idle));
+            opacity: 0.5;
+            animation: spin-reverse 5s linear infinite;
+        }
+
+        /* Núcleo Central */
+        .core-center {
+            width: 50%;
+            height: 50%;
+            background: var(--core-color, var(--core-idle));
+            border-radius: 50%;
+            box-shadow: 0 0 50px var(--core-color, var(--core-idle));
+            opacity: 0.8;
+            animation: pulse-core 3s ease-in-out infinite;
+            transition: all 0.4s ease;
+        }
+
+        /* Estados do Sistema via Classes CSS */
+        .state-idle { --core-color: var(--core-idle); }
+        .state-listening { --core-color: var(--core-listen); }
+        .state-speaking { --core-color: var(--core-speak); }
+
+        .state-listening .core-center { animation: pulse-fast 0.8s ease-in-out infinite; }
+        .state-speaking .ring-1, .state-speaking .ring-2 { animation-duration: 2s; }
+        .state-speaking .core-center { animation: soundwave 1.2s ease-in-out infinite; }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+        @keyframes pulse-core {
+            0%, 100% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes pulse-fast {
+            0%, 100% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 80px var(--core-color); }
+        }
+        @keyframes soundwave {
+            0%, 100% { transform: scale(0.9); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(0.85); }
+            75% { transform: scale(1.1); }
+        }
+
+        /* ---------------------------------- */
+        /* UI PANELS                          */
+        /* ---------------------------------- */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(12px);
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
-        
-        .stark-input-panel {
-            background: rgba(1, 12, 24, 0.95);
-            border: 1px solid rgba(0, 242, 254, 0.8);
-            box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
-            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+
+        /* Overlay de Inicialização */
+        #initOverlay {
+            background: rgba(3, 7, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
+
+        /* Efeito de digitação no log */
+        .log-entry { animation: slideUp 0.3s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen w-screen overflow-x-hidden flex flex-col justify-between select-none text-[#00f2fe] m-0 p-0">
+<body class="flex flex-col items-center justify-between">
 
-    <!-- Canvas HUD Neural Otimizado -->
-    <canvas id="hudCanvas" class="fixed inset-0 z-0 w-full h-full pointer-events-none"></canvas>
+    <!-- TELA DE INICIALIZAÇÃO (Desbloqueia o áudio do navegador) -->
+    <div id="initOverlay" class="fixed inset-0 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-500">
+        <div class="text-4xl font-bold tracking-widest text-sky-400 mb-4 uppercase">Jarvis Core</div>
+        <div class="text-sm font-mono text-slate-400 animate-pulse">CLIQUE EM QUALQUER LUGAR PARA INICIAR SISTEMAS</div>
+    </div>
 
-    <!-- Vinheta Cinemática -->
-    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,#000406_94%)] z-10"></div>
-
-    <!-- Header Superior com Controlo Admin -->
-    <header class="relative z-20 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-none w-full max-w-7xl mx-auto">
-        <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-64">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] tracking-widest uppercase text-[#00f2fe] font-bold">STARK OS // VOICE CORE</span>
-                <span id="systemPulseDot" class="w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_12px_#00f2fe]"></span>
+    <!-- HEADER: Status do Sistema -->
+    <header class="w-full max-w-6xl p-6 flex justify-between items-start z-10">
+        <div class="glass-panel px-6 py-3 flex flex-col gap-1">
+            <div class="text-xs font-mono text-sky-400 uppercase tracking-widest">Status do Sistema</div>
+            <div class="flex items-center gap-2">
+                <div id="statusDot" class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></div>
+                <span id="statusText" class="font-semibold text-slate-200">STANDBY</span>
             </div>
-            <div id="clockDisplay" class="text-lg font-orbitron font-bold text-white tracking-widest">00:00:00</div>
-            <div class="text-[9px] text-cyan-400/90 tracking-wider">CHEFIA: <strong id="adminUserLabel" class="text-white">Fagundes</strong></div>
         </div>
-
-        <div class="stark-panel p-3.5 flex flex-col gap-2 pointer-events-auto w-full sm:w-80">
-            <div class="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider">
-                <span class="text-[#00f2fe]">SUB-AGENTES AUTÓNOMOS</span>
-                <span id="agentCountBadge" class="text-emerald-400">4 ATIVOS</span>
-            </div>
-            <div class="flex gap-2">
-                <input type="text" id="newAgentName" placeholder="Nome do Agente..." class="bg-black/80 text-[#00f2fe] border border-[#00f2fe]/40 rounded px-2 py-1 text-[11px] outline-none flex-grow font-mono" />
-                <button id="createAgentBtn" class="bg-[#00f2fe]/20 hover:bg-[#00f2fe]/40 border border-[#00f2fe] text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer">Criar</button>
-            </div>
-            <div id="agentsListContainer" class="max-h-20 overflow-y-auto space-y-1 text-[10px] text-gray-300 font-mono pr-1">
-                <!-- Injetado dinamicamente -->
-            </div>
+        
+        <div class="glass-panel px-6 py-3 text-right flex flex-col gap-1">
+            <div class="text-xs font-mono text-slate-400 uppercase tracking-widest">Fuso Horário Local</div>
+            <div id="clockDisplay" class="font-mono text-xl font-bold text-slate-200">00:00:00</div>
         </div>
     </header>
 
-    <!-- Centro: Diálogo JARVIS e Workspace Dinâmico -->
-    <main class="relative z-20 flex-grow flex flex-col items-center justify-center pointer-events-none px-4 sm:px-6 py-4 my-auto gap-4 w-full max-w-4xl mx-auto">
-        <div class="stark-panel px-6 py-5 text-center pointer-events-auto w-full shadow-[0_0_50px_rgba(0,242,254,0.3)]">
-            <div id="protocolLabel" class="text-[10px] tracking-widest text-[#00f2fe] font-bold uppercase mb-1">OPEN-JARVIS VOICE PROTOCOL</div>
-            <p id="voiceFeedback" class="text-xs sm:text-sm font-light text-gray-200 tracking-wider leading-relaxed font-mono">
-                "Comandos de voz ativos. Diga para abrir o YouTube, Spotify ou pesquisar, Fagundes."
-            </p>
+    <!-- MAIN: Núcleo Visual de Inteligência -->
+    <main class="flex-1 flex flex-col items-center justify-center w-full relative z-0">
+        <div id="aiCore" class="core-container state-idle">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="core-center"></div>
         </div>
-
-        <!-- Área de Trabalho Dinâmica Gerida pelos Agentes -->
-        <div id="dynamicPlatform" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pointer-events-auto max-h-[35vh] overflow-y-auto pr-1">
-            <div class="stark-panel p-4 flex flex-col justify-between">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">Voice Execution Bridge</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                </div>
-                <p class="text-[11px] text-gray-300 font-light">Abertura instantânea por voz e texto ativada com sucesso.</p>
-            </div>
+        <div id="aiSubtitles" class="absolute bottom-10 text-center font-mono text-lg text-slate-300 max-w-2xl px-6 min-h-[3rem] transition-all duration-300">
+            Aguardando comandos.
         </div>
     </main>
 
-    <!-- Rodapé: Controlo de Voz e Texto -->
-    <footer class="relative z-30 p-4 sm:p-8 flex justify-center pointer-events-auto w-full max-w-3xl mx-auto">
-        <div class="stark-input-panel w-full p-2.5 sm:p-3 flex items-center gap-3">
-            <input 
-                type="text" 
-                id="textInput" 
-                placeholder="Insira diretiva (ex: 'Abrir YouTube', 'Spotify')..." 
-                class="bg-transparent text-[#00f2fe] placeholder-cyan-900/60 text-xs sm:text-sm outline-none flex-grow px-3 font-tech"
-            />
-            <button id="micBtn" class="p-2.5 sm:p-3 bg-[#00f2fe]/15 border border-[#00f2fe]/60 hover:bg-[#00f2fe]/30 text-[#00f2fe] rounded-xl transition flex items-center justify-center group cursor-pointer shadow-[0_0_25px_rgba(0,242,254,0.5)] shrink-0" title="Ativar Microfone">
-                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                </svg>
-            </button>
+    <!-- FOOTER: Controles e Terminal -->
+    <footer class="w-full max-w-6xl p-6 flex gap-6 z-10">
+        
+        <!-- Terminal / Logs -->
+        <div class="glass-panel flex-1 h-48 flex flex-col p-4 overflow-hidden relative">
+            <div class="text-[0.65rem] font-mono text-slate-500 uppercase tracking-widest border-b border-slate-700/50 pb-2 mb-2">
+                Terminal de Diretivas //
+            </div>
+            <div id="logContainer" class="flex-1 overflow-y-auto font-mono text-xs text-slate-300 space-y-2 flex flex-col justify-end pr-2">
+                <div class="text-sky-500">> Interface Neural Carregada.</div>
+            </div>
         </div>
+
+        <!-- Botão de Microfone -->
+        <button id="micBtn" class="glass-panel w-48 h-48 flex flex-col items-center justify-center gap-4 group hover:bg-slate-800/60 transition-all cursor-pointer">
+            <div id="micIconBox" class="w-16 h-16 rounded-full bg-sky-500/20 flex items-center justify-center border border-sky-500/50 group-hover:scale-110 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            </div>
+            <span id="micLabel" class="font-mono text-sm text-sky-400 uppercase tracking-widest font-bold">INICIAR VOZ</span>
+        </button>
+        
     </footer>
 
-    <!-- Lógica de Voz e Texto 100% Sincronizada -->
     <script>
-        const canvas = document.getElementById('hudCanvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-
-        const textInput = document.getElementById('textInput');
+        /* ==========================================
+           1. INTERFACE E UTILIDADES
+           ========================================== */
+        const aiCore = document.getElementById('aiCore');
+        const aiSubtitles = document.getElementById('aiSubtitles');
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.getElementById('statusDot');
+        const logContainer = document.getElementById('logContainer');
         const micBtn = document.getElementById('micBtn');
-        const voiceFeedback = document.getElementById('voiceFeedback');
-        const clockDisplay = document.getElementById('clockDisplay');
-        const newAgentName = document.getElementById('newAgentName');
-        const createAgentBtn = document.getElementById('createAgentBtn');
-        const agentsListContainer = document.getElementById('agentsListContainer');
-        const agentCountBadge = document.getElementById('agentCountBadge');
-        const dynamicPlatform = document.getElementById('dynamicPlatform');
-        const adminUserLabel = document.getElementById('adminUserLabel');
-        const systemPulseDot = document.getElementById('systemPulseDot');
+        const micIconBox = document.getElementById('micIconBox');
+        const micLabel = document.getElementById('micLabel');
+        const initOverlay = document.getElementById('initOverlay');
 
-        let isListening = false;
-        let speechRecognition = null;
-        let speechSynth = window.speechSynthesis;
-        let hudEnergy = 0;
-        let angleTicker = 0;
-
-        let currentAdminName = localStorage.getItem('jarvis_admin_name') || "Fagundes";
-        adminUserLabel.innerText = currentAdminName;
-
-        let internalAgents = [
-            { id: 1, name: "Orquestrador Kernel", status: "Executando" },
-            { id: 2, name: "Executor de DOM", status: "Ativo" },
-            { id: 3, name: "Voice Execution Bridge", status: "Pronto" },
-            { id: 4, name: "Neural Speech Core", status: "Ativo" }
-        ];
-
-        const neuralNodes = [];
-        for (let i = 0; i < 45; i++) {
-            neuralNodes.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 0.8,
-                vy: (Math.random() - 0.5) * 0.8,
-                radius: Math.random() * 2 + 1.2
-            });
-        }
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
+        // Relógio
         setInterval(() => {
             const now = new Date();
-            clockDisplay.innerText = now.toTimeString().split(' ')[0];
+            document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('pt-BR');
         }, 1000);
 
-        function renderAgentsUI() {
-            agentCountBadge.innerText = `${internalAgents.length} ATIVOS`;
-            agentsListContainer.innerHTML = internalAgents.map(a => `
-                <div class="flex justify-between items-center bg-black/60 p-1.5 rounded border border-cyan-500/20">
-                    <span class="text-cyan-300 font-bold">${a.name}</span>
-                    <span class="text-emerald-400 text-[9px]">${a.status}</span>
-                </div>
-            `).join('');
-        }
-        renderAgentsUI();
+        // Adicionar Log no Terminal
+        function appendLog(sender, message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log-entry flex gap-2 ${type === 'error' ? 'text-red-400' : ''}`;
+            
+            let senderColor = 'text-slate-500';
+            if (sender === 'USER') senderColor = 'text-sky-400';
+            if (sender === 'JARVIS') senderColor = 'text-emerald-400';
 
+            div.innerHTML = `<span class="${senderColor}">[${sender}]</span> <span>${message}</span>`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Mudar Estado Visual do Núcleo
+        function setCoreState(state, subtitle = "") {
+            aiCore.className = `core-container state-${state}`;
+            if (subtitle) aiSubtitles.innerText = subtitle;
+
+            if (state === 'idle') {
+                statusText.innerText = "STANDBY";
+                statusDot.className = "w-2 h-2 rounded-full bg-sky-500 animate-pulse";
+                micLabel.innerText = "INICIAR VOZ";
+                micIconBox.className = "w-16 h-16 rounded-full bg-sky-500/20 flex items-center justify-center border border-sky-500/50 group-hover:scale-110 transition-all";
+            } 
+            else if (state === 'listening') {
+                statusText.innerText = "CAPTURANDO ÁUDIO";
+                statusDot.className = "w-2 h-2 rounded-full bg-orange-500 animate-ping";
+                micLabel.innerText = "ESCUTANDO...";
+                micIconBox.className = "w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center border border-orange-500/50 scale-110 shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all";
+            }
+            else if (state === 'speaking') {
+                statusText.innerText = "SINTETIZANDO";
+                statusDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+                micLabel.innerText = "PROCESSANDO";
+                micIconBox.className = "w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/50 transition-all";
+            }
+        }
+
+        /* ==========================================
+           2. SISTEMA DE VOZ (TTS e STT)
+           ========================================== */
+        let speechSynth = window.speechSynthesis;
+        let speechRecognition = null;
         let selectedVoice = null;
+        let isListening = false;
+
+        // Desbloqueia o áudio com interação do usuário
+        initOverlay.addEventListener('click', () => {
+            // Um truque para desbloquear a API de Voz no Chrome/Safari
+            const unlockUtterance = new SpeechSynthesisUtterance("");
+            speechSynth.speak(unlockUtterance);
+            
+            initOverlay.style.opacity = '0';
+            setTimeout(() => {
+                initOverlay.style.display = 'none';
+                appendLog('SYSTEM', 'Módulos de voz destravados.');
+                setCoreState('idle', "Sistemas operacionais. Pronto para receber comandos.");
+            }, 500);
+        });
+
+        // Carrega as Vozes disponíveis no SO
         function loadVoices() {
             const voices = speechSynth.getVoices();
-            selectedVoice = voices.find(v => v.lang.includes('pt') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('antonio') || v.name.toLowerCase().includes('lucas') || v.name.toLowerCase().includes('male'))) || voices.find(v => v.lang.includes('pt')) || voices[0];
+            if (voices.length > 0) {
+                // Tenta encontrar uma voz PT masculina padrão ou Google
+                selectedVoice = voices.find(v => v.lang.includes('pt') && (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('male'))) 
+                             || voices.find(v => v.lang.includes('pt-BR'))
+                             || voices[0];
+            }
         }
         if (speechSynth.onvoiceschanged !== undefined) {
             speechSynth.onvoiceschanged = loadVoices;
         }
-        loadVoices();
 
+        // Função de Falar do Jarvis (Baseada em Promises para controle perfeito)
         function speakJarvis(text) {
-            voiceFeedback.innerText = `"${text}"`;
-            if (speechSynth) {
-                speechSynth.cancel();
+            return new Promise((resolve) => {
+                if (!speechSynth) {
+                    appendLog('ERROR', 'Síntese de voz não suportada.', 'error');
+                    resolve();
+                    return;
+                }
+
+                speechSynth.cancel(); // Para fala anterior
+                stopMic(); // Desliga mic para ele não se escutar
+                
+                setCoreState('speaking', text);
+                appendLog('JARVIS', text);
+
                 const utter = new SpeechSynthesisUtterance(text);
                 if (selectedVoice) utter.voice = selectedVoice;
                 utter.lang = 'pt-BR';
-                utter.rate = 0.98;
-                utter.pitch = 0.45;
+                utter.rate = 1.05; // Levemente mais rápido
+                utter.pitch = 0.9; // Levemente mais grave
+
+                utter.onend = () => {
+                    setCoreState('idle', "Aguardando próximos comandos.");
+                    resolve();
+                };
+                utter.onerror = (e) => {
+                    console.error(e);
+                    setCoreState('idle');
+                    resolve();
+                };
+
                 speechSynth.speak(utter);
-            }
+            });
         }
 
-        // Reconhecimento de Voz Direto e Otimizado para Mobile
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        // Inicializa o STT (Reconhecimento de Voz)
+        function initSTT() {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                appendLog('ERROR', 'Reconhecimento não suportado neste navegador.', 'error');
+                return;
+            }
+
             speechRecognition = new SR();
             speechRecognition.lang = 'pt-BR';
             speechRecognition.continuous = false;
             speechRecognition.interimResults = false;
 
-            speechRecognition.onresult = (e) => {
+            speechRecognition.onstart = () => {
+                isListening = true;
+                setCoreState('listening', "Escutando diretivas...");
+            };
+
+            speechRecognition.onresult = async (e) => {
                 const query = e.results[0][0].transcript.trim();
-                textInput.value = query;
                 stopMic();
                 if (query) {
-                    textInput.value = "";
-                    executeAutonomousCommand(query);
+                    appendLog('USER', query);
+                    await processIntent(query);
                 }
             };
 
-            speechRecognition.onerror = () => stopMic();
-            speechRecognition.onend = () => stopMic();
+            speechRecognition.onerror = (e) => {
+                stopMic();
+                if (e.error !== 'aborted' && e.error !== 'no-speech') {
+                    appendLog('ERROR', `Erro no microfone: ${e.error}`, 'error');
+                }
+            };
+
+            speechRecognition.onend = () => {
+                if (isListening) stopMic();
+            };
         }
 
-        micBtn.addEventListener('click', () => {
+        function toggleMic() {
             if (isListening) {
                 stopMic();
-                return;
-            }
-            if (speechRecognition) {
-                try {
-                    speechRecognition.start();
-                    isListening = true;
-                    micBtn.classList.add('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
-                    systemPulseDot.className = "w-2 h-2 rounded-full bg-red-500 animate-ping shadow-[0_0_20px_#ff3d00]";
-                    speakJarvis(`A escutar, ${currentAdminName}.`);
-                } catch(err) {
-                    stopMic();
-                }
             } else {
-                speakJarvis("Reconhecimento de voz não suportado neste navegador.");
+                startMic();
             }
-        });
+        }
+
+        function startMic() {
+            if (!speechRecognition) initSTT();
+            if (speechRecognition && !isListening) {
+                try { speechRecognition.start(); } catch(e){}
+            }
+        }
 
         function stopMic() {
+            isListening = false;
             if (speechRecognition) {
                 try { speechRecognition.stop(); } catch(e){}
             }
-            isListening = false;
-            hudEnergy = 0;
-            micBtn.classList.remove('bg-red-500/40', 'border-red-400', 'text-white', 'shadow-[0_0_35px_#ff3d00]');
-            systemPulseDot.className = "w-2 h-2 rounded-full bg-[#00f2fe] animate-ping shadow-[0_0_10px_#00f2fe]";
+            if (aiCore.classList.contains('state-listening')) {
+                setCoreState('idle', "Aguardando comandos.");
+            }
         }
 
-        textInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && textInput.value.trim() !== '') {
-                const val = textInput.value;
-                textInput.value = '';
-                executeAutonomousCommand(val);
+        micBtn.addEventListener('click', toggleMic);
+
+        /* ==========================================
+           3. PROCESSAMENTO LÓGICO DE INTENÇÕES (NLP Básico)
+           ========================================== */
+        async function processIntent(transcript) {
+            const text = transcript.toLowerCase().trim();
+            let response = "";
+            let action = null; // Função a executar após a fala
+
+            // 1. Apresentação e Status
+            if (text.includes('quem é você') || text.includes('quem é voce') || text.includes('seu nome')) {
+                response = "Eu sou Jarvis. Uma interface de núcleo avançado, projetada para otimizar suas tarefas digitais.";
             }
-        });
-
-        createAgentBtn.addEventListener('click', () => {
-            const name = newAgentName.value.trim();
-            if (name) {
-                registerNewAgent(name, "Em Execução");
-                newAgentName.value = '';
+            else if (text.includes('olá') || text.includes('tudo bem') || text === 'jarvis') {
+                response = "Olá. Os sistemas centrais estão online e operando em capacidade máxima.";
             }
-        });
-
-        function registerNewAgent(agentName, statusDesc) {
-            const cleanName = agentName.replace(/["']/g, "").trim();
-            internalAgents.push({ id: internalAgents.length + 1, name: cleanName, status: statusDesc });
-            renderAgentsUI();
-            spawnPlatformWidget(`Agente ${cleanName}`, `Sub-agente operacional instanciado com sucesso.`);
-            speakJarvis(`Sub-agente ${cleanName} criado e ativado com sucesso.`);
-        }
-
-        // --- MOTOR DE EXECUÇÃO AUTOMÁTICA (VOZ E TEXTO) ---
-        function executeAutonomousCommand(directive) {
-            hudEnergy = 100;
-            const lower = directive.toLowerCase().trim();
-
-            // 1. Mudar Nome do Administrador
-            if (lower.includes('mudar nome') || lower.includes('chame de') || lower.includes('nome para')) {
-                let parts = directive.split(/para|de/i);
-                if (parts.length > 1) {
-                    currentAdminName = parts[parts.length - 1].trim().replace(/[.!?,]/g, '');
-                    localStorage.setItem('jarvis_admin_name', currentAdminName);
-                    adminUserLabel.innerText = currentAdminName;
-                    spawnPlatformWidget("Perfil Atualizado", `Nome administrativo alterado para ${currentAdminName}`);
-                    speakJarvis(`Nome atualizado para ${currentAdminName}. Pronto, chefe.`);
-                    return;
-                }
+            // 2. Horário
+            else if (text.includes('horas') || text.includes('que horas são')) {
+                const now = new Date();
+                response = `Neste momento são exatamente ${now.getHours()} horas e ${now.getMinutes()} minutos.`;
             }
+            // 3. Abertura de Aplicativos/Sites
+            else if (text.startsWith('abrir') || text.startsWith('abre') || text.includes('iniciar') || text.includes('tocar')) {
+                let target = text.replace(/abrir|abre|iniciar|tocar|o|a|os|as/gi, '').trim();
+                let url = "";
 
-            // 2. Criar Agente
-            if (lower.includes('criar agente') || lower.includes('novo agente')) {
-                let parts = directive.split(/agente/i);
-                let extractedName = parts[1] ? parts[1].trim() : `Auto #${internalAgents.length + 1}`;
-                if (!extractedName || extractedName.length < 2) {
-                    extractedName = `Executor #${internalAgents.length + 1}`;
-                }
-                registerNewAgent(extractedName, "Em Operação");
-                return;
-            }
-
-            // 3. Abertura Automática e Direta de Aplicativos e Pesquisas
-            let appName = "";
-            let appUrl = "";
-
-            if (lower.includes('spotify') || lower.includes('música') || lower.includes('musica')) {
-                appName = "Spotify";
-                appUrl = "https://open.spotify.com";
-            } else if (lower.includes('youtube')) {
-                appName = "YouTube";
-                appUrl = "https://youtube.com";
-            } else if (lower.includes('calculadora')) {
-                appName = "Calculadora";
-                appUrl = "https://www.google.com/search?q=calculadora";
-            } else if (lower.includes('bloco de notas') || lower.includes('notas')) {
-                appName = "Bloco de Notas";
-                appUrl = "https://keep.google.com";
-            } else if (lower.includes('gmail') || lower.includes('email') || lower.includes('e-mail')) {
-                appName = "Gmail";
-                appUrl = "https://mail.google.com";
-            } else if (lower.includes('maps') || lower.includes('gps') || lower.includes('localização')) {
-                appName = "Google Maps";
-                appUrl = "https://maps.google.com";
-            } else if (lower.includes('whatsapp')) {
-                appName = "WhatsApp";
-                appUrl = "https://web.whatsapp.com";
-            } else {
-                let target = directive.replace(/abrir|tocar|pesquisar|buscar|no|o|a|os|as/gi, '').trim();
-                appName = target || directive;
-                appUrl = `https://www.google.com/search?q=${encodeURIComponent(appName)}`;
-            }
-
-            speakJarvis(`A abrir ${appName}, ${currentAdminName}.`);
-            spawnPlatformWidget(`Ação Automática`, `Abrindo ${appName} diretamente...`);
-            
-            // Força a abertura imediata sem bloqueio móvel
-            setTimeout(() => {
-                window.open(appUrl, "_blank");
-            }, 300);
-        }
-
-        function spawnPlatformWidget(title, content) {
-            const card = document.createElement('div');
-            card.className = "stark-panel p-4 flex flex-col justify-between animate-[fadeIn_0.4s_ease-out]";
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[11px] font-bold text-[#00f2fe] uppercase tracking-wider">${title}</span>
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                </div>
-                <p class="text-[11px] text-gray-300 font-light leading-relaxed">${content}</p>
-                <div class="mt-3 flex justify-between items-center text-[9px] font-mono text-cyan-400/70">
-                    <span>STATUS: EXECUTADO</span>
-                    <span>VOICE CORE</span>
-                </div>
-            `;
-            dynamicPlatform.prepend(card);
-        }
-
-        function renderStarkHUD() {
-            angleTicker += 0.015;
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = '#000406';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = 'lighter';
-
-            const primaryColor = isListening ? '255, 61, 0' : '0, 242, 254';
-            const secondaryGlow = isListening ? '#ff3d00' : '#00f2fe';
-
-            ctx.lineWidth = 0.8;
-            for (let i = 0; i < neuralNodes.length; i++) {
-                let n = neuralNodes[i];
-                n.x += n.vx;
-                n.y += n.vy;
-
-                if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
-                if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
-
-                for (let j = i + 1; j < neuralNodes.length; j++) {
-                    let n2 = neuralNodes[j];
-                    let dx = n.x - n2.x;
-                    let dy = n.y - n2.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(n.x, n.y);
-                        ctx.lineTo(n2.x, n2.y);
-                        ctx.strokeStyle = `rgba(${primaryColor}, ${1 - dist / 120})`;
-                        ctx.stroke();
-                    }
+                if (target.includes('youtube')) { url = "https://youtube.com"; target = "YouTube"; }
+                else if (target.includes('spotify') || target.includes('música')) { url = "https://open.spotify.com"; target = "Spotify"; }
+                else if (target.includes('whatsapp')) { url = "https://web.whatsapp.com"; target = "WhatsApp"; }
+                else if (target.includes('gmail') || target.includes('e-mail')) { url = "https://mail.google.com"; target = "Gmail"; }
+                else if (target.includes('calculadora')) { url = "https://www.google.com/search?q=calculadora"; target = "Calculadora"; }
+                else if (target.includes('mapas') || target.includes('gps')) { url = "https://maps.google.com"; target = "Google Maps"; }
+                else {
+                    url = `https://www.google.com/search?q=${encodeURIComponent(target)}`;
                 }
 
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${primaryColor}, 0.7)`;
-                ctx.fill();
+                response = `Entendido. Estabelecendo conexão com ${target}.`;
+                action = () => window.open(url, "_blank");
+            }
+            // 4. Pesquisas Web / Dúvidas Gerais
+            else if (text.includes('pesquisar por') || text.includes('buscar por') || text.includes('quem foi') || text.includes('o que é')) {
+                let query = text.replace(/pesquisar por|buscar por|sobre|quem foi|o que é/gi, '').trim();
+                response = `Realizando varredura no banco de dados global sobre: ${query}.`;
+                action = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+            }
+            // 5. Limpar Tela/Logs
+            else if (text.includes('limpar') || text.includes('apagar registros')) {
+                response = "Limpando os registros do terminal visual.";
+                action = () => { logContainer.innerHTML = ''; appendLog('SYSTEM', 'Terminal limpo.'); };
+            }
+            // 6. Fallback Dinâmico (Quando ele não entende um comando exato)
+            else {
+                response = `Processando diretiva desconhecida. Buscando referências para: ${transcript}.`;
+                action = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(transcript)}`, "_blank");
             }
 
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) * 0.52;
-
-            ctx.strokeStyle = `rgb(${primaryColor})`;
-            ctx.lineWidth = 3;
-            ctx.shadowBlur = isListening ? 30 : 18;
-            ctx.shadowColor = secondaryGlow;
-
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(angleTicker * 0.5);
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 1.35, 0, Math.PI * 2);
-            ctx.setLineDash([15, 20, 8, 20]);
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(-angleTicker * 0.8);
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 1.05, 0, Math.PI * 1.6);
-            ctx.setLineDash([6, 12]);
-            ctx.lineWidth = 3.5;
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, (radius * 0.38) * (1 + (isListening ? Math.sin(angleTicker * 10) * 0.2 : 0)), 0, Math.PI * 2);
-            ctx.fillStyle = isListening ? 'rgba(255, 61, 0, 0.4)' : 'rgba(0, 242, 254, 0.3)';
-            ctx.fill();
-            ctx.strokeStyle = `rgb(${primaryColor})`;
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-            requestAnimationFrame(renderStarkHUD);
+            // Fluxo de Execução
+            await speakJarvis(response);
+            if (action) {
+                setTimeout(action, 500); // Executa a ação (ex: abrir aba) após falar
+            }
         }
-
-        renderStarkHUD();
     </script>
 </body>
 </html>
-
