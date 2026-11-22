@@ -60,9 +60,6 @@
             transition: background-image 0.35s ease;
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* ANÉIS CONCÊNTRICOS HUD (BOOT, ATIVAÇÃO E PLATAFORMA INTERNA)            */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .jarvis-rings-stage {
             position: relative;
             width: 240px;
@@ -119,9 +116,6 @@
             50% { transform: scale(1.04); opacity: 1; }
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* TELAS DE BOOT & ATIVAÇÃO                                              */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .overlay-screen {
             position: fixed;
             inset: 0;
@@ -199,9 +193,6 @@
             transform: scale(0.96);
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* COMMAND FLOOR PRINCIPAL                                               */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .command-floor {
             display: flex;
             flex-direction: column;
@@ -217,7 +208,6 @@
             pointer-events: auto;
         }
 
-        /* BARRA SUPERIOR DE TELEMETRIA */
         .top-telemetry {
             display: flex;
             flex-wrap: wrap;
@@ -327,9 +317,6 @@
             50% { opacity: 0.35; transform: scale(0.8); }
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* PALCO NEURAL CENTRAL (CÍRCULOS + CÉREBRO + HOLOGRAMA 3D + CARDS)        */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .neural-stage {
             position: relative;
             flex: 1 1 auto;
@@ -396,7 +383,6 @@
             margin-top: 2px;
         }
 
-        /* CARDS ORBITAIS DO SECOND BRAIN */
         .orbit-nodes-layer {
             position: absolute;
             inset: 0;
@@ -456,9 +442,6 @@
             overflow: hidden;
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* BARRA DE COMANDO & MICROFONE                                          */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .command-controls-bar {
             display: flex;
             align-items: center;
@@ -518,9 +501,6 @@
             border-color: var(--gold-neural);
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 3 PAINÉIS INFERIORES DE TELEMETRIA (ATS MATRIX)                       */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         .bottom-panels-grid {
             display: grid;
             grid-template-columns: 1.4fr 1fr 1fr;
@@ -604,7 +584,6 @@
             flex: 1;
         }
 
-        /* MODAL DE EDIÇÃO DE NÓ */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -675,7 +654,6 @@
 </head>
 <body>
 
-    <!-- TELA 1: BOOT SEQUENCE -->
     <div class="overlay-screen" id="bootScreen">
         <div class="jarvis-rings-stage">
             <div class="hud-ring hud-ring-1"></div>
@@ -686,10 +664,9 @@
         <div class="matrix-logo">JARVIS</div>
         <div class="matrix-sub">ATS MATRIX // COMMAND FLOOR</div>
         <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-        <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1.5px;">SINCRONIZANDO MALHA NEURAL & SECOND BRAIN...</div>
+        <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1.5px;">SINCRONIZANDO MALHA NEURAL & BUSCA WEB...</div>
     </div>
 
-    <!-- TELA 2: ATIVAÇÃO DE ÁUDIO & MICROFONE -->
     <div class="overlay-screen hidden" id="activationScreen">
         <div class="jarvis-rings-stage">
             <div class="hud-ring hud-ring-1"></div>
@@ -702,10 +679,8 @@
         <button class="btn-activate" id="btnActivate">► ATIVAR SISTEMA</button>
     </div>
 
-    <!-- PLATAFORMA INTERNA: COMMAND FLOOR -->
     <div class="command-floor" id="commandFloor">
 
-        <!-- TELEMETRIA SUPERIOR -->
         <header class="top-telemetry">
             <div class="telemetry-metrics">
                 <span>GRAPH <b>jarvis-sandro-07</b></span>
@@ -716,8 +691,8 @@
 
             <div class="top-right-controls">
                 <div class="api-input-wrap">
-                    <input type="password" id="apiKeyInput" class="api-input" placeholder="Cole sua API Key (AQ. / AIza)">
-                    <span id="keyBadge" class="key-badge">🔑 SALVA</span>
+                    <input type="password" id="apiKeyInput" class="api-input" placeholder="Opcional: AIza... (Motor Livre Ativo)">
+                    <span id="keyBadge" class="key-badge saved">🌐 WEB FREE</span>
                 </div>
                 <button class="btn-hud" id="btnTestApi" style="padding: 0.32rem 0.55rem; border-color: #2dd4ff; color: #2dd4ff;">⚡ TESTAR API</button>
                 <button class="btn-hud" id="btnAddNode" style="padding: 0.32rem 0.55rem;">+ NÓ</button>
@@ -728,12 +703,10 @@
             </div>
         </header>
 
-        <!-- PALCO NEURAL CENTRAL -->
         <main class="neural-stage" id="neuralStage">
             <canvas id="synapseCanvas"></canvas>
             <canvas id="pixelFaceCanvas"></canvas>
 
-            <!-- Círculos Concêntricos Internos -->
             <div class="stage-rings">
                 <div class="hud-ring hud-ring-1"></div>
                 <div class="hud-ring hud-ring-2"></div>
@@ -741,7 +714,6 @@
                 <div class="hud-ring hud-ring-4"></div>
             </div>
 
-            <!-- Núcleo Cerebral Central -->
             <div class="core-brain-hub" id="coreBrainHub" title="Toque para falar com Jarvis">
                 <svg width="42" height="42" viewBox="0 0 100 100" fill="none" stroke="#fbbf24" stroke-width="2.2">
                     <path d="M50 85 C22 85, 12 62, 16 42 C20 22, 40 12, 50 16 C60 12, 80 22, 84 42 C88 62, 78 85, 50 85 Z" fill="rgba(251,191,36,0.08)"/>
@@ -750,11 +722,9 @@
                 <span class="core-label">JARVIS CORE</span>
             </div>
 
-            <!-- Cards Orbitais do Second Brain -->
             <div class="orbit-nodes-layer" id="orbitNodesLayer"></div>
         </main>
 
-        <!-- CONTROLES DE VOZ E COMANDO -->
         <section class="command-controls-bar">
             <button class="btn-hud" id="btnMic">
                 <span>🎙️</span>
@@ -764,9 +734,7 @@
             <button class="btn-hud" id="btnStopSpeech" title="Parar fala / Destravar">⏹️ PARAR</button>
         </section>
 
-        <!-- 3 PAINÉIS INFERIORES DE TELEMETRIA -->
         <footer class="bottom-panels-grid">
-            <!-- PAINEL 1: RUN LOG -->
             <div class="matrix-panel">
                 <div class="panel-header">
                     <span>// RUN LOG</span>
@@ -774,11 +742,10 @@
                 </div>
                 <div class="run-log-body" id="runLogBody">
                     <div class="log-sys">graph.load nodes=8 edges=21 ctx=sandro_fagundes</div>
-                    <div class="log-sys">hologram.mesh vertices=784 mode=wireframe_3d</div>
+                    <div class="log-sys">web.engine free_ai+wiki+ddg status=READY</div>
                 </div>
             </div>
 
-            <!-- PAINEL 2: DISPATCH -->
             <div class="matrix-panel">
                 <div class="panel-header">
                     <span>// DISPATCH</span>
@@ -786,13 +753,12 @@
                 </div>
                 <div class="dispatch-list">
                     <div class="dispatch-row"><span>m1.voice</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
-                    <div class="dispatch-row"><span>m2.gemini</span><span class="bar-tracks" id="dispGeminiBar">██████████</span><span id="dispGeminiStatus" style="color:#10b981;">ok</span></div>
+                    <div class="dispatch-row"><span>m2.ai_net</span><span class="bar-tracks" id="dispGeminiBar">██████████</span><span id="dispGeminiStatus" style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m3.holo3d</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m4.web</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
                 </div>
             </div>
 
-            <!-- PAINEL 3: GRAPH COST -->
             <div class="matrix-panel">
                 <div class="panel-header">
                     <span>// GRAPH COST</span>
@@ -815,7 +781,6 @@
         </footer>
     </div>
 
-    <!-- MODAL DE EDIÇÃO / CRIAÇÃO DE NÓ -->
     <div class="modal-backdrop" id="nodeModal">
         <div class="modal-card">
             <div class="modal-heading" id="modalHeading">// EDITAR NÓ</div>
@@ -854,7 +819,7 @@
         /* ═══════════════════════════════════════════════════════════════════════ */
         /* 1. CONFIGURAÇÃO GLOBAL & PERSISTÊNCIA DE API KEY                        */
         /* ═══════════════════════════════════════════════════════════════════════ */
-        const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6If5b6o_fM-iXRsW9CawttM1vBDUdEGPrZhFURwnDsJ6A";
+        const DEFAULT_GEMINI_API_KEY = "";
 
         const CONFIG = {
             name: "Jarvis",
@@ -932,11 +897,8 @@
             const clean = (rawKey || '').replace(/["'\s\r\n]+/g, '');
             memoryApiKey = clean;
             const badge = document.getElementById('keyBadge');
-            if (clean.length > 6) {
-                badge.classList.add('saved');
-            } else {
-                badge.classList.remove('saved');
-            }
+            badge.classList.add('saved');
+            badge.textContent = clean.startsWith('AIza') ? '🔑 AIza OK' : '🌐 WEB FREE';
             try { localStorage.setItem('jarvis_gemini_key', clean); } catch (e) {}
             try { sessionStorage.setItem('jarvis_gemini_key', clean); } catch (e) {}
             try {
@@ -1606,7 +1568,7 @@
                     resolve();
                 };
 
-                const estimatedMs = Math.max(3000, Math.min(18000, text.length * 85));
+                const estimatedMs = Math.max(3000, Math.min(20000, text.length * 85));
                 speechSafetyTimer = setTimeout(finishOnce, estimatedMs);
 
                 utter.onend = finishOnce;
@@ -1681,7 +1643,7 @@
         };
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 5. CÉREBRO COGNITIVO (GOOGLE GEMINI API + x-goog-api-key + BUSCA WEB)   */
+        /* 5. BUSCA WEB EM TEMPO REAL + MOTOR DE IA GRATUITO SEM RESTRIÇÃO         */
         /* ═══════════════════════════════════════════════════════════════════════ */
         function buildSystemInstruction() {
             let brainDump = "";
@@ -1697,8 +1659,7 @@
 
             return `Você é ${CONFIG.name}, assistente pessoal inteligente com personalidade ${CONFIG.persona}. Trate o usuário por ${CONFIG.address}.
 Regras obrigatórias:
-- Responda qualquer pergunta (conhecimento geral, notícias, finanças, tecnologia, clima, cálculos ou assuntos pessoais) em português do Brasil, de forma objetiva (2 a 4 frases) e natural para ser falada em voz alta.
-- Use a ferramenta de busca na web sempre que precisar de fatos atuais, cotações, notícias ou informações em tempo real.
+- Responda qualquer pergunta (notícias, cotações, fatos atuais, tecnologia, clima ou assuntos pessoais) em português do Brasil, de forma objetiva (2 a 4 frases) e natural para ser falada em voz alta.
 - NÃO use markdown, asteriscos, colchetes ou emojis na resposta falada.
 - Se o usuário revelar um fato novo e duradouro sobre sua vida, projetos, metas, finanças ou rotina, termine sua resposta com uma linha no formato EXATO: [[SAVE:area|titulo|texto]] onde area é uma destas: metas, trabalho, projetos, financas, aprendizado, saude, relacoes, meta. Só inclua se houver novidade real.
 
@@ -1706,26 +1667,119 @@ SECOND BRAIN (Contexto atual de ${CONFIG.address}):
 ${brainDump}`;
         }
 
-        async function queryGeminiWithFallback(contentsPayload, systemText) {
+        async function fetchLiveWebSnippets(query) {
+            const snippets = [];
+            const cleanQuery = query.replace(/[?!.,]+$/g, '').trim();
+
+            try {
+                const wikiSearchUrl = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&format=json&origin=*&srlimit=2`;
+                const wRes = await fetch(wikiSearchUrl);
+                if (wRes.ok) {
+                    const wData = await wRes.json();
+                    const hits = wData?.query?.search || [];
+                    for (const hit of hits) {
+                        const plainSnippet = hit.snippet.replace(/<[^>]+>/g, '');
+                        snippets.push(`[Wikipedia - ${hit.title}]: ${plainSnippet}`);
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(cleanQuery)}&format=json&no_html=1&skip_disambig=1`;
+                const dRes = await fetch(ddgUrl);
+                if (dRes.ok) {
+                    const dData = await dRes.json();
+                    if (dData.AbstractText) {
+                        snippets.push(`[DuckDuckGo]: ${dData.AbstractText}`);
+                    }
+                }
+            } catch (e) {}
+
+            if (/dolar|dólar|euro|bitcoin|btc|cotacao|cotação|moeda/i.test(cleanQuery)) {
+                try {
+                    const fxRes = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL');
+                    if (fxRes.ok) {
+                        const fx = await fxRes.json();
+                        snippets.push(`[Cotações Tempo Real]: Dólar R$ ${Number(fx.USDBRL?.bid || 0).toFixed(2)}, Euro R$ ${Number(fx.EURBRL?.bid || 0).toFixed(2)}, Bitcoin R$ ${Number(fx.BTCBRL?.bid || 0).toLocaleString('pt-BR')}.`);
+                    }
+                } catch (e) {}
+            }
+
+            return snippets.join('\n');
+        }
+
+        async function queryFreeWebAI(userQuestion, systemText) {
+            const webContext = await fetchLiveWebSnippets(userQuestion);
+            const enrichedUserPrompt = webContext
+                ? `Pergunta do ${CONFIG.address}: ${userQuestion}\n\nDados coletados agora da internet para embasar sua resposta:\n${webContext}`
+                : userQuestion;
+
+            try {
+                const recentMsgs = sessionHistory.slice(-6).map(m => ({
+                    role: m.role === 'model' ? 'assistant' : 'user',
+                    content: m.parts?.[0]?.text || ''
+                }));
+                recentMsgs.push({ role: 'user', content: enrichedUserPrompt });
+
+                const pRes = await fetch('https://text.pollinations.ai/openai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'openai',
+                        messages: [
+                            { role: 'system', content: systemText },
+                            ...recentMsgs
+                        ],
+                        seed: Math.floor(Math.random() * 99999)
+                    })
+                });
+
+                if (pRes.ok) {
+                    const pData = await pRes.json();
+                    const reply = pData?.choices?.[0]?.message?.content?.trim();
+                    if (reply) {
+                        return { ok: true, text: reply, model: 'web-ai-free', webSearch: true };
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                const simplePrompt = `${systemText}\n\nUsuário: ${enrichedUserPrompt}\nJarvis:`;
+                const gRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(simplePrompt)}?model=openai`);
+                if (gRes.ok) {
+                    const replyText = (await gRes.text()).trim();
+                    if (replyText && !replyText.startsWith('<!DOCTYPE')) {
+                        return { ok: true, text: replyText, model: 'web-ai-direct', webSearch: true };
+                    }
+                }
+            } catch (e) {}
+
+            if (webContext) {
+                return {
+                    ok: true,
+                    text: `Senhor Sandro, encontrei o seguinte na rede: ${webContext.replace(/\[[^\]]+\]:\s*/g, '')}`,
+                    model: 'wiki-ddg-direct',
+                    webSearch: true
+                };
+            }
+
+            return { ok: false, error: 'Sem conexão com os servidores web no momento.' };
+        }
+
+        async function queryGeminiWithFallback(contentsPayload, systemText, rawUserQuestion = "") {
             const rawKey = getSavedApiKey() || document.getElementById('apiKeyInput').value;
             const apiKey = (rawKey || '').replace(/["'\s\r\n]+/g, '');
             if (apiKey) saveApiKeyForever(apiKey);
 
-            // Matriz de tentativas: envia chave via cabeçalho oficial x-goog-api-key (exigido para chaves AQ.) + fallback via URL
             const candidateMatrix = [];
-            if (apiKey) {
-                candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'header', useSearch: true });
-                candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'header', useSearch: false });
-                candidateMatrix.push({ model: 'gemini-2.0-flash', key: apiKey, authMode: 'header', useSearch: true });
-                candidateMatrix.push({ model: 'gemini-2.0-flash', key: apiKey, authMode: 'header', useSearch: false });
-                candidateMatrix.push({ model: 'gemini-3-flash-preview', key: apiKey, authMode: 'header', useSearch: true });
+            if (apiKey && apiKey.startsWith('AIza')) {
                 candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'query', useSearch: true });
                 candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'query', useSearch: false });
+                candidateMatrix.push({ model: 'gemini-2.0-flash', key: apiKey, authMode: 'query', useSearch: false });
+            } else if (apiKey) {
+                candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'header', useSearch: true });
             }
             candidateMatrix.push({ model: 'gemini-3-flash-preview', key: '', authMode: 'none', useSearch: true });
-            candidateMatrix.push({ model: 'gemini-2.5-flash', key: '', authMode: 'none', useSearch: false });
-
-            let lastError = "Chave de API não configurada.";
 
             for (const cand of candidateMatrix) {
                 const useQuery = cand.key && cand.authMode === 'query';
@@ -1737,14 +1791,9 @@ ${brainDump}`;
                 }
 
                 const bodyObj = {
-                    system_instruction: {
-                        parts: [{ text: systemText }]
-                    },
+                    system_instruction: { parts: [{ text: systemText }] },
                     contents: contentsPayload,
-                    generationConfig: {
-                        maxOutputTokens: 380,
-                        temperature: 0.7
-                    }
+                    generationConfig: { maxOutputTokens: 380, temperature: 0.7 }
                 };
                 if (cand.useSearch) {
                     bodyObj.tools = [{ google_search: {} }];
@@ -1764,26 +1813,23 @@ ${brainDump}`;
                         if (text) {
                             return { ok: true, text, model: cand.model, webSearch: cand.useSearch };
                         }
-                    } else {
-                        const errData = await res.json().catch(() => ({}));
-                        lastError = errData?.error?.message || `HTTP ${res.status}`;
                     }
-                } catch (netErr) {
-                    lastError = netErr.message || "Falha de rede";
-                }
+                } catch (netErr) {}
             }
 
-            return { ok: false, error: lastError };
+            const lastUserMsg = rawUserQuestion || contentsPayload[contentsPayload.length - 1]?.parts?.[0]?.text || "";
+            return await queryFreeWebAI(lastUserMsg, systemText);
         }
 
         async function runApiDiagnostic() {
             const btn = document.getElementById('btnTestApi');
             const origLabel = btn.textContent;
             btn.textContent = '⏳ TESTANDO...';
-            appendLog('DIAGNÓSTICO', 'Testando conexão com Google Gemini (x-goog-api-key) & Busca Web...', 'log-sys');
+            appendLog('DIAGNÓSTICO', 'Verificando motor de IA e busca em tempo real na internet...', 'log-sys');
 
-            const testContents = [{ role: 'user', parts: [{ text: 'Responda apenas: Conexão Gemini ativa e operacional.' }] }];
-            const result = await queryGeminiWithFallback(testContents, 'Você é Jarvis. Seja direto.');
+            const testQuestion = 'Qual a cotação do dólar hoje e confirme que a busca web está ativa em 1 frase.';
+            const testContents = [{ role: 'user', parts: [{ text: testQuestion }] }];
+            const result = await queryGeminiWithFallback(testContents, 'Você é Jarvis. Seja direto e breve.', testQuestion);
 
             btn.textContent = origLabel;
 
@@ -1791,15 +1837,15 @@ ${brainDump}`;
                 document.getElementById('dispGeminiBar').style.color = '#10b981';
                 document.getElementById('dispGeminiStatus').textContent = 'ok';
                 document.getElementById('dispGeminiStatus').style.color = '#10b981';
-                const okMsg = `API validada! Modelo ${result.model} (${result.webSearch ? 'Busca Web ATIVA' : 'Modo Padrão'}).`;
-                appendLog('API OK', okMsg, 'log-jarvis');
-                speakText(`Conexão validada, ${CONFIG.address}. Estou pronto para responder qualquer pergunta.`);
+                appendLog('REDE OK', `Motor [${result.model}] + Busca Web ATIVA!`, 'log-jarvis');
+                appendLog('JARVIS', result.text, 'log-jarvis');
+                speakText(result.text);
             } else {
                 document.getElementById('dispGeminiBar').style.color = '#ef4444';
                 document.getElementById('dispGeminiStatus').textContent = 'err';
                 document.getElementById('dispGeminiStatus').style.color = '#ef4444';
-                appendLog('FALHA API', `${result.error}`, 'log-err');
-                speakText(`Atenção ${CONFIG.address}, a chave de API retornou erro. Verifique o registro no terminal.`);
+                appendLog('FALHA REDE', `${result.error}`, 'log-err');
+                speakText(`Sem acesso à internet no momento, ${CONFIG.address}.`);
             }
         }
 
@@ -1816,21 +1862,14 @@ ${brainDump}`;
                 parts: [{ text: userText }]
             });
 
-            const result = await queryGeminiWithFallback(sessionHistory, buildSystemInstruction());
+            const result = await queryGeminiWithFallback(sessionHistory, buildSystemInstruction(), userText);
 
             if (!result.ok) {
                 sessionHistory.pop();
                 document.getElementById('dispGeminiStatus').textContent = 'err';
                 document.getElementById('dispGeminiStatus').style.color = '#ef4444';
-
-                const isInvalidKey = /API[_ ]?KEY|invalid|unauthenticated|401|403/i.test(result.error);
-                const msg = isInvalidKey
-                    ? `Chave de API recusada pelo Google (${result.error}). Cole sua chave completa no campo superior.`
-                    : `Erro na API do Gemini: ${result.error}`;
-                appendLog('ERRO API', msg, 'log-err');
-                await speakText(isInvalidKey
-                    ? `Senhor Sandro, a chave de API do Gemini foi recusada. Verifique a chave colada no campo superior.`
-                    : `Não consegui consultar a rede agora, ${CONFIG.address}. Verifique o log.`);
+                appendLog('ERRO REDE', result.error, 'log-err');
+                await speakText(`Não consegui consultar a rede agora, ${CONFIG.address}. Verifique sua conexão.`);
                 return;
             }
 
@@ -1895,7 +1934,7 @@ ${brainDump}`;
                 startSynapseLoop();
                 startPixelFaceHologram();
 
-                const welcome = `Núcleo neural pronto, ${CONFIG.address}. Estou ouvindo.`;
+                const welcome = `Núcleo neural e busca na web prontos, ${CONFIG.address}. Estou ouvindo.`;
                 appendLog('JARVIS', welcome, 'log-jarvis');
                 speakText(welcome);
             });
