@@ -1568,13 +1568,45 @@
                     resolve();
                 };
 
-                const estimatedMs = Math.max(3000, Math.min(20000, text.length * 85));
+                // Divide o texto por frases para evitar o corte automático de falas longas no Chrome/Safari mobile
+                const sentences = text
+                    .match(/[^.!?]+[.!?]*/g)
+                    ?.map(s => s.trim())
+                    .filter(Boolean) || [text];
+
+                // Tempo de segurança generoso proporcional ao tamanho total do texto
+                const estimatedMs = Math.max(8000, text.length * 160);
                 speechSafetyTimer = setTimeout(finishOnce, estimatedMs);
 
-                utter.onend = finishOnce;
-                utter.onerror = finishOnce;
+                let currentIdx = 0;
 
-                window.speechSynthesis.speak(utter);
+                const speakNextSentence = () => {
+                    if (finished) return;
+                    if (currentIdx >= sentences.length) {
+                        finishOnce();
+                        return;
+                    }
+
+                    const utter = new SpeechSynthesisUtterance(sentences[currentIdx]);
+                    utter.lang = 'pt-BR';
+                    if (selectedVoice) utter.voice = selectedVoice;
+                    utter.rate = 1.03;
+                    utter.pitch = 0.92;
+
+                    utter.onend = () => {
+                        currentIdx++;
+                        speakNextSentence();
+                    };
+
+                    utter.onerror = () => {
+                        currentIdx++;
+                        speakNextSentence();
+                    };
+
+                    window.speechSynthesis.speak(utter);
+                };
+
+                speakNextSentence();
             });
         }
 
@@ -1857,21 +1889,104 @@ ${brainDump}`;
             updateSystemStatus('thinking');
             appendLog('SANDRO', userText, 'log-user');
 
+            // 1. Intercepta comandos de abertura de aplicativos/sites (YouTube, WhatsApp, Spotify, etc.)
+            const appCommand = parseOpenAppIntent(userText);
+            if (appCommand) {
+                appendLog('JARVIS', appCommand.reply, 'log-jarvis');
+                openExternalAppSafe(appCommand.url, appCommand.appName);
+                await speakText(appCommand.reply);
+                return;
+            }
+
             sessionHistory.push({
                 role: 'user',
                 parts: [{ text: userText }]
             });
-
-            const result = await queryGeminiWithFallback(sessionHistory, buildSystemInstruction(), userText);
-
-            if (!result.ok) {
-                sessionHistory.pop();
-                document.getElementById('dispGeminiStatus').textContent = 'err';
-                document.getElementById('dispGeminiStatus').style.color = '#ef4444';
-                appendLog('ERRO REDE', result.error, 'log-err');
-                await speakText(`Não consegui consultar a rede agora, ${CONFIG.address}. Verifique sua conexão.`);
-                return;
+        function appendLog(author, text, cssClass, htmlContent = null) {
+            const logBox = document.getElementById('runLogBody');
+            const line = document.createElement('div');
+            line.className = cssClass;
+            if (htmlContent) {
+                line.innerHTML = htmlContent;
+            } else {
+                line.textContent = `${author}: ${text}`;
             }
+            logBox.appendChild(line);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function parseOpenAppIntent(rawText) {
+            const norm = normalizeText(rawText);
+            const openTrigger = /^(jarvis[,.\s]*)?(abrir|abre|abra|iniciar|inicia|acessar|acessa|entrar no|entrar na|executar)\s+(.+)$/i;
+            const match = norm.match(openTrigger);
+            if (!match) return null;
+
+            let target = match[3]
+                .replace(/^(o|a|os|as|aplicativo|app|site|pagina|página)\s+/gi, '')
+                .replace(/\s+(por favor|agora|para mim|pra mim)$/gi, '')
+                .trim();
+
+            if (!target) return null;
+
+            // Suporte a busca direta dentro do YouTube ("abrir youtube e pesquisar ...")
+            const ytSearchMatch = target.match(/^youtube\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar)?\s*(.+)$/i);
+            if (ytSearchMatch && ytSearchMatch[1]) {
+                const query = ytSearchMatch[1].trim();
+                return {
+                    appName: `YouTube (${query})`,
+                    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+                    reply: `Abrindo o YouTube e buscando por ${query}, ${CONFIG.address}.`
+                };
+            }
+
+            const appDirectory = [
+                { keys: ['youtube', 'you tube'], name: 'YouTube', url: 'https://www.youtube.com' },
+                { keys: ['whatsapp', 'whats', 'zap'], name: 'WhatsApp', url: 'https://web.whatsapp.com' },
+                { keys: ['spotify', 'musica', 'música'], name: 'Spotify', url: 'https://open.spotify.com' },
+                { keys: ['instagram', 'insta'], name: 'Instagram', url: 'https://www.instagram.com' },
+                { keys: ['gmail', 'email', 'e-mail'], name: 'Gmail', url: 'https://mail.google.com' },
+                { keys: ['maps', 'google maps', 'mapa', 'gps'], name: 'Google Maps', url: 'https://maps.google.com' },
+                { keys: ['netflix'], name: 'Netflix', url: 'https://www.netflix.com' },
+                { keys: ['github'], name: 'GitHub', url: 'https://github.com' },
+                { keys: ['vercel'], name: 'Vercel', url: 'https://vercel.com' },
+                { keys: ['chatgpt', 'chat gpt'], name: 'ChatGPT', url: 'https://chatgpt.com' },
+                { keys: ['gemini'], name: 'Google Gemini', url: 'https://gemini.google.com' },
+                { keys: ['google', 'navegador'], name: 'Google', url: 'https://www.google.com' },
+                { keys: ['calculadora'], name: 'Calculadora', url: 'https://www.google.com/search?q=calculadora' },
+                { keys: ['clima', 'tempo', 'previsao'], name: 'Previsão do Tempo', url: 'https://www.google.com/search?q=previsao+do+tempo' }
+            ];
+
+            for (const app of appDirectory) {
+                if (app.keys.some(k => target === k || target.includes(k))) {
+                    return {
+                        appName: app.name,
+                        url: app.url,
+                        reply: `Abrindo ${app.name} agora mesmo, ${CONFIG.address}.`
+                    };
+                }
+            }
+
+            const displayTarget = target.charAt(0).toUpperCase() + target.slice(1);
+            return {
+                appName: displayTarget,
+                url: `https://www.google.com/search?q=${encodeURIComponent(target)}`,
+                reply: `Localizando e abrindo ${displayTarget} na rede, ${CONFIG.address}.`
+            };
+        }
+
+        function openExternalAppSafe(url, appName) {
+            const win = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                appendLog(
+                    'SYSTEM',
+                    '',
+                    'log-sys',
+                    `<span style="color:#fbbf24;">SYSTEM:</span> Toque para abrir <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2dd4ff; text-decoration:underline; font-weight:bold;">[ ↗ ABRIR ${appName.toUpperCase()} ]</a>`
+                );
+            } else {
+                appendLog('SYSTEM', `Aplicativo/Web iniciado: ${appName}`, 'log-sys');
+            }
+        }
 
             document.getElementById('dispGeminiBar').style.color = '#10b981';
             document.getElementById('dispGeminiStatus').textContent = 'ok';
