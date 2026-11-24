@@ -755,7 +755,7 @@
                     <div class="dispatch-row"><span>m1.voice</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m2.ai_net</span><span class="bar-tracks" id="dispGeminiBar">██████████</span><span id="dispGeminiStatus" style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m3.holo3d</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
-                    <div class="dispatch-row"><span>m4.web</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
+                    <div class="dispatch-row"><span>m4.apps</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
                 </div>
             </div>
 
@@ -824,7 +824,7 @@
         const CONFIG = {
             name: "Jarvis",
             address: "Senhor Sandro",
-            persona: "descontraído, leal e técnico",
+            persona: "leal, técnico, elegante e objetivo",
             model: "gemini-2.5-flash"
         };
 
@@ -864,6 +864,7 @@
         let latestInterimBuffer = "";
         let commandSilenceTimer = null;
         let speechSafetyTimer = null;
+        let speechKeepAliveTimer = null;
         let recognition = null;
         let selectedVoice = null;
         let editingNoteId = null;
@@ -1345,21 +1346,28 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 4. MOTOR DE VOZ (WAKE WORD "EI JARVIS" + TTS PT-BR)                     */
+        /* 4. MOTOR DE VOZ (WAKE WORD "EI JARVIS" + VOZ MASCULINA GRAVE JARVIS)    */
         /* ═══════════════════════════════════════════════════════════════════════ */
+        function selectJarvisMaleVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices();
+            if (!voices || voices.length === 0) return null;
+
+            const ptMale =
+                voices.find(v => /pt[-_]BR/i.test(v.lang) && /daniel|felipe|antonio|antônio|ricardo|thiago|bruno|male|homem/i.test(v.name)) ||
+                voices.find(v => /pt[-_]PT/i.test(v.lang) && /duarte|cristiano|male|homem/i.test(v.name)) ||
+                voices.find(v => /pt[-_]BR/i.test(v.lang) && !/luciana|maria|fernanda|helena|francisca|thalita|camila|female|mulher/i.test(v.name)) ||
+                voices.find(v => /pt[-_]BR/i.test(v.lang)) ||
+                voices.find(v => v.lang.startsWith('pt'));
+
+            selectedVoice = ptMale || null;
+            return selectedVoice;
+        }
+
         function setupSpeechEngine() {
             if ('speechSynthesis' in window) {
-                const pickVoice = () => {
-                    const voices = window.speechSynthesis.getVoices();
-                    selectedVoice =
-                        voices.find(v => v.lang === 'pt-BR' && /daniel|felipe|google|male|homem/i.test(v.name)) ||
-                        voices.find(v => v.lang === 'pt-BR' && !/female|maria|luciana/i.test(v.name)) ||
-                        voices.find(v => v.lang === 'pt-BR') ||
-                        voices.find(v => v.lang.startsWith('pt')) ||
-                        null;
-                };
-                pickVoice();
-                window.speechSynthesis.onvoiceschanged = pickVoice;
+                selectJarvisMaleVoice();
+                window.speechSynthesis.onvoiceschanged = selectJarvisMaleVoice;
             }
 
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1388,7 +1396,7 @@
 
             recognition.onspeechend = () => {
                 if (isRecordingCommand && !isBusy) {
-                    scheduleSilenceCutoff(650);
+                    scheduleSilenceCutoff(850);
                 }
             };
 
@@ -1419,7 +1427,7 @@
                         commandBuffer = "";
                         latestInterimBuffer = "";
                         updateSystemStatus('user_speaking');
-                        appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Botão de gravação ATIVO.', 'log-sys');
+                        appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Escutando comando...', 'log-sys');
 
                         const afterWake = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok)?\s*jarvis[,.\s!?-]*/i, '').trim();
                         if (afterWake) {
@@ -1428,7 +1436,7 @@
                             } else {
                                 latestInterimBuffer = afterWake;
                             }
-                            scheduleSilenceCutoff(1400);
+                            scheduleSilenceCutoff(1350);
                         } else {
                             scheduleSilenceCutoff(3200);
                         }
@@ -1443,7 +1451,7 @@
                         commandBuffer = (commandBuffer + ' ' + cleanedFinal).trim();
                         latestInterimBuffer = "";
                     }
-                    scheduleSilenceCutoff(1200);
+                    scheduleSilenceCutoff(1250);
                 } else if (interimTranscript.trim()) {
                     const cleanedInterim = interimTranscript.replace(/^.*?\b(ei|hey|oi|ok)?\s*jarvis[,.\s!?-]*/i, '').trim();
                     if (cleanedInterim) {
@@ -1453,7 +1461,11 @@
                 }
             };
 
-            recognition.onerror = () => {};
+            recognition.onerror = (event) => {
+                if (event.error === 'not-allowed') {
+                    appendLog('SYSTEM', 'Permissão de microfone negada no navegador.', 'log-err');
+                }
+            };
 
             recognition.onend = () => {
                 isListening = false;
@@ -1490,9 +1502,9 @@
             isRecordingCommand = false;
 
             stopRecognitionSafe();
-            updateSystemStatus(finalCmd ? 'thinking' : 'standby');
 
             if (!finalCmd) {
+                updateSystemStatus('standby');
                 appendLog('SYSTEM', 'Gravação encerrada (nenhum comando detectado).', 'log-sys');
                 setTimeout(() => startRecognitionSafe(), 300);
                 return;
@@ -1520,15 +1532,23 @@
             isListening = false;
         }
 
-        function releaseSpeechLock() {
+        function clearSpeechTimers() {
             if (speechSafetyTimer) {
                 clearTimeout(speechSafetyTimer);
                 speechSafetyTimer = null;
+            }
+            if (speechKeepAliveTimer) {
+                clearInterval(speechKeepAliveTimer);
+                speechKeepAliveTimer = null;
             }
             if (commandSilenceTimer) {
                 clearTimeout(commandSilenceTimer);
                 commandSilenceTimer = null;
             }
+        }
+
+        function releaseSpeechLock() {
+            clearSpeechTimers();
             isBusy = false;
             isRecordingCommand = false;
             commandBuffer = "";
@@ -1539,9 +1559,36 @@
             }, 350);
         }
 
+        function splitTextForNaturalSpeech(fullText) {
+            const clean = fullText.replace(/[*#_`~]/g, '').replace(/\s+/g, ' ').trim();
+            if (!clean) return [];
+            const rawParts = clean.match(/[^.!?;:]+[.!?;:]*/g) || [clean];
+            const chunks = [];
+            for (const part of rawParts) {
+                const trimmed = part.trim();
+                if (!trimmed) continue;
+                if (trimmed.length <= 135) {
+                    chunks.push(trimmed);
+                } else {
+                    const subParts = trimmed.split(/,\s+/);
+                    let current = "";
+                    for (const sp of subParts) {
+                        if ((current + ", " + sp).length > 135 && current) {
+                            chunks.push(current.trim());
+                            current = sp;
+                        } else {
+                            current = current ? `${current}, ${sp}` : sp;
+                        }
+                    }
+                    if (current.trim()) chunks.push(current.trim());
+                }
+            }
+            return chunks;
+        }
+
         function speakText(text) {
             return new Promise((resolve) => {
-                if (!('speechSynthesis' in window)) {
+                if (!('speechSynthesis' in window) || !text) {
                     releaseSpeechLock();
                     resolve();
                     return;
@@ -1550,15 +1597,17 @@
                 isBusy = true;
                 stopRecognitionSafe();
                 updateSystemStatus('speaking');
+                clearSpeechTimers();
                 window.speechSynthesis.cancel();
 
-                if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
+                if (!selectedVoice) selectJarvisMaleVoice();
 
-                const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = 'pt-BR';
-                if (selectedVoice) utter.voice = selectedVoice;
-                utter.rate = 1.03;
-                utter.pitch = 0.92;
+                const chunks = splitTextForNaturalSpeech(text);
+                if (chunks.length === 0) {
+                    releaseSpeechLock();
+                    resolve();
+                    return;
+                }
 
                 let finished = false;
                 const finishOnce = () => {
@@ -1568,45 +1617,48 @@
                     resolve();
                 };
 
-                // Divide o texto por frases para evitar o corte automático de falas longas no Chrome/Safari mobile
-                const sentences = text
-                    .match(/[^.!?]+[.!?]*/g)
-                    ?.map(s => s.trim())
-                    .filter(Boolean) || [text];
+                // Mantém o sintetizador ativo no Safari/Chrome mobile para nunca cortar respostas longas
+                speechKeepAliveTimer = setInterval(() => {
+                    if (!finished && window.speechSynthesis.speaking) {
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }
+                }, 4500);
 
-                // Tempo de segurança generoso proporcional ao tamanho total do texto
-                const estimatedMs = Math.max(8000, text.length * 160);
-                speechSafetyTimer = setTimeout(finishOnce, estimatedMs);
+                const totalTimeoutMs = Math.max(15000, text.length * 220);
+                speechSafetyTimer = setTimeout(finishOnce, totalTimeoutMs);
 
-                let currentIdx = 0;
+                let idx = 0;
 
-                const speakNextSentence = () => {
+                const speakChunk = () => {
                     if (finished) return;
-                    if (currentIdx >= sentences.length) {
+                    if (idx >= chunks.length) {
                         finishOnce();
                         return;
                     }
 
-                    const utter = new SpeechSynthesisUtterance(sentences[currentIdx]);
+                    const utter = new SpeechSynthesisUtterance(chunks[idx]);
                     utter.lang = 'pt-BR';
                     if (selectedVoice) utter.voice = selectedVoice;
-                    utter.rate = 1.03;
-                    utter.pitch = 0.92;
+                    // Timbre masculino grave e pausado estilo JARVIS oficial
+                    utter.rate = 0.98;
+                    utter.pitch = 0.78;
+                    utter.volume = 1.0;
 
                     utter.onend = () => {
-                        currentIdx++;
-                        speakNextSentence();
+                        idx++;
+                        setTimeout(speakChunk, 45);
                     };
 
                     utter.onerror = () => {
-                        currentIdx++;
-                        speakNextSentence();
+                        idx++;
+                        setTimeout(speakChunk, 45);
                     };
 
                     window.speechSynthesis.speak(utter);
                 };
 
-                speakNextSentence();
+                setTimeout(speakChunk, 60);
             });
         }
 
@@ -1641,7 +1693,7 @@
                 targetHeatLevel = 0.7;
                 dot.classList.add('thinking');
                 label.textContent = 'JARVIS FALANDO';
-                micLabel.textContent = 'DESTRAVAR MIC';
+                micLabel.textContent = 'INTERROMPER';
             } else {
                 targetHeatLevel = 0.25;
                 label.textContent = 'STANDBY ("EI JARVIS")';
@@ -1657,8 +1709,7 @@
 
         window.triggerManualMic = () => {
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
-            if (commandSilenceTimer) clearTimeout(commandSilenceTimer);
+            clearSpeechTimers();
 
             if (isRecordingCommand) {
                 finalizeRecordedCommand();
@@ -1675,8 +1726,118 @@
         };
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 5. BUSCA WEB EM TEMPO REAL + MOTOR DE IA GRATUITO SEM RESTRIÇÃO         */
+        /* 5. ABERTURA DE APLICATIVOS + BUSCA WEB EM TEMPO REAL + IA               */
         /* ═══════════════════════════════════════════════════════════════════════ */
+        function appendLog(author, text, cssClass, htmlContent = null) {
+            const logBox = document.getElementById('runLogBody');
+            if (!logBox) return;
+            const line = document.createElement('div');
+            line.className = cssClass;
+            if (htmlContent) {
+                line.innerHTML = htmlContent;
+            } else {
+                line.textContent = `${author}: ${text}`;
+            }
+            logBox.appendChild(line);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function parseOpenAppIntent(rawText) {
+            const norm = normalizeText(rawText);
+            const openTrigger = /^(jarvis[,.\s]*)?(abrir|abre|abra|iniciar|inicia|acessar|acessa|entrar no|entrar na|executar|colocar no|coloca no)\s+(.+)$/i;
+            const match = norm.match(openTrigger);
+            if (!match) return null;
+
+            let target = match[3]
+                .replace(/^(o|a|os|as|aplicativo|app|site|pagina|página)\s+/gi, '')
+                .replace(/\s+(por favor|agora|para mim|pra mim)$/gi, '')
+                .trim();
+
+            if (!target) return null;
+
+            // Busca direta dentro do YouTube ("abrir youtube e pesquisar ...")
+            const ytSearchMatch = target.match(/^youtube\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar)?\s*(.+)$/i);
+            if (ytSearchMatch && ytSearchMatch[1]) {
+                const query = ytSearchMatch[1].trim();
+                const webUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                return {
+                    appName: `YouTube (${query})`,
+                    url: webUrl,
+                    deepLink: `youtube://results?search_query=${encodeURIComponent(query)}`,
+                    reply: `Abrindo o YouTube e buscando por ${query}, ${CONFIG.address}.`
+                };
+            }
+
+            const appDirectory = [
+                { keys: ['youtube', 'you tube'], name: 'YouTube', url: 'https://www.youtube.com', deepLink: 'youtube://' },
+                { keys: ['whatsapp', 'whats', 'zap'], name: 'WhatsApp', url: 'https://web.whatsapp.com', deepLink: 'whatsapp://' },
+                { keys: ['spotify', 'musica', 'música'], name: 'Spotify', url: 'https://open.spotify.com', deepLink: 'spotify://' },
+                { keys: ['instagram', 'insta'], name: 'Instagram', url: 'https://www.instagram.com', deepLink: 'instagram://' },
+                { keys: ['gmail', 'email', 'e-mail'], name: 'Gmail', url: 'https://mail.google.com', deepLink: 'googlegmail://' },
+                { keys: ['maps', 'google maps', 'mapa', 'gps'], name: 'Google Maps', url: 'https://maps.google.com', deepLink: 'comgooglemaps://' },
+                { keys: ['netflix'], name: 'Netflix', url: 'https://www.netflix.com', deepLink: 'nflx://' },
+                { keys: ['github'], name: 'GitHub', url: 'https://github.com', deepLink: '' },
+                { keys: ['vercel'], name: 'Vercel', url: 'https://vercel.com', deepLink: '' },
+                { keys: ['chatgpt', 'chat gpt'], name: 'ChatGPT', url: 'https://chatgpt.com', deepLink: '' },
+                { keys: ['gemini'], name: 'Google Gemini', url: 'https://gemini.google.com', deepLink: '' },
+                { keys: ['google', 'navegador'], name: 'Google', url: 'https://www.google.com', deepLink: '' },
+                { keys: ['calculadora'], name: 'Calculadora', url: 'https://www.google.com/search?q=calculadora', deepLink: '' },
+                { keys: ['clima', 'tempo', 'previsao'], name: 'Previsão do Tempo', url: 'https://www.google.com/search?q=previsao+do+tempo', deepLink: '' }
+            ];
+
+            for (const app of appDirectory) {
+                if (app.keys.some(k => target === k || target.includes(k))) {
+                    return {
+                        appName: app.name,
+                        url: app.url,
+                        deepLink: app.deepLink,
+                        reply: `Abrindo ${app.name} agora mesmo, ${CONFIG.address}.`
+                    };
+                }
+            }
+
+            const displayTarget = target.charAt(0).toUpperCase() + target.slice(1);
+            return {
+                appName: displayTarget,
+                url: `https://www.google.com/search?q=${encodeURIComponent(target)}`,
+                deepLink: '',
+                reply: `Localizando e abrindo ${displayTarget} na rede, ${CONFIG.address}.`
+            };
+        }
+
+        function openExternalAppSafe(url, appName, deepLink = '') {
+            // Sempre disponibiliza o botão direto no terminal para acesso imediato com 1 toque
+            appendLog(
+                'APP LAUNCHER',
+                '',
+                'log-sys',
+                `<span style="color:#10b981;">APP:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2dd4ff; text-decoration:underline; font-weight:bold;">[ ↗ ABRIR ${appName.toUpperCase()} ]</a>`
+            );
+
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile && deepLink) {
+                try {
+                    window.location.href = deepLink;
+                    setTimeout(() => {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    }, 900);
+                    return;
+                } catch (e) {}
+            }
+
+            const win = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                // Fallback por âncora sintética quando pop-up é bloqueado
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
         function buildSystemInstruction() {
             let brainDump = "";
             Object.keys(AREA).forEach((key) => {
@@ -1689,9 +1850,9 @@
                 }
             });
 
-            return `Você é ${CONFIG.name}, assistente pessoal inteligente com personalidade ${CONFIG.persona}. Trate o usuário por ${CONFIG.address}.
+            return `Você é ${CONFIG.name}, o assistente de inteligência artificial pessoal de ${CONFIG.address}, com personalidade ${CONFIG.persona}.
 Regras obrigatórias:
-- Responda qualquer pergunta (notícias, cotações, fatos atuais, tecnologia, clima ou assuntos pessoais) em português do Brasil, de forma objetiva (2 a 4 frases) e natural para ser falada em voz alta.
+- Responda qualquer pergunta (notícias, cotações, fatos atuais, tecnologia, clima ou assuntos pessoais) em português do Brasil, de forma clara, completa e objetiva (2 a 4 frases) para ser falada em voz alta.
 - NÃO use markdown, asteriscos, colchetes ou emojis na resposta falada.
 - Se o usuário revelar um fato novo e duradouro sobre sua vida, projetos, metas, finanças ou rotina, termine sua resposta com uma linha no formato EXATO: [[SAVE:area|titulo|texto]] onde area é uma destas: metas, trabalho, projetos, financas, aprendizado, saude, relacoes, meta. Só inclua se houver novidade real.
 
@@ -1811,7 +1972,6 @@ ${brainDump}`;
             } else if (apiKey) {
                 candidateMatrix.push({ model: 'gemini-2.5-flash', key: apiKey, authMode: 'header', useSearch: true });
             }
-            candidateMatrix.push({ model: 'gemini-3-flash-preview', key: '', authMode: 'none', useSearch: true });
 
             for (const cand of candidateMatrix) {
                 const useQuery = cand.key && cand.authMode === 'query';
@@ -1825,7 +1985,7 @@ ${brainDump}`;
                 const bodyObj = {
                     system_instruction: { parts: [{ text: systemText }] },
                     contents: contentsPayload,
-                    generationConfig: { maxOutputTokens: 380, temperature: 0.7 }
+                    generationConfig: { maxOutputTokens: 420, temperature: 0.7 }
                 };
                 if (cand.useSearch) {
                     bodyObj.tools = [{ google_search: {} }];
@@ -1859,7 +2019,7 @@ ${brainDump}`;
             btn.textContent = '⏳ TESTANDO...';
             appendLog('DIAGNÓSTICO', 'Verificando motor de IA e busca em tempo real na internet...', 'log-sys');
 
-            const testQuestion = 'Qual a cotação do dólar hoje e confirme que a busca web está ativa em 1 frase.';
+            const testQuestion = 'Qual a cotação do dólar hoje e confirme que a busca web está ativa em uma frase curta.';
             const testContents = [{ role: 'user', parts: [{ text: testQuestion }] }];
             const result = await queryGeminiWithFallback(testContents, 'Você é Jarvis. Seja direto e breve.', testQuestion);
 
@@ -1871,13 +2031,13 @@ ${brainDump}`;
                 document.getElementById('dispGeminiStatus').style.color = '#10b981';
                 appendLog('REDE OK', `Motor [${result.model}] + Busca Web ATIVA!`, 'log-jarvis');
                 appendLog('JARVIS', result.text, 'log-jarvis');
-                speakText(result.text);
+                await speakText(result.text);
             } else {
                 document.getElementById('dispGeminiBar').style.color = '#ef4444';
                 document.getElementById('dispGeminiStatus').textContent = 'err';
                 document.getElementById('dispGeminiStatus').style.color = '#ef4444';
                 appendLog('FALHA REDE', `${result.error}`, 'log-err');
-                speakText(`Sem acesso à internet no momento, ${CONFIG.address}.`);
+                await speakText(`Sem acesso à internet no momento, ${CONFIG.address}.`);
             }
         }
 
@@ -1893,100 +2053,29 @@ ${brainDump}`;
             const appCommand = parseOpenAppIntent(userText);
             if (appCommand) {
                 appendLog('JARVIS', appCommand.reply, 'log-jarvis');
-                openExternalAppSafe(appCommand.url, appCommand.appName);
+                openExternalAppSafe(appCommand.url, appCommand.appName, appCommand.deepLink);
                 await speakText(appCommand.reply);
                 return;
             }
 
+            // 2. Consulta o motor de IA + Busca Web
             sessionHistory.push({
                 role: 'user',
                 parts: [{ text: userText }]
             });
-        function appendLog(author, text, cssClass, htmlContent = null) {
-            const logBox = document.getElementById('runLogBody');
-            const line = document.createElement('div');
-            line.className = cssClass;
-            if (htmlContent) {
-                line.innerHTML = htmlContent;
-            } else {
-                line.textContent = `${author}: ${text}`;
+
+            const systemPrompt = buildSystemInstruction();
+            const result = await queryGeminiWithFallback(sessionHistory.slice(-10), systemPrompt, userText);
+
+            if (!result.ok) {
+                document.getElementById('dispGeminiBar').style.color = '#ef4444';
+                document.getElementById('dispGeminiStatus').textContent = 'err';
+                document.getElementById('dispGeminiStatus').style.color = '#ef4444';
+                const failMsg = `Não consegui acessar a rede agora, ${CONFIG.address}. Verifique sua conexão.`;
+                appendLog('JARVIS', failMsg, 'log-err');
+                await speakText(failMsg);
+                return;
             }
-            logBox.appendChild(line);
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
-        function parseOpenAppIntent(rawText) {
-            const norm = normalizeText(rawText);
-            const openTrigger = /^(jarvis[,.\s]*)?(abrir|abre|abra|iniciar|inicia|acessar|acessa|entrar no|entrar na|executar)\s+(.+)$/i;
-            const match = norm.match(openTrigger);
-            if (!match) return null;
-
-            let target = match[3]
-                .replace(/^(o|a|os|as|aplicativo|app|site|pagina|página)\s+/gi, '')
-                .replace(/\s+(por favor|agora|para mim|pra mim)$/gi, '')
-                .trim();
-
-            if (!target) return null;
-
-            // Suporte a busca direta dentro do YouTube ("abrir youtube e pesquisar ...")
-            const ytSearchMatch = target.match(/^youtube\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar)?\s*(.+)$/i);
-            if (ytSearchMatch && ytSearchMatch[1]) {
-                const query = ytSearchMatch[1].trim();
-                return {
-                    appName: `YouTube (${query})`,
-                    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
-                    reply: `Abrindo o YouTube e buscando por ${query}, ${CONFIG.address}.`
-                };
-            }
-
-            const appDirectory = [
-                { keys: ['youtube', 'you tube'], name: 'YouTube', url: 'https://www.youtube.com' },
-                { keys: ['whatsapp', 'whats', 'zap'], name: 'WhatsApp', url: 'https://web.whatsapp.com' },
-                { keys: ['spotify', 'musica', 'música'], name: 'Spotify', url: 'https://open.spotify.com' },
-                { keys: ['instagram', 'insta'], name: 'Instagram', url: 'https://www.instagram.com' },
-                { keys: ['gmail', 'email', 'e-mail'], name: 'Gmail', url: 'https://mail.google.com' },
-                { keys: ['maps', 'google maps', 'mapa', 'gps'], name: 'Google Maps', url: 'https://maps.google.com' },
-                { keys: ['netflix'], name: 'Netflix', url: 'https://www.netflix.com' },
-                { keys: ['github'], name: 'GitHub', url: 'https://github.com' },
-                { keys: ['vercel'], name: 'Vercel', url: 'https://vercel.com' },
-                { keys: ['chatgpt', 'chat gpt'], name: 'ChatGPT', url: 'https://chatgpt.com' },
-                { keys: ['gemini'], name: 'Google Gemini', url: 'https://gemini.google.com' },
-                { keys: ['google', 'navegador'], name: 'Google', url: 'https://www.google.com' },
-                { keys: ['calculadora'], name: 'Calculadora', url: 'https://www.google.com/search?q=calculadora' },
-                { keys: ['clima', 'tempo', 'previsao'], name: 'Previsão do Tempo', url: 'https://www.google.com/search?q=previsao+do+tempo' }
-            ];
-
-            for (const app of appDirectory) {
-                if (app.keys.some(k => target === k || target.includes(k))) {
-                    return {
-                        appName: app.name,
-                        url: app.url,
-                        reply: `Abrindo ${app.name} agora mesmo, ${CONFIG.address}.`
-                    };
-                }
-            }
-
-            const displayTarget = target.charAt(0).toUpperCase() + target.slice(1);
-            return {
-                appName: displayTarget,
-                url: `https://www.google.com/search?q=${encodeURIComponent(target)}`,
-                reply: `Localizando e abrindo ${displayTarget} na rede, ${CONFIG.address}.`
-            };
-        }
-
-        function openExternalAppSafe(url, appName) {
-            const win = window.open(url, '_blank', 'noopener,noreferrer');
-            if (!win || win.closed || typeof win.closed === 'undefined') {
-                appendLog(
-                    'SYSTEM',
-                    '',
-                    'log-sys',
-                    `<span style="color:#fbbf24;">SYSTEM:</span> Toque para abrir <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2dd4ff; text-decoration:underline; font-weight:bold;">[ ↗ ABRIR ${appName.toUpperCase()} ]</a>`
-                );
-            } else {
-                appendLog('SYSTEM', `Aplicativo/Web iniciado: ${appName}`, 'log-sys');
-            }
-        }
 
             document.getElementById('dispGeminiBar').style.color = '#10b981';
             document.getElementById('dispGeminiStatus').textContent = 'ok';
@@ -2028,15 +2117,6 @@ ${brainDump}`;
             await speakText(replyText);
         }
 
-        function appendLog(author, text, cssClass) {
-            const logBox = document.getElementById('runLogBody');
-            const line = document.createElement('div');
-            line.className = cssClass;
-            line.textContent = `${author}: ${text}`;
-            logBox.appendChild(line);
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
         /* ═══════════════════════════════════════════════════════════════════════ */
         /* 6. EVENTOS DE INTERFACE E EDITOR DE NÓS                                 */
         /* ═══════════════════════════════════════════════════════════════════════ */
@@ -2049,7 +2129,14 @@ ${brainDump}`;
                 startSynapseLoop();
                 startPixelFaceHologram();
 
-                const welcome = `Núcleo neural e busca na web prontos, ${CONFIG.address}. Estou ouvindo.`;
+                // Desbloqueia áudio no primeiro clique
+                if ('speechSynthesis' in window) {
+                    selectJarvisMaleVoice();
+                    const unlock = new SpeechSynthesisUtterance(' ');
+                    window.speechSynthesis.speak(unlock);
+                }
+
+                const welcome = `Sistemas online e protocolos de voz ativos, ${CONFIG.address}. Estou à sua disposição.`;
                 appendLog('JARVIS', welcome, 'log-jarvis');
                 speakText(welcome);
             });
