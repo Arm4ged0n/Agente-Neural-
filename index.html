@@ -167,7 +167,7 @@
             width: 0%;
             background: linear-gradient(90deg, var(--gold-neural), var(--red-reactor));
             box-shadow: 0 0 15px var(--gold-neural);
-            animation: bootFill 1.5s ease-out forwards;
+            animation: bootFill 1.35s ease-out forwards;
         }
 
         @keyframes bootFill {
@@ -213,12 +213,12 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.65rem 1rem;
+            gap: 0.5rem;
+            padding: 0.6rem 0.9rem;
             border-bottom: 1px solid var(--border-dim);
             background: rgba(4, 6, 10, 0.9);
             backdrop-filter: blur(8px);
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             letter-spacing: 1px;
             z-index: 20;
         }
@@ -226,7 +226,7 @@
         .telemetry-metrics {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.85rem;
+            gap: 0.75rem;
             color: var(--text-dim);
         }
 
@@ -238,14 +238,8 @@
         .top-right-controls {
             display: flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
-        }
-
-        .api-input-wrap {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
         }
 
         .api-input {
@@ -254,39 +248,20 @@
             border-radius: 4px;
             color: var(--gold-neural);
             font-family: var(--font-mono);
-            font-size: 0.72rem;
-            padding: 0.35rem 0.6rem;
-            width: 165px;
+            font-size: 0.68rem;
+            padding: 0.3rem 0.5rem;
+            width: 130px;
             outline: none;
-        }
-
-        .api-input:focus {
-            border-color: var(--gold-neural);
-            box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
-        }
-
-        .key-badge {
-            font-size: 0.65rem;
-            color: var(--green-ok);
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.45);
-            padding: 0.25rem 0.45rem;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .key-badge.saved {
-            display: inline-block;
         }
 
         .live-pill {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.35rem;
             font-weight: 700;
-            font-size: 0.68rem;
-            letter-spacing: 1.5px;
-            padding: 0.25rem 0.55rem;
+            font-size: 0.64rem;
+            letter-spacing: 1px;
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-dim);
@@ -296,8 +271,8 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: var(--gold-neural);
-            box-shadow: 0 0 8px var(--gold-neural);
+            background: var(--green-ok);
+            box-shadow: 0 0 8px var(--green-ok);
         }
 
         .live-dot.listening {
@@ -347,7 +322,7 @@
             align-items: center;
             justify-content: center;
             pointer-events: none;
-            z-index: 2;
+            z-index: 7;
         }
 
         .core-brain-hub {
@@ -373,7 +348,7 @@
 
         body.voice-hot .core-brain-hub,
         body.voice-speaking .core-brain-hub {
-            opacity: 0.18;
+            opacity: 0.25;
         }
 
         .core-label {
@@ -445,7 +420,7 @@
         .command-controls-bar {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.45rem;
             padding: 0.55rem 0.85rem;
             background: rgba(6, 8, 12, 0.96);
             border-top: 1px solid var(--border-dim);
@@ -458,24 +433,29 @@
             border: 1px solid var(--border-bright);
             color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            padding: 0.55rem 0.75rem;
+            letter-spacing: 0.8px;
+            padding: 0.52rem 0.68rem;
             border-radius: 5px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.3rem;
             white-space: nowrap;
             transition: all 0.2s ease;
+        }
+
+        .btn-hud.mic-standby {
+            border-color: var(--green-ok);
+            color: var(--green-ok);
         }
 
         .btn-hud.mic-active {
             background: linear-gradient(135deg, #dc2626, #ff3d00);
             border-color: #fff;
             color: #fff;
-            box-shadow: 0 0 22px rgba(255, 61, 0, 0.8);
+            box-shadow: 0 0 22px rgba(255, 61, 0, 0.85);
             animation: pulseMicBtn 1s infinite;
         }
 
@@ -493,7 +473,7 @@
             color: #fff;
             font-family: var(--font-mono);
             font-size: 0.76rem;
-            padding: 0.55rem 0.75rem;
+            padding: 0.52rem 0.7rem;
             outline: none;
         }
 
@@ -685,17 +665,15 @@
             <div class="telemetry-metrics">
                 <span>GRAPH <b>jarvis-sandro-07</b></span>
                 <span>NODES <b id="statNodes">8</b></span>
-                <span>EDGES <b id="statEdges">21</b></span>
+                <span>EDGES <b id="statEdges">19</b></span>
                 <span>FRAME <b id="statFrame">0001</b></span>
             </div>
 
             <div class="top-right-controls">
-                <div class="api-input-wrap">
-                    <input type="password" id="apiKeyInput" class="api-input" placeholder="Opcional: AIza... (Motor Livre Ativo)">
-                    <span id="keyBadge" class="key-badge saved">🌐 WEB FREE</span>
-                </div>
-                <button class="btn-hud" id="btnTestApi" style="padding: 0.32rem 0.55rem; border-color: #2dd4ff; color: #2dd4ff;">⚡ TESTAR API</button>
-                <button class="btn-hud" id="btnAddNode" style="padding: 0.32rem 0.55rem;">+ NÓ</button>
+                <button class="btn-hud" id="btnVoiceMode" style="padding: 0.3rem 0.5rem; border-color: var(--gold-neural); color: var(--gold-neural);" title="Alternar motor de áudio do Jarvis">🔊 ÁUDIO: NEURAL</button>
+                <input type="password" id="apiKeyInput" class="api-input" placeholder="AIza... (Opcional)">
+                <button class="btn-hud" id="btnTestApi" style="padding: 0.3rem 0.5rem; border-color: #2dd4ff; color: #2dd4ff;">⚡ TESTAR</button>
+                <button class="btn-hud" id="btnAddNode" style="padding: 0.3rem 0.5rem;">+ NÓ</button>
                 <div class="live-pill">
                     <span class="live-dot" id="liveDot"></span>
                     <span id="statusText">STANDBY</span>
@@ -726,11 +704,11 @@
         </main>
 
         <section class="command-controls-bar">
-            <button class="btn-hud" id="btnMic">
+            <button class="btn-hud mic-standby" id="btnMic">
                 <span>🎙️</span>
                 <span id="micLabel">EI, JARVIS</span>
             </button>
-            <input type="text" id="textCommandInput" class="cmd-text-input" placeholder="Diga 'Ei Jarvis' ou digite qualquer pergunta...">
+            <input type="text" id="textCommandInput" class="cmd-text-input" placeholder="Fale 'Ei Jarvis' ou toque no botão / digite...">
             <button class="btn-hud" id="btnStopSpeech" title="Parar fala / Destravar">⏹️ PARAR</button>
         </section>
 
@@ -741,8 +719,8 @@
                     <span id="clockTelemetry">T 00:00</span>
                 </div>
                 <div class="run-log-body" id="runLogBody">
-                    <div class="log-sys">graph.load nodes=8 edges=21 ctx=sandro_fagundes</div>
-                    <div class="log-sys">web.engine free_ai+wiki+ddg status=READY</div>
+                    <div class="log-sys">graph.load nodes=8 edges=19 ctx=sandro_fagundes</div>
+                    <div class="log-sys">core.ready wake_word="ei jarvis"</div>
                 </div>
             </div>
 
@@ -752,7 +730,7 @@
                     <span style="color: #10b981;">ACTIVE</span>
                 </div>
                 <div class="dispatch-list">
-                    <div class="dispatch-row"><span>m1.voice</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
+                    <div class="dispatch-row"><span>m1.voice</span><span class="bar-tracks">██████████</span><span id="dispVoiceStatus" style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m2.ai_net</span><span class="bar-tracks" id="dispGeminiBar">██████████</span><span id="dispGeminiStatus" style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m3.holo3d</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
                     <div class="dispatch-row"><span>m4.apps</span><span class="bar-tracks">██████████</span><span style="color:#10b981;">ok</span></div>
@@ -766,7 +744,7 @@
                 </div>
                 <div class="graph-cost-grid">
                     <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
-                        <div style="display:flex; justify-content:space-between;"><span>edges</span><b style="color:#fff;">21</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>edges</span><b style="color:#fff;">19</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>readers</span><b style="color:#fff;">14</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>nodes</span><b style="color:#fff;" id="costNodesCount">8</b></div>
                     </div>
@@ -817,7 +795,7 @@
 
     <script>
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 1. CONFIGURAÇÃO GLOBAL & PERSISTÊNCIA DE API KEY                        */
+        /* 1. CONFIGURAÇÃO GLOBAL & PERSISTÊNCIA                                   */
         /* ═══════════════════════════════════════════════════════════════════════ */
         const DEFAULT_GEMINI_API_KEY = "";
 
@@ -859,14 +837,20 @@
         let sessionHistory = [];
         let isBusy = false;
         let isListening = false;
+        let shouldAutoListen = false;
         let isRecordingCommand = false;
         let commandBuffer = "";
         let latestInterimBuffer = "";
         let commandSilenceTimer = null;
+        let micHardTimeoutTimer = null;
         let speechSafetyTimer = null;
         let speechKeepAliveTimer = null;
         let recognition = null;
         let selectedVoice = null;
+        let voiceEngineMode = 'neural';
+        let audioCtx = null;
+        let activeAudioSource = null;
+        let jarvisAudio = null;
         let editingNoteId = null;
         let targetHeatLevel = 0.25;
         let currentHeatLevel = 0.25;
@@ -878,15 +862,6 @@
                 const ls = localStorage.getItem('jarvis_gemini_key');
                 if (ls) { memoryApiKey = ls; return ls; }
             } catch (e) {}
-            try {
-                const ss = sessionStorage.getItem('jarvis_gemini_key');
-                if (ss) { memoryApiKey = ss; return ss; }
-            } catch (e) {}
-            const cookieMatch = document.cookie.match(/(?:^|;\s*)jarvis_gemini_key=([^;]+)/);
-            if (cookieMatch) {
-                memoryApiKey = decodeURIComponent(cookieMatch[1]);
-                return memoryApiKey;
-            }
             if (DEFAULT_GEMINI_API_KEY) {
                 memoryApiKey = DEFAULT_GEMINI_API_KEY;
                 return memoryApiKey;
@@ -897,20 +872,21 @@
         function saveApiKeyForever(rawKey) {
             const clean = (rawKey || '').replace(/["'\s\r\n]+/g, '');
             memoryApiKey = clean;
-            const badge = document.getElementById('keyBadge');
-            badge.classList.add('saved');
-            badge.textContent = clean.startsWith('AIza') ? '🔑 AIza OK' : '🌐 WEB FREE';
             try { localStorage.setItem('jarvis_gemini_key', clean); } catch (e) {}
-            try { sessionStorage.setItem('jarvis_gemini_key', clean); } catch (e) {}
-            try {
-                document.cookie = `jarvis_gemini_key=${encodeURIComponent(clean)}; max-age=315360000; path=/; SameSite=Lax`;
-            } catch (e) {}
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 2. INICIALIZAÇÃO IMEDIATA E SEGURA                                      */
+        /* 2. INICIALIZAÇÃO DO BOOT, GRAFO ORBITAL & LOOP DE SINAPSES              */
         /* ═══════════════════════════════════════════════════════════════════════ */
-        function bootJarvisApp() {
+        let nodeCoords = {};
+        let synapseRunning = false;
+        let holoRunning = false;
+        let appInitialized = false;
+
+        function initJarvisApp() {
+            if (appInitialized) return;
+            appInitialized = true;
+
             try {
                 const storedNotes = localStorage.getItem('jarvis_notes');
                 if (storedNotes) {
@@ -919,489 +895,719 @@
                 }
             } catch (e) {}
 
-            const existingKey = getSavedApiKey();
-            const keyInput = document.getElementById('apiKeyInput');
-            if (existingKey && keyInput) {
-                keyInput.value = existingKey;
-                saveApiKeyForever(existingKey);
-            }
-            if (keyInput) {
-                keyInput.addEventListener('input', (e) => saveApiKeyForever(e.target.value));
-                keyInput.addEventListener('change', (e) => saveApiKeyForever(e.target.value));
+            const apiInput = document.getElementById('apiKeyInput');
+            if (apiInput) {
+                const saved = getSavedApiKey();
+                if (saved) apiInput.value = saved;
+                apiInput.addEventListener('input', (e) => saveApiKeyForever(e.target.value));
             }
 
-            bindUIEvents();
             setupSpeechEngine();
+            bindUIEvents();
 
-            setInterval(() => {
+            const updateClock = () => {
                 const now = new Date();
                 const hh = String(now.getHours()).padStart(2, '0');
                 const mm = String(now.getMinutes()).padStart(2, '0');
                 const clockEl = document.getElementById('clockTelemetry');
                 if (clockEl) clockEl.textContent = `T ${hh}:${mm}`;
-            }, 1000);
+            };
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            window.addEventListener('resize', () => {
+                renderNeuralCommandGraph();
+            });
 
             setTimeout(() => {
-                const boot = document.getElementById('bootScreen');
-                const act = document.getElementById('activationScreen');
-                if (boot) boot.classList.add('hidden');
-                if (act) act.classList.remove('hidden');
-            }, 1500);
+                const bootEl = document.getElementById('bootScreen');
+                const actEl = document.getElementById('activationScreen');
+                if (bootEl) bootEl.classList.add('hidden');
+                if (actEl) actEl.classList.remove('hidden');
+            }, 1350);
         }
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', bootJarvisApp);
+            document.addEventListener('DOMContentLoaded', initJarvisApp);
         } else {
-            bootJarvisApp();
+            initJarvisApp();
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 3A. RENDERIZAÇÃO DOS CARDS ORBITAIS (SECOND BRAIN)                      */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         function renderNeuralCommandGraph(highlightId = null) {
+            const stage = document.getElementById('neuralStage');
             const layer = document.getElementById('orbitNodesLayer');
-            if (!layer) return;
+            if (!stage || !layer) return;
+
+            const w = stage.clientWidth || window.innerWidth;
+            const h = stage.clientHeight || 420;
+            const cx = w / 2;
+            const cy = h / 2;
+            const rx = Math.max(95, Math.min(w * 0.36, 250));
+            const ry = Math.max(95, Math.min(h * 0.37, 175));
+
             layer.innerHTML = '';
+            nodeCoords = {};
 
             const isHot = document.body.classList.contains('voice-hot');
             const isSpeaking = document.body.classList.contains('voice-speaking');
-            const total = NOTES.length;
-
-            document.getElementById('statNodes').textContent = total;
-            document.getElementById('costNodesCount').textContent = total;
-            document.getElementById('statEdges').textContent = EDGES.length + total;
 
             NOTES.forEach((note, idx) => {
-                const angle = (idx / total) * Math.PI * 2 - Math.PI / 2;
-                const rx = window.innerWidth < 640 ? 37 : 38;
-                const ry = window.innerWidth < 640 ? 36 : 36;
-                const leftPct = 50 + Math.cos(angle) * rx;
-                const topPct = 50 + Math.sin(angle) * ry;
+                const angle = (idx / Math.max(NOTES.length, 1)) * Math.PI * 2 - Math.PI / 2;
+                const x = cx + Math.cos(angle) * rx;
+                const y = cy + Math.sin(angle) * ry;
+                const areaInfo = AREA[note.area] || { label: 'Nota', color: '#94a3b8' };
+                const activeColor = isHot ? '#ff3d00' : (isSpeaking ? '#2dd4ff' : areaInfo.color);
 
-                const areaMeta = AREA[note.area] || AREA.meta;
-                const borderColor = isHot ? '#ff3d00' : (isSpeaking ? '#38bdf8' : areaMeta.color);
+                nodeCoords[note.id] = { x, y, color: activeColor };
 
                 const card = document.createElement('div');
                 card.className = 'node-card';
-                card.style.left = `${leftPct}%`;
-                card.style.top = `${topPct}%`;
-                card.style.borderTopColor = borderColor;
-                if (highlightId === note.id || isHot) {
-                    card.style.boxShadow = `0 0 18px ${borderColor}55`;
+                card.style.left = `${x}px`;
+                card.style.top = `${y}px`;
+                card.style.borderTopColor = activeColor;
+                if (highlightId && String(highlightId) === String(note.id)) {
+                    card.style.boxShadow = `0 0 22px ${activeColor}`;
+                    card.style.borderColor = activeColor;
                 }
 
+                const numLabel = `#${String(idx + 1).padStart(2, '0')}`;
                 card.innerHTML = `
-                    <div class="node-card-head" style="color:${borderColor};">
-                        <span>${areaMeta.label}</span>
-                        <span>#0${note.id}</span>
+                    <div class="node-card-head" style="color:${activeColor}">
+                        <span>${areaInfo.label}</span>
+                        <span>${numLabel}</span>
                     </div>
-                    <div class="node-card-title">${note.title}</div>
-                    <div class="node-card-body">${note.body}</div>
+                    <div class="node-card-title"></div>
+                    <div class="node-card-body"></div>
                 `;
+                card.querySelector('.node-card-title').textContent = note.title;
+                card.querySelector('.node-card-body').textContent = note.body;
                 card.addEventListener('click', () => window.openNodeModal(note.id));
                 layer.appendChild(card);
             });
+
+            const statNodes = document.getElementById('statNodes');
+            const costNodes = document.getElementById('costNodesCount');
+            const statEdges = document.getElementById('statEdges');
+            if (statNodes) statNodes.textContent = String(NOTES.length);
+            if (costNodes) costNodes.textContent = String(NOTES.length);
+            if (statEdges) statEdges.textContent = String(EDGES.length + NOTES.length);
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 3B. SINAPSES, FAÍSCAS E RAIOS INTERNOS                                  */
-        /* ═══════════════════════════════════════════════════════════════════════ */
         function startSynapseLoop() {
+            if (synapseRunning) return;
+            synapseRunning = true;
+
             const canvas = document.getElementById('synapseCanvas');
-            if (!canvas) return;
+            const stage = document.getElementById('neuralStage');
+            if (!canvas || !stage) return;
             const ctx = canvas.getContext('2d');
 
-            function resizeSynapse() {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                canvas.width = rect.width || window.innerWidth;
-                canvas.height = rect.height || 420;
-            }
-            resizeSynapse();
-            window.addEventListener('resize', resizeSynapse);
-
-            const sparks = Array.from({ length: 42 }, () => ({
+            const sparks = Array.from({ length: 34 }, () => ({
                 angle: Math.random() * Math.PI * 2,
-                dist: 20 + Math.random() * 140,
-                speed: 0.01 + Math.random() * 0.025,
-                size: 1 + Math.random() * 1.8
+                radius: 25 + Math.random() * 125,
+                speed: (Math.random() * 0.02 + 0.006) * (Math.random() > 0.5 ? 1 : -1),
+                size: Math.random() * 1.8 + 0.6
             }));
 
-            function drawBolt(x1, y1, x2, y2, displace, alpha) {
-                if (displace < 3) {
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.strokeStyle = `rgba(255, 220, 140, ${alpha})`;
-                    ctx.lineWidth = 1.1;
-                    ctx.stroke();
-                    return;
-                }
-                const midX = (x1 + x2) / 2 + (Math.random() - 0.5) * displace;
-                const midY = (y1 + y2) / 2 + (Math.random() - 0.5) * displace;
-                drawBolt(x1, y1, midX, midY, displace / 2, alpha);
-                drawBolt(midX, midY, x2, y2, displace / 2, alpha);
-            }
+            let t = 0;
 
-            function renderLoop() {
+            function drawSynapses() {
+                const w = stage.clientWidth || window.innerWidth;
+                const h = stage.clientHeight || 420;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+                if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+                    canvas.width = Math.floor(w * dpr);
+                    canvas.height = Math.floor(h * dpr);
+                }
+
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.clearRect(0, 0, w, h);
+
+                t += 0.025;
+                currentHeatLevel += (targetHeatLevel - currentHeatLevel) * 0.08;
+
+                const cx = w / 2;
+                const cy = h / 2;
+                const isHot = document.body.classList.contains('voice-hot');
+                const isSpeaking = document.body.classList.contains('voice-speaking');
+
+                const primaryRGB = isHot ? '255, 61, 0' : (isSpeaking ? '45, 212, 255' : '251, 191, 36');
+                const secondaryRGB = isHot ? '255, 180, 60' : (isSpeaking ? '125, 211, 252' : '217, 119, 6');
+
+                ctx.lineWidth = 1;
+                EDGES.forEach(([aId, bId], i) => {
+                    const a = nodeCoords[aId];
+                    const b = nodeCoords[bId];
+                    if (!a || !b) return;
+
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    const mx = (a.x + b.x) / 2 + Math.sin(t + i) * 8;
+                    const my = (a.y + b.y) / 2 + Math.cos(t + i) * 8;
+                    ctx.quadraticCurveTo(mx, my, b.x, b.y);
+                    ctx.strokeStyle = `rgba(${primaryRGB}, ${0.14 + currentHeatLevel * 0.18})`;
+                    ctx.stroke();
+                });
+
+                Object.values(nodeCoords).forEach((pos, idx) => {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.strokeStyle = `rgba(${primaryRGB}, ${0.12 + currentHeatLevel * 0.16})`;
+                    ctx.stroke();
+
+                    const pulse = (t * (0.45 + currentHeatLevel * 0.65) + idx * 0.19) % 1;
+                    const px = cx + (pos.x - cx) * pulse;
+                    const py = cy + (pos.y - cy) * pulse;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 1.8 + currentHeatLevel, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${secondaryRGB}, 0.85)`;
+                    ctx.fill();
+                });
+
+                const boltCount = isHot ? 7 : (isSpeaking ? 5 : 2);
+                const maxBoltR = Math.min(w, h) * 0.34;
+                for (let b = 0; b < boltCount; b++) {
+                    if (Math.random() > 0.38 + currentHeatLevel * 0.45) continue;
+                    const ang = Math.random() * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    let r = 18;
+                    while (r < maxBoltR) {
+                        r += 14 + Math.random() * 14;
+                        const jitter = (Math.random() - 0.5) * (0.22 + currentHeatLevel * 0.25);
+                        ctx.lineTo(cx + Math.cos(ang + jitter) * r, cy + Math.sin(ang + jitter) * r);
+                    }
+                    ctx.strokeStyle = `rgba(${secondaryRGB}, ${0.22 + currentHeatLevel * 0.45})`;
+                    ctx.lineWidth = isHot ? 1.4 : 1;
+                    ctx.stroke();
+                }
+
+                sparks.forEach((sp) => {
+                    sp.angle += sp.speed * (1 + currentHeatLevel * 2.2);
+                    const x = cx + Math.cos(sp.angle) * sp.radius;
+                    const y = cy + Math.sin(sp.angle) * sp.radius;
+                    ctx.beginPath();
+                    ctx.arc(x, y, sp.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${primaryRGB}, ${0.35 + currentHeatLevel * 0.45})`;
+                    ctx.fill();
+                });
+
                 frameCounter++;
-                if (frameCounter % 4 === 0) {
+                if (frameCounter % 6 === 0) {
                     const frameEl = document.getElementById('statFrame');
                     if (frameEl) frameEl.textContent = String(frameCounter).padStart(4, '0');
                 }
 
-                currentHeatLevel += (targetHeatLevel - currentHeatLevel) * 0.08;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                const cx = canvas.width / 2;
-                const cy = canvas.height / 2;
-                const isHot = document.body.classList.contains('voice-hot');
-                const isSpeaking = document.body.classList.contains('voice-speaking');
-
-                const rx = canvas.width * (window.innerWidth < 640 ? 0.37 : 0.38);
-                const ry = canvas.height * 0.36;
-                const total = NOTES.length;
-
-                NOTES.forEach((_, idx) => {
-                    const angle = (idx / total) * Math.PI * 2 - Math.PI / 2;
-                    const nx = cx + Math.cos(angle) * rx;
-                    const ny = cy + Math.sin(angle) * ry;
-
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    ctx.lineTo(nx, ny);
-                    ctx.strokeStyle = isHot
-                        ? 'rgba(255, 61, 0, 0.45)'
-                        : (isSpeaking ? 'rgba(56, 189, 248, 0.32)' : 'rgba(251, 191, 36, 0.16)');
-                    ctx.lineWidth = isHot ? 1.3 : 0.8;
-                    ctx.stroke();
-                });
-
-                sparks.forEach(sp => {
-                    sp.angle += sp.speed * (0.6 + currentHeatLevel * 2.2);
-                    const x = cx + Math.cos(sp.angle) * sp.dist;
-                    const y = cy + Math.sin(sp.angle) * sp.dist;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, sp.size, 0, Math.PI * 2);
-                    ctx.fillStyle = isHot
-                        ? 'rgba(255, 243, 176, 0.9)'
-                        : (isSpeaking ? 'rgba(125, 249, 255, 0.7)' : 'rgba(251, 191, 36, 0.45)');
-                    ctx.fill();
-                });
-
-                if (isHot || Math.random() < 0.14) {
-                    const boltCount = isHot ? 3 : 1;
-                    for (let b = 0; b < boltCount; b++) {
-                        const a = Math.random() * Math.PI * 2;
-                        const len = (isHot ? 95 : 55) + Math.random() * 45;
-                        drawBolt(
-                            cx,
-                            cy,
-                            cx + Math.cos(a) * len,
-                            cy + Math.sin(a) * len,
-                            isHot ? 26 : 14,
-                            isHot ? 0.75 : 0.32
-                        );
-                    }
-                }
-
-                requestAnimationFrame(renderLoop);
+                requestAnimationFrame(drawSynapses);
             }
-            requestAnimationFrame(renderLoop);
+
+            requestAnimationFrame(drawSynapses);
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 3C. HOLOGRAMA COMPUTACIONAL 3D (MALHA NEURAL & NUVEM DE VÉRTICES)       */
+        /* 3. HOLOGRAMA ORIGINAL (MALHA GEODÉSICA OVAL 3D + ANÉIS + RAIOS RETOS)   */
         /* ═══════════════════════════════════════════════════════════════════════ */
         function startPixelFaceHologram() {
+            if (holoRunning) return;
+            holoRunning = true;
+
             const canvas = document.getElementById('pixelFaceCanvas');
-            if (!canvas) return;
+            const stage = document.getElementById('neuralStage');
+            if (!canvas || !stage) return;
             const ctx = canvas.getContext('2d');
 
-            function resizeFaceCanvas() {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                canvas.width = rect.width || window.innerWidth;
-                canvas.height = rect.height || 420;
-            }
-            resizeFaceCanvas();
-            window.addEventListener('resize', resizeFaceCanvas);
+            const latBands = 18;
+            const lonBands = 24;
+            const meshPoints = [];
 
-            const rows = 26;
-            const cols = 28;
-            const meshVertices = [];
-
-            for (let r = 0; r <= rows; r++) {
-                const v = r / rows;
+            for (let i = 0; i <= latBands; i++) {
+                const v = i / latBands;
                 const phi = v * Math.PI;
-                const rowList = [];
+                for (let j = 0; j < lonBands; j++) {
+                    const theta = (j / lonBands) * Math.PI * 2;
+                    const sinPhi = Math.sin(phi);
+                    const cosPhi = Math.cos(phi);
 
-                for (let c = 0; c <= cols; c++) {
-                    const u = c / cols;
-                    const theta = (u - 0.5) * Math.PI * 1.08;
+                    let rx = 0.72 * sinPhi;
+                    let ry = 1.04 * (-cosPhi);
+                    let rz = 0.72 * sinPhi;
 
-                    let rx = Math.sin(phi) * 0.78;
-                    let ry = -Math.cos(phi) * 1.05;
-                    let rz = Math.sin(phi) * Math.cos(theta) * 0.85;
-
-                    if (v > 0.52) {
-                        const jawT = (v - 0.52) / 0.48;
-                        rx *= (1 - jawT * 0.36);
-                        rz *= (1 - jawT * 0.18);
+                    if (v > 0.62) {
+                        const taper = (v - 0.62) / 0.38;
+                        rx *= (1 - taper * 0.22);
+                        rz *= (1 - taper * 0.16);
                     }
 
-                    const eyeDistL = Math.hypot(u - 0.34, v - 0.43);
-                    const eyeDistR = Math.hypot(u - 0.66, v - 0.43);
-                    if (eyeDistL < 0.11) rz -= (0.11 - eyeDistL) * 1.45;
-                    if (eyeDistR < 0.11) rz -= (0.11 - eyeDistR) * 1.45;
-
-                    const noseX = Math.abs(u - 0.5);
-                    if (noseX < 0.09 && v > 0.38 && v < 0.63) {
-                        const noseProfile = Math.sin(((v - 0.38) / 0.25) * Math.PI);
-                        rz += (0.09 - noseX) * 2.8 * noseProfile;
-                    }
-
-                    const cheekL = Math.hypot(u - 0.27, v - 0.54);
-                    const cheekR = Math.hypot(u - 0.73, v - 0.54);
-                    if (cheekL < 0.14) rz += (0.14 - cheekL) * 0.65;
-                    if (cheekR < 0.14) rz += (0.14 - cheekR) * 0.65;
-
-                    const isBrowZone = (v > 0.35 && v < 0.39) && ((u > 0.23 && u < 0.44) || (u > 0.56 && u < 0.77));
-                    const isMouthZone = Math.abs(u - 0.5) < 0.16 && v > 0.67 && v < 0.78;
-                    const isLowerJaw = v >= 0.74 && Math.abs(u - 0.5) < 0.26;
-                    const isEyeCore = (eyeDistL < 0.048 || eyeDistR < 0.048);
-
-                    rowList.push({
-                        x: rx * Math.sin(theta),
-                        y: ry,
-                        z: rz,
-                        u,
-                        v,
-                        isBrowZone,
-                        isMouthZone,
-                        isLowerJaw,
-                        isEyeCore
+                    const isBrightNode = (i % 2 === 0 && j % 2 === 0) || (v > 0.3 && v < 0.72 && (j % 3 === 0));
+                    meshPoints.push({
+                        lat: i,
+                        lon: j,
+                        bx: rx * Math.sin(theta),
+                        by: ry,
+                        bz: rz * Math.cos(theta),
+                        bright: isBrightNode,
+                        phase: (i * 0.45) + (j * 0.3)
                     });
                 }
-                meshVertices.push(rowList);
             }
 
-            const dataRays = Array.from({ length: 28 }, (_, i) => ({
-                angle: -Math.PI * 0.9 + (i / 27) * Math.PI * 0.8,
-                length: 0.35 + Math.random() * 0.65,
-                phase: Math.random() * Math.PI * 2
-            }));
+            const radialRays = Array.from({ length: 36 }, (_, idx) => {
+                const angle = (idx / 36) * Math.PI * 2;
+                return {
+                    angle,
+                    inner: 0.78 + (idx % 3) * 0.08,
+                    outer: 1.45 + (idx % 4) * 0.22,
+                    dotPos: 0.35 + (idx % 5) * 0.14
+                };
+            });
 
             let holoAlpha = 0;
             let time = 0;
 
-            function animateFace() {
-                time += 0.04;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function drawHologram() {
+                const w = stage.clientWidth || window.innerWidth;
+                const h = stage.clientHeight || 420;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+                if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+                    canvas.width = Math.floor(w * dpr);
+                    canvas.height = Math.floor(h * dpr);
+                }
+
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.clearRect(0, 0, w, h);
+
+                time += 0.028;
 
                 const isHot = document.body.classList.contains('voice-hot');
                 const isSpeaking = document.body.classList.contains('voice-speaking');
-                const targetAlpha = (isHot || isSpeaking) ? 1 : 0;
+                const targetAlpha = (isHot || isSpeaking) ? 1.0 : 0.0;
+                holoAlpha += (targetAlpha - holoAlpha) * 0.09;
 
-                holoAlpha += (targetAlpha - holoAlpha) * 0.1;
+                if (holoAlpha < 0.02) {
+                    requestAnimationFrame(drawHologram);
+                    return;
+                }
 
-                if (holoAlpha > 0.01) {
-                    const cx = canvas.width / 2;
-                    const cy = canvas.height / 2 + 4;
-                    const scale = Math.min(canvas.width, canvas.height) * 0.31;
+                const cx = w / 2;
+                const cy = h / 2;
+                const scale = Math.min(w, h) * 0.33;
 
-                    const rotY = Math.sin(time * 0.45) * 0.18;
-                    const rotX = Math.cos(time * 0.35) * 0.06;
-                    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-                    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+                const mainRGB = isHot ? '255, 68, 24' : '45, 212, 255';
+                const glowRGB = isHot ? '255, 130, 50' : '56, 189, 248';
+                const coreWhite = '255, 255, 255';
 
-                    const speechEnergy = isSpeaking
-                        ? (0.25 + 0.75 * Math.abs(Math.sin(time * 4.5) * Math.cos(time * 2.7)))
-                        : (isHot ? 0.12 : 0);
+                // Brilho radial de fundo atrás do holograma
+                const bgGlow = ctx.createRadialGradient(cx, cy, scale * 0.12, cx, cy, scale * 1.55);
+                bgGlow.addColorStop(0, `rgba(${mainRGB}, ${0.26 * holoAlpha})`);
+                bgGlow.addColorStop(0.55, `rgba(${glowRGB}, ${0.10 * holoAlpha})`);
+                bgGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = bgGlow;
+                ctx.fillRect(0, 0, w, h);
 
-                    const crownBeam = ctx.createLinearGradient(cx, cy - scale * 1.35, cx, cy - scale * 0.75);
-                    crownBeam.addColorStop(0, 'rgba(56, 189, 248, 0)');
-                    crownBeam.addColorStop(0.5, `rgba(186, 248, 255, ${holoAlpha * 0.85})`);
-                    crownBeam.addColorStop(1, 'rgba(56, 189, 248, 0)');
-                    ctx.fillStyle = crownBeam;
-                    ctx.fillRect(cx - 2, cy - scale * 1.35, 4, scale * 0.6);
+                // Raios retos de telemetria radiando para fora (igual ao print original)
+                ctx.lineWidth = 0.85;
+                radialRays.forEach((ray) => {
+                    const cosA = Math.cos(ray.angle);
+                    const sinA = Math.sin(ray.angle);
+                    const x1 = cx + cosA * scale * ray.inner;
+                    const y1 = cy + sinA * scale * ray.inner * 1.1;
+                    const x2 = cx + cosA * scale * ray.outer;
+                    const y2 = cy + sinA * scale * ray.outer * 1.1;
 
-                    dataRays.forEach(ray => {
-                        const x1 = cx + Math.cos(ray.angle) * scale * 0.72;
-                        const y1 = cy + Math.sin(ray.angle) * scale * 0.92;
-                        const x2 = cx + Math.cos(ray.angle) * scale * (0.85 + ray.length);
-                        const y2 = cy + Math.sin(ray.angle) * scale * (1.05 + ray.length);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = `rgba(${mainRGB}, ${0.22 * holoAlpha})`;
+                    ctx.stroke();
+
+                    const pulseT = (ray.dotPos + time * 0.18) % 1;
+                    const dx = x1 + (x2 - x1) * pulseT;
+                    const dy = y1 + (y2 - y1) * pulseT;
+                    ctx.beginPath();
+                    ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${coreWhite}, ${0.65 * holoAlpha})`;
+                    ctx.fill();
+                });
+
+                // Rotação suave 3D + pulsação vocal
+                const rotY = time * 0.35;
+                const rotX = Math.sin(time * 0.5) * 0.1;
+                const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+                const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+
+                const vocalPulse = isSpeaking
+                    ? (1 + Math.sin(time * 8.5) * 0.028 + Math.sin(time * 5.1) * 0.018)
+                    : (isHot ? 1 + Math.sin(time * 6.0) * 0.02 : 1);
+
+                // Projeção 3D -> 2D dos vértices
+                const projected = new Array(meshPoints.length);
+                for (let k = 0; k < meshPoints.length; k++) {
+                    const p = meshPoints[k];
+                    const x0 = p.bx * vocalPulse;
+                    const y0 = p.by * vocalPulse;
+                    const z0 = p.bz * vocalPulse;
+
+                    const rx = x0 * cosY + z0 * sinY;
+                    const rz1 = -x0 * sinY + z0 * cosY;
+                    const ry = y0 * cosX - rz1 * sinX;
+                    const rz = y0 * sinX + rz1 * cosX;
+
+                    const persp = 2.8 / (2.8 - rz);
+                    projected[k] = {
+                        sx: cx + rx * scale * persp,
+                        sy: cy + ry * scale * persp,
+                        z: rz,
+                        p
+                    };
+                }
+
+                // Desenha grade wireframe (paralelos e meridianos)
+                ctx.lineWidth = 0.85;
+                for (let i = 0; i <= latBands; i++) {
+                    for (let j = 0; j < lonBands; j++) {
+                        const a = projected[i * lonBands + j];
+                        const b = projected[i * lonBands + ((j + 1) % lonBands)];
+                        const depth = (a.z + 1) * 0.5;
+
                         ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.strokeStyle = `rgba(56, 189, 248, ${holoAlpha * 0.28})`;
-                        ctx.lineWidth = 0.9;
+                        ctx.moveTo(a.sx, a.sy);
+                        ctx.lineTo(b.sx, b.sy);
+                        ctx.strokeStyle = `rgba(${mainRGB}, ${(0.12 + depth * 0.34) * holoAlpha})`;
                         ctx.stroke();
 
-                        const p = 0.5 + 0.5 * Math.sin(time * 2 + ray.phase);
-                        ctx.beginPath();
-                        ctx.arc(x2, y2, 1.5, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(186, 248, 255, ${holoAlpha * p * 0.8})`;
-                        ctx.fill();
-                    });
-
-                    const projected = [];
-                    for (let r = 0; r <= rows; r++) {
-                        const projRow = [];
-                        for (let c = 0; c <= cols; c++) {
-                            const pt = meshVertices[r][c];
-                            let x = pt.x;
-                            let y = pt.y;
-                            let z = pt.z;
-
-                            if (pt.isMouthZone) {
-                                const dir = pt.v < 0.725 ? -1 : 1;
-                                y += dir * speechEnergy * 0.045;
-                                z += speechEnergy * 0.03;
-                            } else if (pt.isLowerJaw) {
-                                y += speechEnergy * 0.045;
-                            }
-
-                            const x1 = x * cosY - z * sinY;
-                            const z1 = z * cosY + x * sinY;
-                            const y2 = y * cosX - z1 * sinX;
-                            const z2 = z1 * cosX + y * sinX;
-
-                            const persp = 2.4 / (2.4 - z2);
-                            projRow.push({
-                                sx: cx + x1 * scale * persp,
-                                sy: cy + y2 * scale * persp,
-                                z: z2,
-                                v: pt.v,
-                                isBrowZone: pt.isBrowZone,
-                                isEyeCore: pt.isEyeCore,
-                                isMouthZone: pt.isMouthZone
-                            });
-                        }
-                        projected.push(projRow);
-                    }
-
-                    const scanV = (time * 0.35) % 1;
-
-                    ctx.lineWidth = 0.75;
-                    for (let r = 0; r < rows; r++) {
-                        for (let c = 0; c < cols; c++) {
-                            const p00 = projected[r][c];
-                            const p10 = projected[r][c + 1];
-                            const p01 = projected[r + 1][c];
-
-                            if (p00.z < -0.15) continue;
-
-                            const depthAlpha = Math.max(0.08, Math.min(0.65, (p00.z + 0.35) * 0.55));
-                            const scanBoost = Math.abs(p00.v - scanV) < 0.045 ? 0.45 : 0;
-
+                        if (i < latBands) {
+                            const c = projected[(i + 1) * lonBands + j];
                             ctx.beginPath();
-                            ctx.moveTo(p00.sx, p00.sy);
-                            ctx.lineTo(p10.sx, p10.sy);
-                            ctx.moveTo(p00.sx, p00.sy);
-                            ctx.lineTo(p01.sx, p01.sy);
-
-                            if (p00.isMouthZone && isSpeaking) {
-                                ctx.strokeStyle = `rgba(125, 249, 255, ${holoAlpha * (depthAlpha + 0.35)})`;
-                            } else {
-                                ctx.strokeStyle = `rgba(56, 189, 248, ${holoAlpha * (depthAlpha * 0.55 + scanBoost)})`;
-                            }
+                            ctx.moveTo(a.sx, a.sy);
+                            ctx.lineTo(c.sx, c.sy);
+                            ctx.strokeStyle = `rgba(${mainRGB}, ${(0.10 + depth * 0.30) * holoAlpha})`;
                             ctx.stroke();
-                        }
-                    }
-
-                    for (let r = 0; r <= rows; r++) {
-                        for (let c = 0; c <= cols; c++) {
-                            const p = projected[r][c];
-                            if (p.z < -0.1) continue;
-
-                            const scanBoost = Math.abs(p.v - scanV) < 0.045;
-                            let radius = p.z > 0.35 ? 1.45 : 0.95;
-                            let color = `rgba(186, 248, 255, ${holoAlpha * Math.min(1, p.z + 0.45)})`;
-
-                            if (p.isEyeCore) {
-                                radius = 2.8;
-                                color = `rgba(255, 255, 255, ${holoAlpha})`;
-                            } else if (p.isBrowZone) {
-                                radius = 1.85;
-                                color = `rgba(125, 249, 255, ${holoAlpha * 0.95})`;
-                            } else if (p.isMouthZone) {
-                                radius = isSpeaking ? 2.2 : 1.75;
-                                color = `rgba(125, 249, 255, ${holoAlpha})`;
-                            } else if (scanBoost) {
-                                radius = 1.8;
-                                color = `rgba(255, 255, 255, ${holoAlpha * 0.95})`;
-                            }
-
-                            ctx.beginPath();
-                            ctx.arc(p.sx, p.sy, radius, 0, Math.PI * 2);
-                            ctx.fillStyle = color;
-                            ctx.fill();
                         }
                     }
                 }
 
-                requestAnimationFrame(animateFace);
+                // Desenha os nós/vértices luminosos (pontos brancos + halo)
+                for (let k = 0; k < projected.length; k++) {
+                    const pt = projected[k];
+                    const depth = Math.max(0.05, (pt.z + 1) * 0.5);
+                    const flicker = 0.8 + 0.2 * Math.sin(time * 3 + pt.p.phase);
+                    const radius = pt.p.bright
+                        ? (1.3 + depth * 2.1)
+                        : (0.8 + depth * 1.1);
+
+                    ctx.beginPath();
+                    ctx.arc(pt.sx, pt.sy, radius, 0, Math.PI * 2);
+                    if (pt.z > 0.15 && pt.p.bright) {
+                        ctx.fillStyle = `rgba(${coreWhite}, ${Math.min(1, depth * 1.05 * flicker) * holoAlpha})`;
+                    } else {
+                        ctx.fillStyle = `rgba(${mainRGB}, ${Math.min(0.95, depth * 0.85 * flicker) * holoAlpha})`;
+                    }
+                    ctx.fill();
+                }
+
+                // Anéis concêntricos luminosos sobrepostos no centro da malha (assinatura visual do print)
+                const ringOuterR = scale * 0.72 * vocalPulse;
+                const ringInnerR = scale * 0.50 * vocalPulse;
+
+                ctx.save();
+                ctx.shadowColor = `rgba(${mainRGB}, ${0.85 * holoAlpha})`;
+                ctx.shadowBlur = 14;
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, ringOuterR, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(${mainRGB}, ${0.82 * holoAlpha})`;
+                ctx.lineWidth = 2.0;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, ringInnerR, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(${glowRGB}, ${0.72 * holoAlpha})`;
+                ctx.lineWidth = 1.6;
+                ctx.stroke();
+                ctx.restore();
+
+                requestAnimationFrame(drawHologram);
             }
-            requestAnimationFrame(animateFace);
+
+            requestAnimationFrame(drawHologram);
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 4. MOTOR DE VOZ (WAKE WORD "EI JARVIS" + VOZ MASCULINA GRAVE JARVIS)    */
+        /* 4. MOTOR DE VOZ MASCULINA (AUDIOCONTEXT NEURAL + FALLBACK MASCULINO)    */
         /* ═══════════════════════════════════════════════════════════════════════ */
-        function selectJarvisMaleVoice() {
+        const FEMALE_VOICE_HINTS = /luciana|joana|maria|fernanda|helena|francisca|thalita|camila|raquel|catarina|ines|inês|sofia|leticia|letícia|vitoria|vitória|sara|monica|mônica|ana|paula|female|mulher|woman|girl|samantha|victoria|karen|moira|tessa|fiona|shelley|sandy|flo|grandma|avó|avo\b/i;
+        const MALE_VOICE_HINTS = /daniel|reed|eddy|rocko|grandpa|avô|arthur|tiago|felipe|antonio|antônio|joaquim|cristiano|ricardo|thiago|bruno|pedro|lucas|gabriel|rafael|carlos|paulo|jorge|fernando|rodrigo|henrique|male|homem|man|guy/i;
+
+        function ensureAudioContext() {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            if (!audioCtx) {
+                audioCtx = new Ctx();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => {});
+            }
+            return audioCtx;
+        }
+
+        function unlockJarvisAudio() {
+            const ctx = ensureAudioContext();
+            if (ctx) {
+                try {
+                    const silentBuf = ctx.createBuffer(1, 1, 22050);
+                    const src = ctx.createBufferSource();
+                    src.buffer = silentBuf;
+                    src.connect(ctx.destination);
+                    src.start(0);
+                } catch (e) {}
+            }
+
+            if (!jarvisAudio) {
+                jarvisAudio = new Audio();
+                jarvisAudio.setAttribute('playsinline', '');
+            }
+            try {
+                jarvisAudio.muted = true;
+                jarvisAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+                const p = jarvisAudio.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        jarvisAudio.pause();
+                        jarvisAudio.muted = false;
+                    }).catch(() => {
+                        jarvisAudio.muted = false;
+                    });
+                }
+            } catch (e) {}
+
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                    const u = new SpeechSynthesisUtterance(' ');
+                    u.volume = 0;
+                    window.speechSynthesis.speak(u);
+                } catch (e) {}
+            }
+        }
+
+        function stopAllAudio() {
+            if (activeAudioSource) {
+                try {
+                    activeAudioSource.onended = null;
+                    activeAudioSource.stop();
+                    activeAudioSource.disconnect();
+                } catch (e) {}
+                activeAudioSource = null;
+            }
+            if (jarvisAudio) {
+                try {
+                    jarvisAudio.onended = null;
+                    jarvisAudio.onerror = null;
+                    jarvisAudio.pause();
+                } catch (e) {}
+            }
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+        }
+
+        function pickBestLocalMaleVoice() {
             if (!('speechSynthesis' in window)) return null;
             const voices = window.speechSynthesis.getVoices();
             if (!voices || voices.length === 0) return null;
 
-            const ptMale =
-                voices.find(v => /pt[-_]BR/i.test(v.lang) && /daniel|felipe|antonio|antônio|ricardo|thiago|bruno|male|homem/i.test(v.name)) ||
-                voices.find(v => /pt[-_]PT/i.test(v.lang) && /duarte|cristiano|male|homem/i.test(v.name)) ||
-                voices.find(v => /pt[-_]BR/i.test(v.lang) && !/luciana|maria|fernanda|helena|francisca|thalita|camila|female|mulher/i.test(v.name)) ||
-                voices.find(v => /pt[-_]BR/i.test(v.lang)) ||
-                voices.find(v => v.lang.startsWith('pt'));
+            const ptVoices = voices.filter(v => /^pt/i.test(v.lang));
+            const explicitMalePt = ptVoices.filter(v => MALE_VOICE_HINTS.test(v.name) && !FEMALE_VOICE_HINTS.test(v.name));
+            const nonFemalePt = ptVoices.filter(v => !FEMALE_VOICE_HINTS.test(v.name));
 
-            selectedVoice = ptMale || null;
+            selectedVoice =
+                explicitMalePt.find(v => /daniel|felipe|antonio|antônio|ricardo|tiago|joaquim|cristiano/i.test(v.name)) ||
+                explicitMalePt.find(v => /reed|eddy|rocko|grandpa|avô/i.test(v.name)) ||
+                explicitMalePt[0] ||
+                nonFemalePt[0] ||
+                ptVoices[0] ||
+                voices[0];
+
             return selectedVoice;
+        }
+
+        function updateVoiceModeButton() {
+            const btn = document.getElementById('btnVoiceMode');
+            if (!btn) return;
+            btn.textContent = voiceEngineMode === 'neural' ? '🔊 ÁUDIO: NEURAL' : '🔊 ÁUDIO: LOCAL';
         }
 
         function setupSpeechEngine() {
             if ('speechSynthesis' in window) {
-                selectJarvisMaleVoice();
-                window.speechSynthesis.onvoiceschanged = selectJarvisMaleVoice;
+                pickBestLocalMaleVoice();
+                window.speechSynthesis.onvoiceschanged = pickBestLocalMaleVoice;
             }
+            updateVoiceModeButton();
 
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SR) {
+                document.getElementById('dispVoiceStatus').textContent = 'n/a';
                 appendLog('SYSTEM', 'Reconhecimento de voz indisponível neste navegador. Use o campo de texto.', 'log-err');
+            }
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryStr = window.atob(base64);
+            const len = binaryStr.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function playArrayBufferViaAudioContext(arrayBuffer, playbackRate = 0.96) {
+            return new Promise(async (resolve, reject) => {
+                const ctx = ensureAudioContext();
+                if (!ctx) {
+                    reject(new Error('no_audio_ctx'));
+                    return;
+                }
+                try {
+                    if (ctx.state === 'suspended') {
+                        await ctx.resume();
+                    }
+                    const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+                    if (!isBusy) {
+                        resolve();
+                        return;
+                    }
+                    const source = ctx.createBufferSource();
+                    source.buffer = decoded;
+                    source.playbackRate.value = playbackRate;
+                    source.connect(ctx.destination);
+                    activeAudioSource = source;
+                    source.onended = () => {
+                        if (activeAudioSource === source) activeAudioSource = null;
+                        resolve();
+                    };
+                    source.start(0);
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        }
+
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 4200) {
+            const ctrl = new AbortController();
+            const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { ...options, signal: ctrl.signal });
+                clearTimeout(tid);
+                return res;
+            } catch (e) {
+                clearTimeout(tid);
+                throw e;
+            }
+        }
+
+        async function playNeuralMaleChunk(chunkText) {
+            // Provedor 1: TikTok Neural PT-BR Masculino (br_005) -> MP3 Base64 -> AudioContext
+            try {
+                const res = await fetchWithTimeout('https://tiktok-tts.weilnet.workers.dev/api/generation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: chunkText, voice: 'br_005' })
+                }, 4200);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.success && data.data) {
+                        const ab = base64ToArrayBuffer(data.data);
+                        await playArrayBufferViaAudioContext(ab, 0.96);
+                        return true;
+                    }
+                }
+            } catch (e) {}
+
+            // Provedor 2: Polly Ricardo (PT-BR Masculino) via StreamElements -> AudioContext / Audio Element
+            try {
+                const seUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Ricardo&text=${encodeURIComponent(chunkText)}`;
+                const res2 = await fetchWithTimeout(seUrl, {}, 3800);
+                if (res2.ok) {
+                    const ab2 = await res2.arrayBuffer();
+                    if (ab2 && ab2.byteLength > 200) {
+                        await playArrayBufferViaAudioContext(ab2, 0.98);
+                        return true;
+                    }
+                }
+            } catch (e) {}
+
+            return false;
+        }
+
+        function resetMicHardTimeout(ms) {
+            if (micHardTimeoutTimer) clearTimeout(micHardTimeoutTimer);
+            micHardTimeoutTimer = setTimeout(() => {
+                if (isRecordingCommand && !isBusy) {
+                    finalizeRecordedCommand();
+                }
+            }, ms);
+        }
+
+        function scheduleSilenceCutoff(delayMs) {
+            if (commandSilenceTimer) clearTimeout(commandSilenceTimer);
+            commandSilenceTimer = setTimeout(() => {
+                if (isRecordingCommand && !isBusy) {
+                    finalizeRecordedCommand();
+                }
+            }, delayMs);
+        }
+
+        function setInputHearingPreview(text) {
+            const input = document.getElementById('textCommandInput');
+            if (!input) return;
+            input.placeholder = text
+                ? `Ouvindo: ${text}`
+                : "Fale 'Ei Jarvis' ou toque no botão / digite...";
+        }
+
+        function startFreshRecognition(forManualCommand = false) {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                isRecordingCommand = false;
+                updateSystemStatus('standby');
+                appendLog('SYSTEM', 'Microfone não suportado neste navegador. Digite sua pergunta abaixo.', 'log-err');
                 return;
             }
 
-            recognition = new SR();
-            recognition.lang = 'pt-BR';
-            recognition.continuous = true;
-            recognition.interimResults = true;
+            if (recognition) {
+                try {
+                    recognition.onstart = null;
+                    recognition.onresult = null;
+                    recognition.onerror = null;
+                    recognition.onend = null;
+                    recognition.abort();
+                } catch (e) {}
+                recognition = null;
+                isListening = false;
+            }
 
-            recognition.onstart = () => {
+            const rec = new SR();
+            rec.lang = 'pt-BR';
+            rec.continuous = false;
+            rec.interimResults = true;
+            rec.maxAlternatives = 1;
+            recognition = rec;
+
+            rec.onstart = () => {
+                if (recognition !== rec) return;
                 isListening = true;
-                if (!isBusy && !isRecordingCommand) {
-                    updateSystemStatus('standby');
+                if (!isBusy) {
+                    updateSystemStatus(isRecordingCommand ? 'user_speaking' : 'standby');
                 }
             };
 
-            recognition.onspeechstart = () => {
-                if (isRecordingCommand && !isBusy) {
-                    updateSystemStatus('user_speaking');
-                }
-            };
-
-            recognition.onspeechend = () => {
-                if (isRecordingCommand && !isBusy) {
-                    scheduleSilenceCutoff(850);
-                }
-            };
-
-            recognition.onresult = (event) => {
-                if (isBusy) return;
+            rec.onresult = (event) => {
+                if (recognition !== rec || isBusy) return;
 
                 let interimTranscript = '';
                 let finalTranscript = '';
@@ -1419,7 +1625,7 @@
                 if (!combinedRaw) return;
 
                 const norm = normalizeText(combinedRaw);
-                const wakeRegex = /\b(ei|hey|oi|ok)?\s*jarvis\b/i;
+                const wakeRegex = /\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)\b/i;
 
                 if (!isRecordingCommand) {
                     if (wakeRegex.test(norm)) {
@@ -1427,86 +1633,135 @@
                         commandBuffer = "";
                         latestInterimBuffer = "";
                         updateSystemStatus('user_speaking');
-                        appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Escutando comando...', 'log-sys');
+                        resetMicHardTimeout(7500);
+                        appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Fale seu comando...', 'log-sys');
 
-                        const afterWake = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok)?\s*jarvis[,.\s!?-]*/i, '').trim();
+                        const afterWake = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)[,.\s!?-]*/i, '').trim();
                         if (afterWake) {
-                            if (finalTranscript.trim()) {
-                                commandBuffer = afterWake;
-                            } else {
-                                latestInterimBuffer = afterWake;
-                            }
-                            scheduleSilenceCutoff(1350);
+                            setInputHearingPreview(afterWake);
+                            if (finalTranscript.trim()) commandBuffer = afterWake;
+                            else latestInterimBuffer = afterWake;
+                            scheduleSilenceCutoff(1150);
                         } else {
-                            scheduleSilenceCutoff(3200);
+                            setInputHearingPreview('pode falar...');
+                            scheduleSilenceCutoff(3500);
                         }
                     }
                     return;
                 }
 
                 updateSystemStatus('user_speaking');
+                resetMicHardTimeout(6500);
+
+                const cleaned = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)[,.\s!?-]*/i, '').trim();
+                if (cleaned) {
+                    setInputHearingPreview(cleaned);
+                }
+
                 if (finalTranscript.trim()) {
-                    const cleanedFinal = finalTranscript.replace(/^.*?\b(ei|hey|oi|ok)?\s*jarvis[,.\s!?-]*/i, '').trim();
-                    if (cleanedFinal) {
-                        commandBuffer = (commandBuffer + ' ' + cleanedFinal).trim();
+                    if (cleaned) {
+                        commandBuffer = (commandBuffer + ' ' + cleaned).trim();
                         latestInterimBuffer = "";
                     }
-                    scheduleSilenceCutoff(1250);
+                    scheduleSilenceCutoff(950);
                 } else if (interimTranscript.trim()) {
-                    const cleanedInterim = interimTranscript.replace(/^.*?\b(ei|hey|oi|ok)?\s*jarvis[,.\s!?-]*/i, '').trim();
-                    if (cleanedInterim) {
-                        latestInterimBuffer = cleanedInterim;
+                    if (cleaned) {
+                        latestInterimBuffer = cleaned;
                     }
-                    scheduleSilenceCutoff(1400);
+                    scheduleSilenceCutoff(1350);
                 }
             };
 
-            recognition.onerror = (event) => {
-                if (event.error === 'not-allowed') {
-                    appendLog('SYSTEM', 'Permissão de microfone negada no navegador.', 'log-err');
-                }
-            };
-
-            recognition.onend = () => {
+            rec.onerror = (event) => {
+                if (recognition !== rec) return;
                 isListening = false;
-                if (isRecordingCommand && (commandBuffer.trim() || latestInterimBuffer.trim()) && !isBusy) {
-                    finalizeRecordedCommand();
+
+                if (isRecordingCommand) {
+                    const captured = (commandBuffer + ' ' + latestInterimBuffer).trim();
+                    if (captured) {
+                        finalizeRecordedCommand();
+                        return;
+                    }
+                    clearSpeechTimers();
+                    isRecordingCommand = false;
+                    setInputHearingPreview('');
+                    updateSystemStatus('standby');
+
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        shouldAutoListen = false;
+                        document.getElementById('dispVoiceStatus').textContent = 'perm';
+                        appendLog('SYSTEM', 'Microfone bloqueado pelo navegador/prévia. Use o site no Safari/Vercel ou digite abaixo.', 'log-err');
+                    } else if (event.error === 'no-speech') {
+                        appendLog('SYSTEM', 'Nenhuma voz detectada. Toque no botão e fale próximo ao microfone.', 'log-sys');
+                    } else if (event.error !== 'aborted') {
+                        appendLog('SYSTEM', `Microfone interrompido (${event.error}). Tente tocar novamente.`, 'log-err');
+                    }
+                } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    shouldAutoListen = false;
+                    document.getElementById('dispVoiceStatus').textContent = 'perm';
+                }
+            };
+
+            rec.onend = () => {
+                if (recognition !== rec) return;
+                isListening = false;
+                if (isBusy) return;
+
+                if (isRecordingCommand) {
+                    const captured = (commandBuffer + ' ' + latestInterimBuffer).trim();
+                    if (captured) {
+                        finalizeRecordedCommand();
+                    } else {
+                        clearSpeechTimers();
+                        isRecordingCommand = false;
+                        setInputHearingPreview('');
+                        updateSystemStatus('standby');
+                        appendLog('SYSTEM', 'Escuta encerrada sem áudio captado. Toque novamente para falar.', 'log-sys');
+                    }
                     return;
                 }
-                if (!isBusy) {
-                    updateSystemStatus(isRecordingCommand ? 'user_speaking' : 'standby');
+
+                if (shouldAutoListen) {
                     setTimeout(() => {
-                        if (!isBusy) startRecognitionSafe();
-                    }, 300);
+                        if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
+                            startFreshRecognition(false);
+                        }
+                    }, 350);
                 }
             };
-        }
 
-        function scheduleSilenceCutoff(delayMs) {
-            if (commandSilenceTimer) clearTimeout(commandSilenceTimer);
-            commandSilenceTimer = setTimeout(() => {
-                if (isRecordingCommand && !isBusy) {
-                    finalizeRecordedCommand();
+            try {
+                rec.start();
+                if (forManualCommand) {
+                    resetMicHardTimeout(8000);
                 }
-            }, delayMs);
+            } catch (e) {
+                isListening = false;
+                if (forManualCommand) {
+                    isRecordingCommand = false;
+                    setInputHearingPreview('');
+                    updateSystemStatus('standby');
+                    appendLog('SYSTEM', 'Não foi possível iniciar o microfone agora. Toque novamente ou digite.', 'log-err');
+                }
+            }
         }
 
         function finalizeRecordedCommand() {
-            if (commandSilenceTimer) {
-                clearTimeout(commandSilenceTimer);
-                commandSilenceTimer = null;
-            }
+            clearSpeechTimers();
             const finalCmd = (commandBuffer + ' ' + latestInterimBuffer).trim();
             commandBuffer = "";
             latestInterimBuffer = "";
             isRecordingCommand = false;
+            setInputHearingPreview('');
 
             stopRecognitionSafe();
 
             if (!finalCmd) {
                 updateSystemStatus('standby');
-                appendLog('SYSTEM', 'Gravação encerrada (nenhum comando detectado).', 'log-sys');
-                setTimeout(() => startRecognitionSafe(), 300);
+                appendLog('SYSTEM', 'Nenhuma fala captada. Voltando para STANDBY.', 'log-sys');
+                if (shouldAutoListen) {
+                    setTimeout(() => startFreshRecognition(false), 400);
+                }
                 return;
             }
 
@@ -1517,19 +1772,20 @@
             return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
 
-        function startRecognitionSafe() {
-            if (!recognition || isBusy) return;
-            try {
-                recognition.start();
-            } catch (e) {}
-        }
-
         function stopRecognitionSafe() {
             if (!recognition) return;
-            try {
-                recognition.stop();
-            } catch (e) {}
+            const rec = recognition;
+            recognition = null;
             isListening = false;
+            try {
+                rec.onstart = null;
+                rec.onresult = null;
+                rec.onerror = null;
+                rec.onend = null;
+                rec.abort();
+            } catch (e) {
+                try { rec.stop(); } catch (e2) {}
+            }
         }
 
         function clearSpeechTimers() {
@@ -1545,6 +1801,10 @@
                 clearTimeout(commandSilenceTimer);
                 commandSilenceTimer = null;
             }
+            if (micHardTimeoutTimer) {
+                clearTimeout(micHardTimeoutTimer);
+                micHardTimeoutTimer = null;
+            }
         }
 
         function releaseSpeechLock() {
@@ -1553,13 +1813,18 @@
             isRecordingCommand = false;
             commandBuffer = "";
             latestInterimBuffer = "";
+            setInputHearingPreview('');
             updateSystemStatus('standby');
-            setTimeout(() => {
-                startRecognitionSafe();
-            }, 350);
+            if (shouldAutoListen) {
+                setTimeout(() => {
+                    if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
+                        startFreshRecognition(false);
+                    }
+                }, 400);
+            }
         }
 
-        function splitTextForNaturalSpeech(fullText) {
+        function splitTextForNaturalSpeech(fullText, maxLen = 175) {
             const clean = fullText.replace(/[*#_`~]/g, '').replace(/\s+/g, ' ').trim();
             if (!clean) return [];
             const rawParts = clean.match(/[^.!?;:]+[.!?;:]*/g) || [clean];
@@ -1567,13 +1832,13 @@
             for (const part of rawParts) {
                 const trimmed = part.trim();
                 if (!trimmed) continue;
-                if (trimmed.length <= 135) {
+                if (trimmed.length <= maxLen) {
                     chunks.push(trimmed);
                 } else {
                     const subParts = trimmed.split(/,\s+/);
                     let current = "";
                     for (const sp of subParts) {
-                        if ((current + ", " + sp).length > 135 && current) {
+                        if ((current + ", " + sp).length > maxLen && current) {
                             chunks.push(current.trim());
                             current = sp;
                         } else {
@@ -1586,9 +1851,53 @@
             return chunks;
         }
 
+        function speakChunksLocally(chunks, onDone) {
+            if (!('speechSynthesis' in window) || chunks.length === 0) {
+                onDone();
+                return;
+            }
+            pickBestLocalMaleVoice();
+
+            speechKeepAliveTimer = setInterval(() => {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.pause();
+                    window.speechSynthesis.resume();
+                }
+            }, 4500);
+
+            let idx = 0;
+            const speakNext = () => {
+                if (!isBusy || idx >= chunks.length) {
+                    onDone();
+                    return;
+                }
+                const utter = new SpeechSynthesisUtterance(chunks[idx]);
+                if (selectedVoice) {
+                    utter.voice = selectedVoice;
+                    utter.lang = selectedVoice.lang || 'pt-BR';
+                } else {
+                    utter.lang = 'pt-BR';
+                }
+                utter.rate = 0.96;
+                utter.pitch = 0.55;
+                utter.volume = 1.0;
+
+                utter.onend = () => {
+                    idx++;
+                    setTimeout(speakNext, 45);
+                };
+                utter.onerror = () => {
+                    idx++;
+                    setTimeout(speakNext, 45);
+                };
+                window.speechSynthesis.speak(utter);
+            };
+            setTimeout(speakNext, 45);
+        }
+
         function speakText(text) {
-            return new Promise((resolve) => {
-                if (!('speechSynthesis' in window) || !text) {
+            return new Promise(async (resolve) => {
+                if (!text) {
                     releaseSpeechLock();
                     resolve();
                     return;
@@ -1596,13 +1905,11 @@
 
                 isBusy = true;
                 stopRecognitionSafe();
-                updateSystemStatus('speaking');
+                stopAllAudio();
                 clearSpeechTimers();
-                window.speechSynthesis.cancel();
+                updateSystemStatus('speaking');
 
-                if (!selectedVoice) selectJarvisMaleVoice();
-
-                const chunks = splitTextForNaturalSpeech(text);
+                const chunks = splitTextForNaturalSpeech(text, 175);
                 if (chunks.length === 0) {
                     releaseSpeechLock();
                     resolve();
@@ -1617,48 +1924,22 @@
                     resolve();
                 };
 
-                // Mantém o sintetizador ativo no Safari/Chrome mobile para nunca cortar respostas longas
-                speechKeepAliveTimer = setInterval(() => {
-                    if (!finished && window.speechSynthesis.speaking) {
-                        window.speechSynthesis.pause();
-                        window.speechSynthesis.resume();
-                    }
-                }, 4500);
-
-                const totalTimeoutMs = Math.max(15000, text.length * 220);
+                const totalTimeoutMs = Math.max(22000, text.length * 260);
                 speechSafetyTimer = setTimeout(finishOnce, totalTimeoutMs);
 
-                let idx = 0;
-
-                const speakChunk = () => {
-                    if (finished) return;
-                    if (idx >= chunks.length) {
-                        finishOnce();
-                        return;
+                if (voiceEngineMode === 'neural') {
+                    for (let i = 0; i < chunks.length; i++) {
+                        if (finished || !isBusy) return;
+                        const played = await playNeuralMaleChunk(chunks[i]);
+                        if (!played) {
+                            speakChunksLocally(chunks.slice(i), finishOnce);
+                            return;
+                        }
                     }
-
-                    const utter = new SpeechSynthesisUtterance(chunks[idx]);
-                    utter.lang = 'pt-BR';
-                    if (selectedVoice) utter.voice = selectedVoice;
-                    // Timbre masculino grave e pausado estilo JARVIS oficial
-                    utter.rate = 0.98;
-                    utter.pitch = 0.78;
-                    utter.volume = 1.0;
-
-                    utter.onend = () => {
-                        idx++;
-                        setTimeout(speakChunk, 45);
-                    };
-
-                    utter.onerror = () => {
-                        idx++;
-                        setTimeout(speakChunk, 45);
-                    };
-
-                    window.speechSynthesis.speak(utter);
-                };
-
-                setTimeout(speakChunk, 60);
+                    finishOnce();
+                } else {
+                    speakChunksLocally(chunks, finishOnce);
+                }
             });
         }
 
@@ -1669,7 +1950,7 @@
             const micLabel = document.getElementById('micLabel');
 
             dot.className = 'live-dot';
-            micBtn.classList.remove('mic-active');
+            micBtn.classList.remove('mic-active', 'mic-standby');
 
             const wasHot = document.body.classList.contains('voice-hot');
             const wasSpeaking = document.body.classList.contains('voice-speaking');
@@ -1696,7 +1977,8 @@
                 micLabel.textContent = 'INTERROMPER';
             } else {
                 targetHeatLevel = 0.25;
-                label.textContent = 'STANDBY ("EI JARVIS")';
+                label.textContent = shouldAutoListen ? 'ESCUTANDO "EI JARVIS"' : 'STANDBY';
+                micBtn.classList.add('mic-standby');
                 micLabel.textContent = 'EI, JARVIS';
             }
 
@@ -1708,21 +1990,25 @@
         }
 
         window.triggerManualMic = () => {
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            clearSpeechTimers();
+            unlockJarvisAudio();
 
             if (isRecordingCommand) {
                 finalizeRecordedCommand();
                 return;
             }
 
+            stopAllAudio();
+            clearSpeechTimers();
+            shouldAutoListen = true;
             isBusy = false;
             isRecordingCommand = true;
             commandBuffer = "";
             latestInterimBuffer = "";
+            setInputHearingPreview('pode falar agora...');
             updateSystemStatus('user_speaking');
-            appendLog('SYSTEM', 'Gravação manual ativada — fale agora e pare para enviar.', 'log-sys');
-            startRecognitionSafe();
+            appendLog('SYSTEM', 'Microfone ativo — fale sua pergunta e faça pausa para o Jarvis responder.', 'log-sys');
+
+            startFreshRecognition(true);
         };
 
         /* ═══════════════════════════════════════════════════════════════════════ */
@@ -1755,7 +2041,6 @@
 
             if (!target) return null;
 
-            // Busca direta dentro do YouTube ("abrir youtube e pesquisar ...")
             const ytSearchMatch = target.match(/^youtube\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar)?\s*(.+)$/i);
             if (ytSearchMatch && ytSearchMatch[1]) {
                 const query = ytSearchMatch[1].trim();
@@ -1806,7 +2091,6 @@
         }
 
         function openExternalAppSafe(url, appName, deepLink = '') {
-            // Sempre disponibiliza o botão direto no terminal para acesso imediato com 1 toque
             appendLog(
                 'APP LAUNCHER',
                 '',
@@ -1827,7 +2111,6 @@
 
             const win = window.open(url, '_blank', 'noopener,noreferrer');
             if (!win || win.closed || typeof win.closed === 'undefined') {
-                // Fallback por âncora sintética quando pop-up é bloqueado
                 const a = document.createElement('a');
                 a.href = url;
                 a.target = '_blank';
@@ -2016,8 +2299,8 @@ ${brainDump}`;
         async function runApiDiagnostic() {
             const btn = document.getElementById('btnTestApi');
             const origLabel = btn.textContent;
-            btn.textContent = '⏳ TESTANDO...';
-            appendLog('DIAGNÓSTICO', 'Verificando motor de IA e busca em tempo real na internet...', 'log-sys');
+            btn.textContent = '⏳...';
+            appendLog('DIAGNÓSTICO', 'Verificando motor de IA e busca em tempo real...', 'log-sys');
 
             const testQuestion = 'Qual a cotação do dólar hoje e confirme que a busca web está ativa em uma frase curta.';
             const testContents = [{ role: 'user', parts: [{ text: testQuestion }] }];
@@ -2049,7 +2332,6 @@ ${brainDump}`;
             updateSystemStatus('thinking');
             appendLog('SANDRO', userText, 'log-user');
 
-            // 1. Intercepta comandos de abertura de aplicativos/sites (YouTube, WhatsApp, Spotify, etc.)
             const appCommand = parseOpenAppIntent(userText);
             if (appCommand) {
                 appendLog('JARVIS', appCommand.reply, 'log-jarvis');
@@ -2058,7 +2340,6 @@ ${brainDump}`;
                 return;
             }
 
-            // 2. Consulta o motor de IA + Busca Web
             sessionHistory.push({
                 role: 'user',
                 parts: [{ text: userText }]
@@ -2125,23 +2406,29 @@ ${brainDump}`;
                 document.getElementById('activationScreen').classList.add('hidden');
                 document.getElementById('commandFloor').classList.add('active');
 
+                shouldAutoListen = true;
                 renderNeuralCommandGraph();
                 startSynapseLoop();
                 startPixelFaceHologram();
+                unlockJarvisAudio();
+                pickBestLocalMaleVoice();
 
-                // Desbloqueia áudio no primeiro clique
-                if ('speechSynthesis' in window) {
-                    selectJarvisMaleVoice();
-                    const unlock = new SpeechSynthesisUtterance(' ');
-                    window.speechSynthesis.speak(unlock);
-                }
-
-                const welcome = `Sistemas online e protocolos de voz ativos, ${CONFIG.address}. Estou à sua disposição.`;
+                const welcome = `Sistemas online, ${CONFIG.address}. Estou à sua disposição.`;
                 appendLog('JARVIS', welcome, 'log-jarvis');
                 speakText(welcome);
             });
 
+            document.getElementById('btnVoiceMode').addEventListener('click', () => {
+                unlockJarvisAudio();
+                voiceEngineMode = voiceEngineMode === 'neural' ? 'local' : 'neural';
+                updateVoiceModeButton();
+                const msg = `Perfil de áudio atualizado, ${CONFIG.address}.`;
+                appendLog('SYSTEM', msg, 'log-sys');
+                speakText(msg);
+            });
+
             document.getElementById('btnTestApi').addEventListener('click', () => {
+                unlockJarvisAudio();
                 runApiDiagnostic();
             });
 
@@ -2154,12 +2441,14 @@ ${brainDump}`;
             });
 
             document.getElementById('btnStopSpeech').addEventListener('click', () => {
-                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                stopAllAudio();
+                stopRecognitionSafe();
                 releaseSpeechLock();
             });
 
             document.getElementById('textCommandInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
+                    unlockJarvisAudio();
                     const val = e.target.value.trim();
                     if (val) {
                         e.target.value = '';
