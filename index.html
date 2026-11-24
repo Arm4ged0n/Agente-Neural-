@@ -33,14 +33,14 @@
             --heat-primary: #ff2a00;
             --heat-secondary: #ff8c00;
             --heat-spark: #fff3b0;
-            --heat-glow: rgba(255, 42, 0, 0.65);
+            --heat-glow: rgba(255, 42, 0, 0.62);
         }
 
         body.voice-speaking {
             --heat-primary: #38bdf8;
             --heat-secondary: #00e5ff;
             --heat-spark: #ffffff;
-            --heat-glow: rgba(0, 229, 255, 0.32);
+            --heat-glow: rgba(0, 229, 255, 0.34);
         }
 
         body {
@@ -133,6 +133,7 @@
         .overlay-screen.hidden {
             opacity: 0;
             pointer-events: none;
+            display: none;
         }
 
         .matrix-logo {
@@ -167,7 +168,7 @@
             width: 0%;
             background: linear-gradient(90deg, var(--gold-neural), var(--red-reactor));
             box-shadow: 0 0 15px var(--gold-neural);
-            animation: bootFill 1.35s ease-out forwards;
+            animation: bootFill 1.1s ease-out forwards;
         }
 
         @keyframes bootFill {
@@ -250,7 +251,7 @@
             font-family: var(--font-mono);
             font-size: 0.68rem;
             padding: 0.3rem 0.5rem;
-            width: 130px;
+            width: 126px;
             outline: none;
         }
 
@@ -316,8 +317,8 @@
 
         .stage-rings {
             position: absolute;
-            width: min(78vw, 340px);
-            height: min(78vw, 340px);
+            width: min(76vw, 330px);
+            height: min(76vw, 330px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -331,7 +332,7 @@
             width: 96px;
             height: 96px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 61, 0, 0.25) 0%, rgba(5, 7, 12, 0.92) 72%);
+            background: radial-gradient(circle, rgba(255, 61, 0, 0.22) 0%, rgba(5, 7, 12, 0.92) 72%);
             border: 1.5px solid var(--heat-primary);
             box-shadow: 0 0 35px var(--heat-glow), inset 0 0 20px var(--heat-glow);
             display: flex;
@@ -348,7 +349,7 @@
 
         body.voice-hot .core-brain-hub,
         body.voice-speaking .core-brain-hub {
-            opacity: 0.25;
+            opacity: 0.28;
         }
 
         .core-label {
@@ -368,7 +369,7 @@
         .node-card {
             position: absolute;
             transform: translate(-50%, -50%);
-            width: clamp(92px, 24vw, 132px);
+            width: clamp(92px, 24vw, 134px);
             background: rgba(7, 9, 14, 0.88);
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-top-width: 2px;
@@ -521,7 +522,7 @@
 
         .run-log-body {
             flex: 1;
-            max-height: 92px;
+            max-height: 96px;
             overflow-y: auto;
             font-size: 0.66rem;
             line-height: 1.4;
@@ -644,7 +645,7 @@
         <div class="matrix-logo">JARVIS</div>
         <div class="matrix-sub">ATS MATRIX // COMMAND FLOOR</div>
         <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-        <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1.5px;">SINCRONIZANDO MALHA NEURAL & BUSCA WEB...</div>
+        <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1.5px;">SINCRONIZANDO MALHA NEURAL &amp; BUSCA WEB...</div>
     </div>
 
     <div class="overlay-screen hidden" id="activationScreen">
@@ -670,7 +671,7 @@
             </div>
 
             <div class="top-right-controls">
-                <button class="btn-hud" id="btnVoiceMode" style="padding: 0.3rem 0.5rem; border-color: var(--gold-neural); color: var(--gold-neural);" title="Alternar motor de áudio do Jarvis">🔊 ÁUDIO: NEURAL</button>
+                <button class="btn-hud" id="btnVoiceMode" style="padding: 0.3rem 0.5rem; border-color: var(--gold-neural); color: var(--gold-neural);" title="Alternar perfil de áudio">🤖 VOZ: ROBÔ</button>
                 <input type="password" id="apiKeyInput" class="api-input" placeholder="AIza... (Opcional)">
                 <button class="btn-hud" id="btnTestApi" style="padding: 0.3rem 0.5rem; border-color: #2dd4ff; color: #2dd4ff;">⚡ TESTAR</button>
                 <button class="btn-hud" id="btnAddNode" style="padding: 0.3rem 0.5rem;">+ NÓ</button>
@@ -744,7 +745,7 @@
                 </div>
                 <div class="graph-cost-grid">
                     <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
-                        <div style="display:flex; justify-content:space-between;"><span>edges</span><b style="color:#fff;">19</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>edges</span><b style="color:#fff;" id="costEdgesCount">19</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>readers</span><b style="color:#fff;">14</b></div>
                         <div style="display:flex; justify-content:space-between;"><span>nodes</span><b style="color:#fff;" id="costNodesCount">8</b></div>
                     </div>
@@ -841,20 +842,26 @@
         let isRecordingCommand = false;
         let commandBuffer = "";
         let latestInterimBuffer = "";
+        let lastHeardTranscript = "";
         let commandSilenceTimer = null;
         let micHardTimeoutTimer = null;
+        let micStartWatchdog = null;
         let speechSafetyTimer = null;
         let speechKeepAliveTimer = null;
         let recognition = null;
         let selectedVoice = null;
-        let voiceEngineMode = 'neural';
-        let audioCtx = null;
-        let activeAudioSource = null;
+        let voiceEngineMode = 'robot';
         let jarvisAudio = null;
+        let robotAudioCtx = null;
+        let robotSourceConnected = false;
+        let audioUnlocked = false;
         let editingNoteId = null;
         let targetHeatLevel = 0.25;
         let currentHeatLevel = 0.25;
         let frameCounter = 1;
+        let synapseRunning = false;
+        let holoRunning = false;
+        let nodePositions = {};
 
         function getSavedApiKey() {
             if (memoryApiKey) return memoryApiKey;
@@ -876,121 +883,74 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 2. INICIALIZAÇÃO DO BOOT, GRAFO ORBITAL & LOOP DE SINAPSES              */
+        /* 2. GRAFO ORBITAL & TELEMETRIA VISUAL                                    */
         /* ═══════════════════════════════════════════════════════════════════════ */
-        let nodeCoords = {};
-        let synapseRunning = false;
-        let holoRunning = false;
-        let appInitialized = false;
-
-        function initJarvisApp() {
-            if (appInitialized) return;
-            appInitialized = true;
-
-            try {
-                const storedNotes = localStorage.getItem('jarvis_notes');
-                if (storedNotes) {
-                    const parsed = JSON.parse(storedNotes);
-                    if (Array.isArray(parsed) && parsed.length > 0) NOTES = parsed;
-                }
-            } catch (e) {}
-
-            const apiInput = document.getElementById('apiKeyInput');
-            if (apiInput) {
-                const saved = getSavedApiKey();
-                if (saved) apiInput.value = saved;
-                apiInput.addEventListener('input', (e) => saveApiKeyForever(e.target.value));
-            }
-
-            setupSpeechEngine();
-            bindUIEvents();
-
-            const updateClock = () => {
-                const now = new Date();
-                const hh = String(now.getHours()).padStart(2, '0');
-                const mm = String(now.getMinutes()).padStart(2, '0');
-                const clockEl = document.getElementById('clockTelemetry');
-                if (clockEl) clockEl.textContent = `T ${hh}:${mm}`;
-            };
-            updateClock();
-            setInterval(updateClock, 1000);
-
-            window.addEventListener('resize', () => {
-                renderNeuralCommandGraph();
-            });
-
-            setTimeout(() => {
-                const bootEl = document.getElementById('bootScreen');
-                const actEl = document.getElementById('activationScreen');
-                if (bootEl) bootEl.classList.add('hidden');
-                if (actEl) actEl.classList.remove('hidden');
-            }, 1350);
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initJarvisApp);
-        } else {
-            initJarvisApp();
-        }
-
         function renderNeuralCommandGraph(highlightId = null) {
-            const stage = document.getElementById('neuralStage');
             const layer = document.getElementById('orbitNodesLayer');
-            if (!stage || !layer) return;
-
-            const w = stage.clientWidth || window.innerWidth;
-            const h = stage.clientHeight || 420;
-            const cx = w / 2;
-            const cy = h / 2;
-            const rx = Math.max(95, Math.min(w * 0.36, 250));
-            const ry = Math.max(95, Math.min(h * 0.37, 175));
+            const stage = document.getElementById('neuralStage');
+            if (!layer || !stage) return;
 
             layer.innerHTML = '';
-            nodeCoords = {};
+            nodePositions = {};
+
+            const count = NOTES.length || 1;
+            const stageRect = stage.getBoundingClientRect();
+            const isNarrow = stageRect.width < 520;
+            const rxPct = isNarrow ? 34 : 36;
+            const ryPct = isNarrow ? 34 : 35;
 
             const isHot = document.body.classList.contains('voice-hot');
             const isSpeaking = document.body.classList.contains('voice-speaking');
 
             NOTES.forEach((note, idx) => {
-                const angle = (idx / Math.max(NOTES.length, 1)) * Math.PI * 2 - Math.PI / 2;
-                const x = cx + Math.cos(angle) * rx;
-                const y = cy + Math.sin(angle) * ry;
-                const areaInfo = AREA[note.area] || { label: 'Nota', color: '#94a3b8' };
-                const activeColor = isHot ? '#ff3d00' : (isSpeaking ? '#2dd4ff' : areaInfo.color);
+                const angle = (idx / count) * Math.PI * 2 - Math.PI / 2;
+                const xPct = 50 + Math.cos(angle) * rxPct;
+                const yPct = 50 + Math.sin(angle) * ryPct;
+                nodePositions[note.id] = { xPct, yPct };
 
-                nodeCoords[note.id] = { x, y, color: activeColor };
+                const areaMeta = AREA[note.area] || AREA.meta;
+                const accent = isHot ? '#ff3d00' : (isSpeaking ? '#2dd4ff' : areaMeta.color);
 
                 const card = document.createElement('div');
                 card.className = 'node-card';
-                card.style.left = `${x}px`;
-                card.style.top = `${y}px`;
-                card.style.borderTopColor = activeColor;
+                card.style.left = `${xPct}%`;
+                card.style.top = `${yPct}%`;
+                card.style.borderTopColor = accent;
                 if (highlightId && String(highlightId) === String(note.id)) {
-                    card.style.boxShadow = `0 0 22px ${activeColor}`;
-                    card.style.borderColor = activeColor;
+                    card.style.boxShadow = `0 0 22px ${accent}`;
+                    card.style.borderColor = accent;
                 }
 
-                const numLabel = `#${String(idx + 1).padStart(2, '0')}`;
+                const numTag = `#${String(idx + 1).padStart(2, '0')}`;
                 card.innerHTML = `
-                    <div class="node-card-head" style="color:${activeColor}">
-                        <span>${areaInfo.label}</span>
-                        <span>${numLabel}</span>
+                    <div class="node-card-head" style="color:${accent};">
+                        <span>${areaMeta.label}</span>
+                        <span>${numTag}</span>
                     </div>
-                    <div class="node-card-title"></div>
-                    <div class="node-card-body"></div>
+                    <div class="node-card-title">${escapeHtml(note.title)}</div>
+                    <div class="node-card-body">${escapeHtml(note.body)}</div>
                 `;
-                card.querySelector('.node-card-title').textContent = note.title;
-                card.querySelector('.node-card-body').textContent = note.body;
                 card.addEventListener('click', () => window.openNodeModal(note.id));
                 layer.appendChild(card);
             });
 
-            const statNodes = document.getElementById('statNodes');
-            const costNodes = document.getElementById('costNodesCount');
-            const statEdges = document.getElementById('statEdges');
-            if (statNodes) statNodes.textContent = String(NOTES.length);
-            if (costNodes) costNodes.textContent = String(NOTES.length);
-            if (statEdges) statEdges.textContent = String(EDGES.length + NOTES.length);
+            const totalEdges = EDGES.length + NOTES.length;
+            const elNodes = document.getElementById('statNodes');
+            const elEdges = document.getElementById('statEdges');
+            const elCostNodes = document.getElementById('costNodesCount');
+            const elCostEdges = document.getElementById('costEdgesCount');
+            if (elNodes) elNodes.textContent = String(NOTES.length);
+            if (elEdges) elEdges.textContent = String(totalEdges);
+            if (elCostNodes) elCostNodes.textContent = String(NOTES.length);
+            if (elCostEdges) elCostEdges.textContent = String(totalEdges);
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
         function startSynapseLoop() {
@@ -1002,112 +962,93 @@
             if (!canvas || !stage) return;
             const ctx = canvas.getContext('2d');
 
-            const sparks = Array.from({ length: 34 }, () => ({
-                angle: Math.random() * Math.PI * 2,
-                radius: 25 + Math.random() * 125,
-                speed: (Math.random() * 0.02 + 0.006) * (Math.random() > 0.5 ? 1 : -1),
-                size: Math.random() * 1.8 + 0.6
-            }));
+            const rays = [];
+            for (let i = 0; i < 42; i++) {
+                rays.push({
+                    angle: (i / 42) * Math.PI * 2,
+                    lenFactor: 0.48 + (i % 5) * 0.11,
+                    speed: 0.008 + (i % 4) * 0.004,
+                    phase: Math.random()
+                });
+            }
 
-            let t = 0;
+            const resize = () => {
+                const r = stage.getBoundingClientRect();
+                canvas.width = Math.max(1, Math.floor(r.width));
+                canvas.height = Math.max(1, Math.floor(r.height));
+            };
+            resize();
+            window.addEventListener('resize', () => {
+                resize();
+                renderNeuralCommandGraph();
+            });
 
-            function drawSynapses() {
-                const w = stage.clientWidth || window.innerWidth;
-                const h = stage.clientHeight || 420;
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-                if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
-                    canvas.width = Math.floor(w * dpr);
-                    canvas.height = Math.floor(h * dpr);
-                }
-
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                ctx.clearRect(0, 0, w, h);
-
-                t += 0.025;
+            const tick = () => {
                 currentHeatLevel += (targetHeatLevel - currentHeatLevel) * 0.08;
-
+                const w = canvas.width;
+                const h = canvas.height;
                 const cx = w / 2;
                 const cy = h / 2;
+                const maxR = Math.min(w, h) * 0.56;
+
+                ctx.clearRect(0, 0, w, h);
+
                 const isHot = document.body.classList.contains('voice-hot');
                 const isSpeaking = document.body.classList.contains('voice-speaking');
+                const strokeRgb = isHot ? '255, 61, 0' : (isSpeaking ? '45, 212, 255' : '251, 191, 36');
+                const sparkRgb = isHot ? '255, 240, 180' : (isSpeaking ? '224, 247, 255' : '254, 240, 138');
 
-                const primaryRGB = isHot ? '255, 61, 0' : (isSpeaking ? '45, 212, 255' : '251, 191, 36');
-                const secondaryRGB = isHot ? '255, 180, 60' : (isSpeaking ? '125, 211, 252' : '217, 119, 6');
+                rays.forEach((ray) => {
+                    ray.phase = (ray.phase + ray.speed * (0.7 + currentHeatLevel * 1.4)) % 1;
+                    const x2 = cx + Math.cos(ray.angle) * (maxR * ray.lenFactor);
+                    const y2 = cy + Math.sin(ray.angle) * (maxR * ray.lenFactor);
 
-                ctx.lineWidth = 1;
-                EDGES.forEach(([aId, bId], i) => {
-                    const a = nodeCoords[aId];
-                    const b = nodeCoords[bId];
-                    if (!a || !b) return;
-
-                    ctx.beginPath();
-                    ctx.moveTo(a.x, a.y);
-                    const mx = (a.x + b.x) / 2 + Math.sin(t + i) * 8;
-                    const my = (a.y + b.y) / 2 + Math.cos(t + i) * 8;
-                    ctx.quadraticCurveTo(mx, my, b.x, b.y);
-                    ctx.strokeStyle = `rgba(${primaryRGB}, ${0.14 + currentHeatLevel * 0.18})`;
-                    ctx.stroke();
-                });
-
-                Object.values(nodeCoords).forEach((pos, idx) => {
                     ctx.beginPath();
                     ctx.moveTo(cx, cy);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.strokeStyle = `rgba(${primaryRGB}, ${0.12 + currentHeatLevel * 0.16})`;
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = `rgba(${strokeRgb}, ${0.08 + currentHeatLevel * 0.16})`;
+                    ctx.lineWidth = 0.8;
                     ctx.stroke();
 
-                    const pulse = (t * (0.45 + currentHeatLevel * 0.65) + idx * 0.19) % 1;
-                    const px = cx + (pos.x - cx) * pulse;
-                    const py = cy + (pos.y - cy) * pulse;
+                    const px = cx + (x2 - cx) * ray.phase;
+                    const py = cy + (y2 - cy) * ray.phase;
                     ctx.beginPath();
-                    ctx.arc(px, py, 1.8 + currentHeatLevel, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${secondaryRGB}, 0.85)`;
+                    ctx.arc(px, py, 1.3 + currentHeatLevel * 0.9, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${sparkRgb}, ${0.35 + currentHeatLevel * 0.55})`;
                     ctx.fill();
                 });
 
-                const boltCount = isHot ? 7 : (isSpeaking ? 5 : 2);
-                const maxBoltR = Math.min(w, h) * 0.34;
-                for (let b = 0; b < boltCount; b++) {
-                    if (Math.random() > 0.38 + currentHeatLevel * 0.45) continue;
-                    const ang = Math.random() * Math.PI * 2;
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    let r = 18;
-                    while (r < maxBoltR) {
-                        r += 14 + Math.random() * 14;
-                        const jitter = (Math.random() - 0.5) * (0.22 + currentHeatLevel * 0.25);
-                        ctx.lineTo(cx + Math.cos(ang + jitter) * r, cy + Math.sin(ang + jitter) * r);
-                    }
-                    ctx.strokeStyle = `rgba(${secondaryRGB}, ${0.22 + currentHeatLevel * 0.45})`;
-                    ctx.lineWidth = isHot ? 1.4 : 1;
-                    ctx.stroke();
-                }
+                EDGES.forEach(([idA, idB]) => {
+                    const pA = nodePositions[idA];
+                    const pB = nodePositions[idB];
+                    if (!pA || !pB) return;
+                    const x1 = (pA.xPct / 100) * w;
+                    const y1 = (pA.yPct / 100) * h;
+                    const x2 = (pB.xPct / 100) * w;
+                    const y2 = (pB.yPct / 100) * h;
 
-                sparks.forEach((sp) => {
-                    sp.angle += sp.speed * (1 + currentHeatLevel * 2.2);
-                    const x = cx + Math.cos(sp.angle) * sp.radius;
-                    const y = cy + Math.sin(sp.angle) * sp.radius;
                     ctx.beginPath();
-                    ctx.arc(x, y, sp.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${primaryRGB}, ${0.35 + currentHeatLevel * 0.45})`;
-                    ctx.fill();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = `rgba(${strokeRgb}, ${0.14 + currentHeatLevel * 0.2})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
                 });
 
                 frameCounter++;
                 if (frameCounter % 6 === 0) {
-                    const frameEl = document.getElementById('statFrame');
-                    if (frameEl) frameEl.textContent = String(frameCounter).padStart(4, '0');
+                    const elFrame = document.getElementById('statFrame');
+                    if (elFrame) elFrame.textContent = String(frameCounter).padStart(4, '0');
                 }
 
-                requestAnimationFrame(drawSynapses);
-            }
+                requestAnimationFrame(tick);
+            };
 
-            requestAnimationFrame(drawSynapses);
+            requestAnimationFrame(tick);
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 3. HOLOGRAMA ORIGINAL (MALHA GEODÉSICA OVAL 3D + ANÉIS + RAIOS RETOS)   */
+        /* 3. HOLOGRAMA GEODÉSICO 3D ORIGINAL (MALHA OVAL + VÉRTICES LUMINOSOS)    */
         /* ═══════════════════════════════════════════════════════════════════════ */
         function startPixelFaceHologram() {
             if (holoRunning) return;
@@ -1118,295 +1059,225 @@
             if (!canvas || !stage) return;
             const ctx = canvas.getContext('2d');
 
-            const latBands = 18;
-            const lonBands = 24;
-            const meshPoints = [];
+            const resize = () => {
+                const r = stage.getBoundingClientRect();
+                canvas.width = Math.max(1, Math.floor(r.width));
+                canvas.height = Math.max(1, Math.floor(r.height));
+            };
+            resize();
+            window.addEventListener('resize', resize);
 
-            for (let i = 0; i <= latBands; i++) {
-                const v = i / latBands;
+            const latCount = 15;
+            const lonCount = 22;
+            const points = [];
+            for (let i = 0; i <= latCount; i++) {
+                const v = i / latCount;
                 const phi = v * Math.PI;
-                for (let j = 0; j < lonBands; j++) {
-                    const theta = (j / lonBands) * Math.PI * 2;
-                    const sinPhi = Math.sin(phi);
-                    const cosPhi = Math.cos(phi);
-
-                    let rx = 0.72 * sinPhi;
-                    let ry = 1.04 * (-cosPhi);
-                    let rz = 0.72 * sinPhi;
-
-                    if (v > 0.62) {
-                        const taper = (v - 0.62) / 0.38;
-                        rx *= (1 - taper * 0.22);
-                        rz *= (1 - taper * 0.16);
-                    }
-
-                    const isBrightNode = (i % 2 === 0 && j % 2 === 0) || (v > 0.3 && v < 0.72 && (j % 3 === 0));
-                    meshPoints.push({
-                        lat: i,
-                        lon: j,
-                        bx: rx * Math.sin(theta),
-                        by: ry,
-                        bz: rz * Math.cos(theta),
-                        bright: isBrightNode,
-                        phase: (i * 0.45) + (j * 0.3)
-                    });
+                for (let j = 0; j < lonCount; j++) {
+                    const u = j / lonCount;
+                    const theta = u * Math.PI * 2;
+                    const x = Math.sin(phi) * Math.cos(theta) * 0.82;
+                    const y = -Math.cos(phi) * 1.12;
+                    const z = Math.sin(phi) * Math.sin(theta) * 0.82;
+                    points.push({ x, y, z, i, j });
                 }
             }
 
-            const radialRays = Array.from({ length: 36 }, (_, idx) => {
-                const angle = (idx / 36) * Math.PI * 2;
-                return {
-                    angle,
-                    inner: 0.78 + (idx % 3) * 0.08,
-                    outer: 1.45 + (idx % 4) * 0.22,
-                    dotPos: 0.35 + (idx % 5) * 0.14
-                };
-            });
-
-            let holoAlpha = 0;
-            let time = 0;
-
-            function drawHologram() {
-                const w = stage.clientWidth || window.innerWidth;
-                const h = stage.clientHeight || 420;
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-                if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
-                    canvas.width = Math.floor(w * dpr);
-                    canvas.height = Math.floor(h * dpr);
-                }
-
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            let rotY = 0;
+            const render = (now) => {
+                const w = canvas.width;
+                const h = canvas.height;
                 ctx.clearRect(0, 0, w, h);
-
-                time += 0.028;
 
                 const isHot = document.body.classList.contains('voice-hot');
                 const isSpeaking = document.body.classList.contains('voice-speaking');
-                const targetAlpha = (isHot || isSpeaking) ? 1.0 : 0.0;
-                holoAlpha += (targetAlpha - holoAlpha) * 0.09;
+                const active = isHot || isSpeaking;
 
-                if (holoAlpha < 0.02) {
-                    requestAnimationFrame(drawHologram);
-                    return;
-                }
+                const globalAlpha = active ? 0.96 : 0.34;
+                const baseRgb = isHot ? '255, 72, 24' : (isSpeaking ? '56, 189, 248' : '251, 191, 36');
+                const dotRgb = isHot ? '255, 236, 190' : (isSpeaking ? '232, 252, 255' : '255, 243, 200');
 
+                rotY += active ? 0.011 : 0.004;
+                const pulse = 1 + Math.sin(now * (active ? 0.009 : 0.003)) * (active ? 0.035 : 0.015);
+                const radius = Math.min(w, h) * 0.255 * pulse;
                 const cx = w / 2;
                 const cy = h / 2;
-                const scale = Math.min(w, h) * 0.33;
 
-                const mainRGB = isHot ? '255, 68, 24' : '45, 212, 255';
-                const glowRGB = isHot ? '255, 130, 50' : '56, 189, 248';
-                const coreWhite = '255, 255, 255';
+                const cosY = Math.cos(rotY);
+                const sinY = Math.sin(rotY);
 
-                // Brilho radial de fundo atrás do holograma
-                const bgGlow = ctx.createRadialGradient(cx, cy, scale * 0.12, cx, cy, scale * 1.55);
-                bgGlow.addColorStop(0, `rgba(${mainRGB}, ${0.26 * holoAlpha})`);
-                bgGlow.addColorStop(0.55, `rgba(${glowRGB}, ${0.10 * holoAlpha})`);
-                bgGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                ctx.fillStyle = bgGlow;
-                ctx.fillRect(0, 0, w, h);
-
-                // Raios retos de telemetria radiando para fora (igual ao print original)
-                ctx.lineWidth = 0.85;
-                radialRays.forEach((ray) => {
-                    const cosA = Math.cos(ray.angle);
-                    const sinA = Math.sin(ray.angle);
-                    const x1 = cx + cosA * scale * ray.inner;
-                    const y1 = cy + sinA * scale * ray.inner * 1.1;
-                    const x2 = cx + cosA * scale * ray.outer;
-                    const y2 = cy + sinA * scale * ray.outer * 1.1;
-
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.strokeStyle = `rgba(${mainRGB}, ${0.22 * holoAlpha})`;
-                    ctx.stroke();
-
-                    const pulseT = (ray.dotPos + time * 0.18) % 1;
-                    const dx = x1 + (x2 - x1) * pulseT;
-                    const dy = y1 + (y2 - y1) * pulseT;
-                    ctx.beginPath();
-                    ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${coreWhite}, ${0.65 * holoAlpha})`;
-                    ctx.fill();
+                const projected = points.map((p) => {
+                    const rx = p.x * cosY - p.z * sinY;
+                    const rz = p.x * sinY + p.z * cosY;
+                    const ry = p.y;
+                    const perspective = 2.6 / (2.6 - rz);
+                    return {
+                        sx: cx + rx * radius * perspective,
+                        sy: cy + ry * radius * perspective,
+                        z: rz,
+                        p: perspective,
+                        i: p.i,
+                        j: p.j
+                    };
                 });
 
-                // Rotação suave 3D + pulsação vocal
-                const rotY = time * 0.35;
-                const rotX = Math.sin(time * 0.5) * 0.1;
-                const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-                const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
-
-                const vocalPulse = isSpeaking
-                    ? (1 + Math.sin(time * 8.5) * 0.028 + Math.sin(time * 5.1) * 0.018)
-                    : (isHot ? 1 + Math.sin(time * 6.0) * 0.02 : 1);
-
-                // Projeção 3D -> 2D dos vértices
-                const projected = new Array(meshPoints.length);
-                for (let k = 0; k < meshPoints.length; k++) {
-                    const p = meshPoints[k];
-                    const x0 = p.bx * vocalPulse;
-                    const y0 = p.by * vocalPulse;
-                    const z0 = p.bz * vocalPulse;
-
-                    const rx = x0 * cosY + z0 * sinY;
-                    const rz1 = -x0 * sinY + z0 * cosY;
-                    const ry = y0 * cosX - rz1 * sinX;
-                    const rz = y0 * sinX + rz1 * cosX;
-
-                    const persp = 2.8 / (2.8 - rz);
-                    projected[k] = {
-                        sx: cx + rx * scale * persp,
-                        sy: cy + ry * scale * persp,
-                        z: rz,
-                        p
-                    };
-                }
-
-                // Desenha grade wireframe (paralelos e meridianos)
-                ctx.lineWidth = 0.85;
-                for (let i = 0; i <= latBands; i++) {
-                    for (let j = 0; j < lonBands; j++) {
-                        const a = projected[i * lonBands + j];
-                        const b = projected[i * lonBands + ((j + 1) % lonBands)];
-                        const depth = (a.z + 1) * 0.5;
+                ctx.lineWidth = active ? 1.05 : 0.7;
+                for (let i = 0; i <= latCount; i++) {
+                    for (let j = 0; j < lonCount; j++) {
+                        const idx = i * lonCount + j;
+                        const nextLon = i * lonCount + ((j + 1) % lonCount);
+                        const a = projected[idx];
+                        const b = projected[nextLon];
+                        const avgZ = (a.z + b.z) * 0.5;
+                        const alpha = Math.max(0.05, (avgZ + 1.1) * 0.22) * globalAlpha;
 
                         ctx.beginPath();
                         ctx.moveTo(a.sx, a.sy);
                         ctx.lineTo(b.sx, b.sy);
-                        ctx.strokeStyle = `rgba(${mainRGB}, ${(0.12 + depth * 0.34) * holoAlpha})`;
+                        ctx.strokeStyle = `rgba(${baseRgb}, ${alpha})`;
                         ctx.stroke();
 
-                        if (i < latBands) {
-                            const c = projected[(i + 1) * lonBands + j];
+                        if (i < latCount) {
+                            const nextLat = (i + 1) * lonCount + j;
+                            const c = projected[nextLat];
                             ctx.beginPath();
                             ctx.moveTo(a.sx, a.sy);
                             ctx.lineTo(c.sx, c.sy);
-                            ctx.strokeStyle = `rgba(${mainRGB}, ${(0.10 + depth * 0.30) * holoAlpha})`;
+                            ctx.strokeStyle = `rgba(${baseRgb}, ${alpha * 0.85})`;
                             ctx.stroke();
                         }
                     }
                 }
 
-                // Desenha os nós/vértices luminosos (pontos brancos + halo)
-                for (let k = 0; k < projected.length; k++) {
-                    const pt = projected[k];
-                    const depth = Math.max(0.05, (pt.z + 1) * 0.5);
-                    const flicker = 0.8 + 0.2 * Math.sin(time * 3 + pt.p.phase);
-                    const radius = pt.p.bright
-                        ? (1.3 + depth * 2.1)
-                        : (0.8 + depth * 1.1);
-
-                    ctx.beginPath();
-                    ctx.arc(pt.sx, pt.sy, radius, 0, Math.PI * 2);
-                    if (pt.z > 0.15 && pt.p.bright) {
-                        ctx.fillStyle = `rgba(${coreWhite}, ${Math.min(1, depth * 1.05 * flicker) * holoAlpha})`;
-                    } else {
-                        ctx.fillStyle = `rgba(${mainRGB}, ${Math.min(0.95, depth * 0.85 * flicker) * holoAlpha})`;
-                    }
-                    ctx.fill();
+                if (active) {
+                    const ringPulse = 1 + Math.sin(now * 0.012) * 0.04;
+                    [0.92, 0.72, 0.52].forEach((scale, k) => {
+                        ctx.beginPath();
+                        ctx.ellipse(cx, cy, radius * 0.9 * scale * ringPulse, radius * 1.12 * scale * ringPulse, 0, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(${baseRgb}, ${0.55 - k * 0.14})`;
+                        ctx.lineWidth = k === 0 ? 1.8 : 1.1;
+                        ctx.stroke();
+                    });
                 }
 
-                // Anéis concêntricos luminosos sobrepostos no centro da malha (assinatura visual do print)
-                const ringOuterR = scale * 0.72 * vocalPulse;
-                const ringInnerR = scale * 0.50 * vocalPulse;
+                projected.forEach((pt) => {
+                    const depthNorm = (pt.z + 1) * 0.5;
+                    const size = (0.9 + depthNorm * 2.1) * (active ? 1.12 : 0.85);
+                    const alpha = Math.max(0.1, depthNorm * 0.95) * globalAlpha;
+                    ctx.beginPath();
+                    ctx.arc(pt.sx, pt.sy, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${dotRgb}, ${alpha})`;
+                    ctx.fill();
+                });
 
-                ctx.save();
-                ctx.shadowColor = `rgba(${mainRGB}, ${0.85 * holoAlpha})`;
-                ctx.shadowBlur = 14;
+                requestAnimationFrame(render);
+            };
 
-                ctx.beginPath();
-                ctx.arc(cx, cy, ringOuterR, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(${mainRGB}, ${0.82 * holoAlpha})`;
-                ctx.lineWidth = 2.0;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(cx, cy, ringInnerR, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(${glowRGB}, ${0.72 * holoAlpha})`;
-                ctx.lineWidth = 1.6;
-                ctx.stroke();
-                ctx.restore();
-
-                requestAnimationFrame(drawHologram);
-            }
-
-            requestAnimationFrame(drawHologram);
+            requestAnimationFrame(render);
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 4. MOTOR DE VOZ MASCULINA (AUDIOCONTEXT NEURAL + FALLBACK MASCULINO)    */
+        /* 4. VOZ MASCULINA ROBÓTICA (DSP METÁLICO + MICROFONE CONTÍNUO ESTÁVEL)   */
         /* ═══════════════════════════════════════════════════════════════════════ */
         const FEMALE_VOICE_HINTS = /luciana|joana|maria|fernanda|helena|francisca|thalita|camila|raquel|catarina|ines|inês|sofia|leticia|letícia|vitoria|vitória|sara|monica|mônica|ana|paula|female|mulher|woman|girl|samantha|victoria|karen|moira|tessa|fiona|shelley|sandy|flo|grandma|avó|avo\b/i;
         const MALE_VOICE_HINTS = /daniel|reed|eddy|rocko|grandpa|avô|arthur|tiago|felipe|antonio|antônio|joaquim|cristiano|ricardo|thiago|bruno|pedro|lucas|gabriel|rafael|carlos|paulo|jorge|fernando|rodrigo|henrique|male|homem|man|guy/i;
 
-        function ensureAudioContext() {
-            const Ctx = window.AudioContext || window.webkitAudioContext;
-            if (!Ctx) return null;
-            if (!audioCtx) {
-                audioCtx = new Ctx();
+        function ensureJarvisAudioElement() {
+            if (!jarvisAudio) {
+                jarvisAudio = new Audio();
+                jarvisAudio.crossOrigin = 'anonymous';
+                jarvisAudio.setAttribute('playsinline', '');
+                jarvisAudio.preload = 'auto';
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(() => {});
+            return jarvisAudio;
+        }
+
+        function attachRobotFilterChain(audioEl) {
+            if (robotSourceConnected) return;
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            try {
+                if (!robotAudioCtx) {
+                    robotAudioCtx = new AudioCtx();
+                }
+                if (robotAudioCtx.state === 'suspended') {
+                    robotAudioCtx.resume();
+                }
+                const source = robotAudioCtx.createMediaElementSource(audioEl);
+
+                // Filtro de graves masculinos (chest resonance)
+                const bassBoost = robotAudioCtx.createBiquadFilter();
+                bassBoost.type = 'lowshelf';
+                bassBoost.frequency.value = 180;
+                bassBoost.gain.value = 8.5;
+
+                // Ressonância metálica estilo armadura/Jarvis
+                const metallicPeaking = robotAudioCtx.createBiquadFilter();
+                metallicPeaking.type = 'peaking';
+                metallicPeaking.frequency.value = 1150;
+                metallicPeaking.Q.value = 5.5;
+                metallicPeaking.gain.value = 7.0;
+
+                // Delay curto de 14ms para timbre sintético/robótico limpo
+                const combDelay = robotAudioCtx.createDelay();
+                combDelay.delayTime.value = 0.014;
+                const combGain = robotAudioCtx.createGain();
+                combGain.gain.value = 0.26;
+
+                const masterGain = robotAudioCtx.createGain();
+                masterGain.gain.value = 1.15;
+
+                source.connect(bassBoost);
+                bassBoost.connect(metallicPeaking);
+                metallicPeaking.connect(masterGain);
+
+                metallicPeaking.connect(combDelay);
+                combDelay.connect(combGain);
+                combGain.connect(masterGain);
+
+                masterGain.connect(robotAudioCtx.destination);
+                robotSourceConnected = true;
+            } catch (e) {
+                // Se CORS impedir WebAudio no host, o playbackRate rebaixado já mantém o timbre grave
             }
-            return audioCtx;
         }
 
         function unlockJarvisAudio() {
-            const ctx = ensureAudioContext();
-            if (ctx) {
-                try {
-                    const silentBuf = ctx.createBuffer(1, 1, 22050);
-                    const src = ctx.createBufferSource();
-                    src.buffer = silentBuf;
-                    src.connect(ctx.destination);
-                    src.start(0);
-                } catch (e) {}
+            const audioEl = ensureJarvisAudioElement();
+            if (robotAudioCtx && robotAudioCtx.state === 'suspended') {
+                try { robotAudioCtx.resume(); } catch (e) {}
             }
-
-            if (!jarvisAudio) {
-                jarvisAudio = new Audio();
-                jarvisAudio.setAttribute('playsinline', '');
-            }
+            if (audioUnlocked) return;
             try {
-                jarvisAudio.muted = true;
-                jarvisAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-                const p = jarvisAudio.play();
+                audioEl.muted = true;
+                audioEl.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+                const p = audioEl.play();
                 if (p && typeof p.then === 'function') {
                     p.then(() => {
-                        jarvisAudio.pause();
-                        jarvisAudio.muted = false;
+                        audioEl.pause();
+                        audioEl.removeAttribute('src');
+                        audioEl.load();
+                        audioEl.muted = false;
+                        audioUnlocked = true;
                     }).catch(() => {
-                        jarvisAudio.muted = false;
+                        audioEl.muted = false;
                     });
+                } else {
+                    audioEl.muted = false;
+                    audioUnlocked = true;
                 }
             } catch (e) {}
-
-            if ('speechSynthesis' in window) {
-                try {
-                    window.speechSynthesis.cancel();
-                    const u = new SpeechSynthesisUtterance(' ');
-                    u.volume = 0;
-                    window.speechSynthesis.speak(u);
-                } catch (e) {}
-            }
         }
 
         function stopAllAudio() {
-            if (activeAudioSource) {
-                try {
-                    activeAudioSource.onended = null;
-                    activeAudioSource.stop();
-                    activeAudioSource.disconnect();
-                } catch (e) {}
-                activeAudioSource = null;
-            }
             if (jarvisAudio) {
                 try {
+                    jarvisAudio.onplaying = null;
                     jarvisAudio.onended = null;
                     jarvisAudio.onerror = null;
                     jarvisAudio.pause();
+                    jarvisAudio.removeAttribute('src');
+                    jarvisAudio.load();
                 } catch (e) {}
             }
             if ('speechSynthesis' in window) {
@@ -1419,13 +1290,13 @@
             const voices = window.speechSynthesis.getVoices();
             if (!voices || voices.length === 0) return null;
 
-            const ptVoices = voices.filter(v => /^pt/i.test(v.lang));
+            const ptVoices = voices.filter(v => /^pt([-_]|$)/i.test(v.lang));
             const explicitMalePt = ptVoices.filter(v => MALE_VOICE_HINTS.test(v.name) && !FEMALE_VOICE_HINTS.test(v.name));
             const nonFemalePt = ptVoices.filter(v => !FEMALE_VOICE_HINTS.test(v.name));
 
             selectedVoice =
                 explicitMalePt.find(v => /daniel|felipe|antonio|antônio|ricardo|tiago|joaquim|cristiano/i.test(v.name)) ||
-                explicitMalePt.find(v => /reed|eddy|rocko|grandpa|avô/i.test(v.name)) ||
+                explicitMalePt.find(v => /eddy|reed|rocko|grandpa|avô/i.test(v.name)) ||
                 explicitMalePt[0] ||
                 nonFemalePt[0] ||
                 ptVoices[0] ||
@@ -1437,7 +1308,7 @@
         function updateVoiceModeButton() {
             const btn = document.getElementById('btnVoiceMode');
             if (!btn) return;
-            btn.textContent = voiceEngineMode === 'neural' ? '🔊 ÁUDIO: NEURAL' : '🔊 ÁUDIO: LOCAL';
+            btn.textContent = voiceEngineMode === 'robot' ? '🤖 VOZ: ROBÔ' : '🔊 VOZ: LOCAL';
         }
 
         function setupSpeechEngine() {
@@ -1449,54 +1320,13 @@
 
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SR) {
-                document.getElementById('dispVoiceStatus').textContent = 'n/a';
+                const disp = document.getElementById('dispVoiceStatus');
+                if (disp) disp.textContent = 'n/a';
                 appendLog('SYSTEM', 'Reconhecimento de voz indisponível neste navegador. Use o campo de texto.', 'log-err');
             }
         }
 
-        function base64ToArrayBuffer(base64) {
-            const binaryStr = window.atob(base64);
-            const len = binaryStr.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryStr.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function playArrayBufferViaAudioContext(arrayBuffer, playbackRate = 0.96) {
-            return new Promise(async (resolve, reject) => {
-                const ctx = ensureAudioContext();
-                if (!ctx) {
-                    reject(new Error('no_audio_ctx'));
-                    return;
-                }
-                try {
-                    if (ctx.state === 'suspended') {
-                        await ctx.resume();
-                    }
-                    const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
-                    if (!isBusy) {
-                        resolve();
-                        return;
-                    }
-                    const source = ctx.createBufferSource();
-                    source.buffer = decoded;
-                    source.playbackRate.value = playbackRate;
-                    source.connect(ctx.destination);
-                    activeAudioSource = source;
-                    source.onended = () => {
-                        if (activeAudioSource === source) activeAudioSource = null;
-                        resolve();
-                    };
-                    source.start(0);
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        }
-
-        async function fetchWithTimeout(url, options = {}, timeoutMs = 4200) {
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 5500) {
             const ctrl = new AbortController();
             const tid = setTimeout(() => ctrl.abort(), timeoutMs);
             try {
@@ -1509,42 +1339,96 @@
             }
         }
 
-        async function playNeuralMaleChunk(chunkText) {
-            // Provedor 1: TikTok Neural PT-BR Masculino (br_005) -> MP3 Base64 -> AudioContext
-            try {
-                const res = await fetchWithTimeout('https://tiktok-tts.weilnet.workers.dev/api/generation', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: chunkText, voice: 'br_005' })
-                }, 4200);
-
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.success && data.data) {
-                        const ab = base64ToArrayBuffer(data.data);
-                        await playArrayBufferViaAudioContext(ab, 0.96);
-                        return true;
-                    }
+        function playDirectAudioUrl(url, rate = 0.87, startTimeoutMs = 4500) {
+            return new Promise((resolve) => {
+                const audioEl = ensureJarvisAudioElement();
+                attachRobotFilterChain(audioEl);
+                if (robotAudioCtx && robotAudioCtx.state === 'suspended') {
+                    try { robotAudioCtx.resume(); } catch (e) {}
                 }
-            } catch (e) {}
 
-            // Provedor 2: Polly Ricardo (PT-BR Masculino) via StreamElements -> AudioContext / Audio Element
-            try {
-                const seUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Ricardo&text=${encodeURIComponent(chunkText)}`;
-                const res2 = await fetchWithTimeout(seUrl, {}, 3800);
-                if (res2.ok) {
-                    const ab2 = await res2.arrayBuffer();
-                    if (ab2 && ab2.byteLength > 200) {
-                        await playArrayBufferViaAudioContext(ab2, 0.98);
-                        return true;
+                let settled = false;
+                let startedPlaying = false;
+
+                const cleanup = () => {
+                    clearTimeout(loadTimer);
+                    clearTimeout(maxPlayTimer);
+                    audioEl.onplaying = null;
+                    audioEl.onended = null;
+                    audioEl.onerror = null;
+                };
+
+                const done = (ok) => {
+                    if (settled) return;
+                    settled = true;
+                    cleanup();
+                    try {
+                        audioEl.pause();
+                        audioEl.removeAttribute('src');
+                        audioEl.load();
+                    } catch (e) {}
+                    resolve(ok);
+                };
+
+                const loadTimer = setTimeout(() => {
+                    if (!startedPlaying) done(false);
+                }, startTimeoutMs);
+
+                const maxPlayTimer = setTimeout(() => {
+                    done(startedPlaying);
+                }, 26000);
+
+                audioEl.onplaying = () => {
+                    startedPlaying = true;
+                    clearTimeout(loadTimer);
+                };
+
+                audioEl.onended = () => {
+                    done(true);
+                };
+
+                audioEl.onerror = () => {
+                    done(false);
+                };
+
+                try {
+                    audioEl.muted = false;
+                    audioEl.volume = 1.0;
+                    audioEl.src = url;
+                    try {
+                        audioEl.preservesPitch = false;
+                        audioEl.mozPreservesPitch = false;
+                        audioEl.webkitPreservesPitch = false;
+                    } catch (e) {}
+                    // Velocidade 0.87 sem preservar pitch abaixa o tom vocal deixando masculino e robótico
+                    audioEl.playbackRate = rate;
+                    const playPromise = audioEl.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.catch(() => done(false));
                     }
+                } catch (e) {
+                    done(false);
                 }
-            } catch (e) {}
+            });
+        }
 
+        async function playRobotMaleChunk(chunkText) {
+            const encoded = encodeURIComponent(chunkText);
+            // Voz masculina PT-BR (Ricardo) + timbre grave robótico (0.87x sem preservePitch + ressonância metálica)
+            const ricardoUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Ricardo&text=${encoded}`;
+            if (await playDirectAudioUrl(ricardoUrl, 0.87, 4500)) {
+                return true;
+            }
+            if (!isBusy) return true;
+
+            const cristianoUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Cristiano&text=${encoded}`;
+            if (await playDirectAudioUrl(cristianoUrl, 0.88, 4000)) {
+                return true;
+            }
             return false;
         }
 
-        function resetMicHardTimeout(ms) {
+        function startMicHardTimeout(ms) {
             if (micHardTimeoutTimer) clearTimeout(micHardTimeoutTimer);
             micHardTimeoutTimer = setTimeout(() => {
                 if (isRecordingCommand && !isBusy) {
@@ -1579,16 +1463,12 @@
                 return;
             }
 
-            if (recognition) {
-                try {
-                    recognition.onstart = null;
-                    recognition.onresult = null;
-                    recognition.onerror = null;
-                    recognition.onend = null;
-                    recognition.abort();
-                } catch (e) {}
-                recognition = null;
-                isListening = false;
+            stopRecognitionSafe();
+            stopAllAudio();
+
+            if (micStartWatchdog) {
+                clearTimeout(micStartWatchdog);
+                micStartWatchdog = null;
             }
 
             const rec = new SR();
@@ -1598,8 +1478,29 @@
             rec.maxAlternatives = 1;
             recognition = rec;
 
+            let didStart = false;
+            let localHeardText = "";
+
+            if (forManualCommand) {
+                micStartWatchdog = setTimeout(() => {
+                    if (!didStart && isRecordingCommand && !isBusy) {
+                        stopRecognitionSafe();
+                        clearSpeechTimers();
+                        isRecordingCommand = false;
+                        setInputHearingPreview('');
+                        updateSystemStatus('standby');
+                        appendLog('SYSTEM', 'Microfone não respondeu. Toque novamente para falar.', 'log-err');
+                    }
+                }, 3000);
+            }
+
             rec.onstart = () => {
                 if (recognition !== rec) return;
+                didStart = true;
+                if (micStartWatchdog) {
+                    clearTimeout(micStartWatchdog);
+                    micStartWatchdog = null;
+                }
                 isListening = true;
                 if (!isBusy) {
                     updateSystemStatus(isRecordingCommand ? 'user_speaking' : 'standby');
@@ -1608,20 +1509,24 @@
 
             rec.onresult = (event) => {
                 if (recognition !== rec || isBusy) return;
+                didStart = true;
+                if (micStartWatchdog) {
+                    clearTimeout(micStartWatchdog);
+                    micStartWatchdog = null;
+                }
 
-                let interimTranscript = '';
-                let finalTranscript = '';
+                let fullTranscript = '';
+                let hasFinal = false;
 
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const part = event.results[i][0].transcript;
+                for (let i = 0; i < event.results.length; i++) {
+                    const seg = event.results[i][0]?.transcript || '';
+                    fullTranscript += seg + ' ';
                     if (event.results[i].isFinal) {
-                        finalTranscript += part + ' ';
-                    } else {
-                        interimTranscript += part;
+                        hasFinal = true;
                     }
                 }
 
-                const combinedRaw = (finalTranscript || interimTranscript).trim();
+                const combinedRaw = fullTranscript.replace(/\s+/g, ' ').trim();
                 if (!combinedRaw) return;
 
                 const norm = normalizeText(combinedRaw);
@@ -1632,16 +1537,19 @@
                         isRecordingCommand = true;
                         commandBuffer = "";
                         latestInterimBuffer = "";
+                        lastHeardTranscript = "";
+                        localHeardText = "";
                         updateSystemStatus('user_speaking');
-                        resetMicHardTimeout(7500);
+                        startMicHardTimeout(8500);
                         appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Fale seu comando...', 'log-sys');
 
                         const afterWake = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)[,.\s!?-]*/i, '').trim();
                         if (afterWake) {
+                            localHeardText = afterWake;
+                            lastHeardTranscript = afterWake;
+                            commandBuffer = afterWake;
                             setInputHearingPreview(afterWake);
-                            if (finalTranscript.trim()) commandBuffer = afterWake;
-                            else latestInterimBuffer = afterWake;
-                            scheduleSilenceCutoff(1150);
+                            scheduleSilenceCutoff(hasFinal ? 750 : 1150);
                         } else {
                             setInputHearingPreview('pode falar...');
                             scheduleSilenceCutoff(3500);
@@ -1650,35 +1558,58 @@
                     return;
                 }
 
-                updateSystemStatus('user_speaking');
-                resetMicHardTimeout(6500);
-
                 const cleaned = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)[,.\s!?-]*/i, '').trim();
-                if (cleaned) {
-                    setInputHearingPreview(cleaned);
-                }
+                if (!cleaned) return;
 
-                if (finalTranscript.trim()) {
-                    if (cleaned) {
-                        commandBuffer = (commandBuffer + ' ' + cleaned).trim();
-                        latestInterimBuffer = "";
+                if (cleaned !== localHeardText) {
+                    localHeardText = cleaned;
+                    lastHeardTranscript = cleaned;
+                    commandBuffer = cleaned;
+                    latestInterimBuffer = cleaned;
+                    setInputHearingPreview(cleaned);
+                    scheduleSilenceCutoff(hasFinal ? 700 : 1100);
+                } else if (hasFinal) {
+                    scheduleSilenceCutoff(550);
+                }
+            };
+
+            rec.onspeechend = () => {
+                if (recognition !== rec || isBusy) return;
+                if (isRecordingCommand) {
+                    const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
+                    if (captured) {
+                        commandBuffer = captured;
+                        scheduleSilenceCutoff(350);
+                        try { rec.stop(); } catch (e) {}
+                    } else {
+                        scheduleSilenceCutoff(1100);
                     }
-                    scheduleSilenceCutoff(950);
-                } else if (interimTranscript.trim()) {
-                    if (cleaned) {
-                        latestInterimBuffer = cleaned;
+                }
+            };
+
+            rec.onaudioend = () => {
+                if (recognition !== rec || isBusy) return;
+                if (isRecordingCommand) {
+                    const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
+                    if (captured) {
+                        commandBuffer = captured;
                     }
-                    scheduleSilenceCutoff(1350);
+                    scheduleSilenceCutoff(300);
                 }
             };
 
             rec.onerror = (event) => {
                 if (recognition !== rec) return;
                 isListening = false;
+                if (micStartWatchdog) {
+                    clearTimeout(micStartWatchdog);
+                    micStartWatchdog = null;
+                }
 
                 if (isRecordingCommand) {
-                    const captured = (commandBuffer + ' ' + latestInterimBuffer).trim();
+                    const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
                     if (captured) {
+                        commandBuffer = captured;
                         finalizeRecordedCommand();
                         return;
                     }
@@ -1689,34 +1620,41 @@
 
                     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                         shouldAutoListen = false;
-                        document.getElementById('dispVoiceStatus').textContent = 'perm';
-                        appendLog('SYSTEM', 'Microfone bloqueado pelo navegador/prévia. Use o site no Safari/Vercel ou digite abaixo.', 'log-err');
+                        const disp = document.getElementById('dispVoiceStatus');
+                        if (disp) disp.textContent = 'perm';
+                        appendLog('SYSTEM', 'Microfone bloqueado pelo navegador. Use no Safari/Vercel ou digite abaixo.', 'log-err');
                     } else if (event.error === 'no-speech') {
-                        appendLog('SYSTEM', 'Nenhuma voz detectada. Toque no botão e fale próximo ao microfone.', 'log-sys');
+                        appendLog('SYSTEM', 'Nenhuma voz detectada. Toque novamente e fale perto do microfone.', 'log-sys');
                     } else if (event.error !== 'aborted') {
-                        appendLog('SYSTEM', `Microfone interrompido (${event.error}). Tente tocar novamente.`, 'log-err');
+                        appendLog('SYSTEM', `Microfone interrompido (${event.error}). Toque novamente para falar.`, 'log-err');
                     }
                 } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                     shouldAutoListen = false;
-                    document.getElementById('dispVoiceStatus').textContent = 'perm';
+                    const disp = document.getElementById('dispVoiceStatus');
+                    if (disp) disp.textContent = 'perm';
                 }
             };
 
             rec.onend = () => {
                 if (recognition !== rec) return;
                 isListening = false;
+                if (micStartWatchdog) {
+                    clearTimeout(micStartWatchdog);
+                    micStartWatchdog = null;
+                }
                 if (isBusy) return;
 
                 if (isRecordingCommand) {
-                    const captured = (commandBuffer + ' ' + latestInterimBuffer).trim();
+                    const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
                     if (captured) {
+                        commandBuffer = captured;
                         finalizeRecordedCommand();
                     } else {
                         clearSpeechTimers();
                         isRecordingCommand = false;
                         setInputHearingPreview('');
                         updateSystemStatus('standby');
-                        appendLog('SYSTEM', 'Escuta encerrada sem áudio captado. Toque novamente para falar.', 'log-sys');
+                        appendLog('SYSTEM', 'Escuta encerrada sem fala captada. Toque novamente para perguntar.', 'log-sys');
                     }
                     return;
                 }
@@ -1726,31 +1664,36 @@
                         if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
                             startFreshRecognition(false);
                         }
-                    }, 350);
+                    }, 480);
                 }
             };
 
             try {
                 rec.start();
                 if (forManualCommand) {
-                    resetMicHardTimeout(8000);
+                    startMicHardTimeout(8500);
                 }
             } catch (e) {
                 isListening = false;
+                if (micStartWatchdog) {
+                    clearTimeout(micStartWatchdog);
+                    micStartWatchdog = null;
+                }
                 if (forManualCommand) {
                     isRecordingCommand = false;
                     setInputHearingPreview('');
                     updateSystemStatus('standby');
-                    appendLog('SYSTEM', 'Não foi possível iniciar o microfone agora. Toque novamente ou digite.', 'log-err');
+                    appendLog('SYSTEM', 'Reiniciando sessão de áudio. Toque mais uma vez para falar.', 'log-err');
                 }
             }
         }
 
         function finalizeRecordedCommand() {
             clearSpeechTimers();
-            const finalCmd = (commandBuffer + ' ' + latestInterimBuffer).trim();
+            const finalCmd = (commandBuffer || latestInterimBuffer || lastHeardTranscript).trim();
             commandBuffer = "";
             latestInterimBuffer = "";
+            lastHeardTranscript = "";
             isRecordingCommand = false;
             setInputHearingPreview('');
 
@@ -1760,7 +1703,7 @@
                 updateSystemStatus('standby');
                 appendLog('SYSTEM', 'Nenhuma fala captada. Voltando para STANDBY.', 'log-sys');
                 if (shouldAutoListen) {
-                    setTimeout(() => startFreshRecognition(false), 400);
+                    setTimeout(() => startFreshRecognition(false), 500);
                 }
                 return;
             }
@@ -1769,7 +1712,7 @@
         }
 
         function normalizeText(str) {
-            return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            return String(str || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
 
         function stopRecognitionSafe() {
@@ -1780,6 +1723,8 @@
             try {
                 rec.onstart = null;
                 rec.onresult = null;
+                rec.onspeechend = null;
+                rec.onaudioend = null;
                 rec.onerror = null;
                 rec.onend = null;
                 rec.abort();
@@ -1805,14 +1750,20 @@
                 clearTimeout(micHardTimeoutTimer);
                 micHardTimeoutTimer = null;
             }
+            if (micStartWatchdog) {
+                clearTimeout(micStartWatchdog);
+                micStartWatchdog = null;
+            }
         }
 
         function releaseSpeechLock() {
             clearSpeechTimers();
+            stopAllAudio();
             isBusy = false;
             isRecordingCommand = false;
             commandBuffer = "";
             latestInterimBuffer = "";
+            lastHeardTranscript = "";
             setInputHearingPreview('');
             updateSystemStatus('standby');
             if (shouldAutoListen) {
@@ -1820,12 +1771,12 @@
                     if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
                         startFreshRecognition(false);
                     }
-                }, 400);
+                }, 650);
             }
         }
 
         function splitTextForNaturalSpeech(fullText, maxLen = 175) {
-            const clean = fullText.replace(/[*#_`~]/g, '').replace(/\s+/g, ' ').trim();
+            const clean = String(fullText || '').replace(/[*#_`~]/g, '').replace(/\s+/g, ' ').trim();
             if (!clean) return [];
             const rawParts = clean.match(/[^.!?;:]+[.!?;:]*/g) || [clean];
             const chunks = [];
@@ -1858,12 +1809,15 @@
             }
             pickBestLocalMaleVoice();
 
-            speechKeepAliveTimer = setInterval(() => {
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.pause();
-                    window.speechSynthesis.resume();
-                }
-            }, 4500);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (!isIOS) {
+                speechKeepAliveTimer = setInterval(() => {
+                    if (window.speechSynthesis.speaking) {
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }
+                }, 4500);
+            }
 
             let idx = 0;
             const speakNext = () => {
@@ -1878,8 +1832,8 @@
                 } else {
                     utter.lang = 'pt-BR';
                 }
-                utter.rate = 0.96;
-                utter.pitch = 0.55;
+                utter.rate = 0.92;
+                utter.pitch = 0.42;
                 utter.volume = 1.0;
 
                 utter.onend = () => {
@@ -1924,13 +1878,13 @@
                     resolve();
                 };
 
-                const totalTimeoutMs = Math.max(22000, text.length * 260);
+                const totalTimeoutMs = Math.max(24000, text.length * 280);
                 speechSafetyTimer = setTimeout(finishOnce, totalTimeoutMs);
 
-                if (voiceEngineMode === 'neural') {
+                if (voiceEngineMode === 'robot') {
                     for (let i = 0; i < chunks.length; i++) {
                         if (finished || !isBusy) return;
-                        const played = await playNeuralMaleChunk(chunks[i]);
+                        const played = await playRobotMaleChunk(chunks[i]);
                         if (!played) {
                             speakChunksLocally(chunks.slice(i), finishOnce);
                             return;
@@ -1948,6 +1902,7 @@
             const label = document.getElementById('statusText');
             const micBtn = document.getElementById('btnMic');
             const micLabel = document.getElementById('micLabel');
+            if (!dot || !label || !micBtn || !micLabel) return;
 
             dot.className = 'live-dot';
             micBtn.classList.remove('mic-active', 'mic-standby');
@@ -1990,25 +1945,27 @@
         }
 
         window.triggerManualMic = () => {
-            unlockJarvisAudio();
-
             if (isRecordingCommand) {
                 finalizeRecordedCommand();
                 return;
             }
 
             stopAllAudio();
+            stopRecognitionSafe();
             clearSpeechTimers();
             shouldAutoListen = true;
             isBusy = false;
             isRecordingCommand = true;
             commandBuffer = "";
             latestInterimBuffer = "";
+            lastHeardTranscript = "";
             setInputHearingPreview('pode falar agora...');
             updateSystemStatus('user_speaking');
             appendLog('SYSTEM', 'Microfone ativo — fale sua pergunta e faça pausa para o Jarvis responder.', 'log-sys');
 
-            startFreshRecognition(true);
+            setTimeout(() => {
+                startFreshRecognition(true);
+            }, 120);
         };
 
         /* ═══════════════════════════════════════════════════════════════════════ */
@@ -2095,7 +2052,7 @@
                 'APP LAUNCHER',
                 '',
                 'log-sys',
-                `<span style="color:#10b981;">APP:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2dd4ff; text-decoration:underline; font-weight:bold;">[ ↗ ABRIR ${appName.toUpperCase()} ]</a>`
+                `<span style="color:#10b981;">APP:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2dd4ff; text-decoration:underline; font-weight:bold;">[ ↗ ABRIR ${escapeHtml(appName.toUpperCase())} ]</a>`
             );
 
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -2148,21 +2105,33 @@ ${brainDump}`;
             const cleanQuery = query.replace(/[?!.,]+$/g, '').trim();
 
             try {
-                const wikiSearchUrl = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&format=json&origin=*&srlimit=2`;
-                const wRes = await fetch(wikiSearchUrl);
+                const wikiSearchUrl = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&format=json&origin=*&srlimit=1`;
+                const wRes = await fetchWithTimeout(wikiSearchUrl, {}, 4000);
                 if (wRes.ok) {
                     const wData = await wRes.json();
-                    const hits = wData?.query?.search || [];
-                    for (const hit of hits) {
-                        const plainSnippet = hit.snippet.replace(/<[^>]+>/g, '');
-                        snippets.push(`[Wikipedia - ${hit.title}]: ${plainSnippet}`);
+                    const topHit = wData?.query?.search?.[0];
+                    if (topHit) {
+                        const extractUrl = `https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&exsentences=3&titles=${encodeURIComponent(topHit.title)}&format=json&origin=*`;
+                        const eRes = await fetchWithTimeout(extractUrl, {}, 3500);
+                        if (eRes.ok) {
+                            const eData = await eRes.json();
+                            const pages = eData?.query?.pages || {};
+                            const firstPage = Object.values(pages)[0];
+                            if (firstPage?.extract) {
+                                snippets.push(`[Wikipedia - ${topHit.title}]: ${firstPage.extract.trim()}`);
+                            }
+                        }
+                        if (snippets.length === 0) {
+                            const plainSnippet = topHit.snippet.replace(/<[^>]+>/g, '');
+                            snippets.push(`[Wikipedia - ${topHit.title}]: ${plainSnippet}`);
+                        }
                     }
                 }
             } catch (e) {}
 
             try {
                 const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(cleanQuery)}&format=json&no_html=1&skip_disambig=1`;
-                const dRes = await fetch(ddgUrl);
+                const dRes = await fetchWithTimeout(ddgUrl, {}, 3500);
                 if (dRes.ok) {
                     const dData = await dRes.json();
                     if (dData.AbstractText) {
@@ -2173,10 +2142,24 @@ ${brainDump}`;
 
             if (/dolar|dólar|euro|bitcoin|btc|cotacao|cotação|moeda/i.test(cleanQuery)) {
                 try {
-                    const fxRes = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL');
+                    const fxRes = await fetchWithTimeout('https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL', {}, 4000);
                     if (fxRes.ok) {
                         const fx = await fxRes.json();
                         snippets.push(`[Cotações Tempo Real]: Dólar R$ ${Number(fx.USDBRL?.bid || 0).toFixed(2)}, Euro R$ ${Number(fx.EURBRL?.bid || 0).toFixed(2)}, Bitcoin R$ ${Number(fx.BTCBRL?.bid || 0).toLocaleString('pt-BR')}.`);
+                    }
+                } catch (e) {}
+            }
+
+            if (/tempo|clima|temperatura|chuva|previsao|previsão/i.test(cleanQuery)) {
+                try {
+                    const meteoUrl = 'https://api.open-meteo.com/v1/forecast?latitude=-29.58&longitude=-50.90&current=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=America%2FSao_Paulo';
+                    const mRes = await fetchWithTimeout(meteoUrl, {}, 3500);
+                    if (mRes.ok) {
+                        const mData = await mRes.json();
+                        const cur = mData?.current;
+                        if (cur) {
+                            snippets.push(`[Clima Agora - Nova Hartz]: ${cur.temperature_2m} graus Celsius, umidade de ${cur.relative_humidity_2m} por cento e vento a ${cur.wind_speed_10m} quilômetros por hora.`);
+                        }
                     }
                 } catch (e) {}
             }
@@ -2185,6 +2168,28 @@ ${brainDump}`;
         }
 
         async function queryFreeWebAI(userQuestion, systemText) {
+            const normQ = normalizeText(userQuestion);
+
+            if (/\b(que horas|horario|hora certa|horas sao)\b/.test(normQ)) {
+                const now = new Date();
+                return {
+                    ok: true,
+                    text: `Agora são exatamente ${now.getHours()} horas e ${now.getMinutes()} minutos, ${CONFIG.address}.`,
+                    model: 'local-clock',
+                    webSearch: false
+                };
+            }
+            if (/\b(que dia e hoje|data de hoje|qual a data)\b/.test(normQ)) {
+                const now = new Date();
+                const formatted = now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                return {
+                    ok: true,
+                    text: `Hoje é ${formatted}, ${CONFIG.address}.`,
+                    model: 'local-calendar',
+                    webSearch: false
+                };
+            }
+
             const webContext = await fetchLiveWebSnippets(userQuestion);
             const enrichedUserPrompt = webContext
                 ? `Pergunta do ${CONFIG.address}: ${userQuestion}\n\nDados coletados agora da internet para embasar sua resposta:\n${webContext}`
@@ -2197,7 +2202,7 @@ ${brainDump}`;
                 }));
                 recentMsgs.push({ role: 'user', content: enrichedUserPrompt });
 
-                const pRes = await fetch('https://text.pollinations.ai/openai', {
+                const pRes = await fetchWithTimeout('https://text.pollinations.ai/openai', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2208,7 +2213,7 @@ ${brainDump}`;
                         ],
                         seed: Math.floor(Math.random() * 99999)
                     })
-                });
+                }, 7000);
 
                 if (pRes.ok) {
                     const pData = await pRes.json();
@@ -2221,10 +2226,10 @@ ${brainDump}`;
 
             try {
                 const simplePrompt = `${systemText}\n\nUsuário: ${enrichedUserPrompt}\nJarvis:`;
-                const gRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(simplePrompt)}?model=openai`);
+                const gRes = await fetchWithTimeout(`https://text.pollinations.ai/${encodeURIComponent(simplePrompt)}?model=openai`, {}, 6500);
                 if (gRes.ok) {
                     const replyText = (await gRes.text()).trim();
-                    if (replyText && !replyText.startsWith('<!DOCTYPE')) {
+                    if (replyText && !replyText.startsWith('<!DOCTYPE') && !replyText.startsWith('{')) {
                         return { ok: true, text: replyText, model: 'web-ai-direct', webSearch: true };
                     }
                 }
@@ -2233,8 +2238,8 @@ ${brainDump}`;
             if (webContext) {
                 return {
                     ok: true,
-                    text: `Senhor Sandro, encontrei o seguinte na rede: ${webContext.replace(/\[[^\]]+\]:\s*/g, '')}`,
-                    model: 'wiki-ddg-direct',
+                    text: `${CONFIG.address}, encontrei o seguinte na rede: ${webContext.replace(/\[[^\]]+\]:\s*/g, '')}`,
+                    model: 'wiki-web-direct',
                     webSearch: true
                 };
             }
@@ -2243,7 +2248,7 @@ ${brainDump}`;
         }
 
         async function queryGeminiWithFallback(contentsPayload, systemText, rawUserQuestion = "") {
-            const rawKey = getSavedApiKey() || document.getElementById('apiKeyInput').value;
+            const rawKey = getSavedApiKey() || document.getElementById('apiKeyInput')?.value || '';
             const apiKey = (rawKey || '').replace(/["'\s\r\n]+/g, '');
             if (apiKey) saveApiKeyForever(apiKey);
 
@@ -2275,11 +2280,11 @@ ${brainDump}`;
                 }
 
                 try {
-                    const res = await fetch(url, {
+                    const res = await fetchWithTimeout(url, {
                         method: 'POST',
                         headers,
                         body: JSON.stringify(bodyObj)
-                    });
+                    }, 7500);
 
                     if (res.ok) {
                         const data = await res.json();
@@ -2399,9 +2404,17 @@ ${brainDump}`;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 6. EVENTOS DE INTERFACE E EDITOR DE NÓS                                 */
+        /* 6. EVENTOS DE INTERFACE, EDITOR DE NÓS & BOOT                           */
         /* ═══════════════════════════════════════════════════════════════════════ */
         function bindUIEvents() {
+            const apiInput = document.getElementById('apiKeyInput');
+            if (apiInput) {
+                apiInput.value = getSavedApiKey();
+                apiInput.addEventListener('input', (e) => {
+                    saveApiKeyForever(e.target.value);
+                });
+            }
+
             document.getElementById('btnActivate').addEventListener('click', () => {
                 document.getElementById('activationScreen').classList.add('hidden');
                 document.getElementById('commandFloor').classList.add('active');
@@ -2420,7 +2433,7 @@ ${brainDump}`;
 
             document.getElementById('btnVoiceMode').addEventListener('click', () => {
                 unlockJarvisAudio();
-                voiceEngineMode = voiceEngineMode === 'neural' ? 'local' : 'neural';
+                voiceEngineMode = voiceEngineMode === 'robot' ? 'local' : 'robot';
                 updateVoiceModeButton();
                 const msg = `Perfil de áudio atualizado, ${CONFIG.address}.`;
                 appendLog('SYSTEM', msg, 'log-sys');
@@ -2521,6 +2534,45 @@ ${brainDump}`;
 
             modal.classList.add('open');
         };
+
+        function updateClockTelemetry() {
+            const el = document.getElementById('clockTelemetry');
+            if (!el) return;
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            el.textContent = `T ${hh}:${mm}`;
+        }
+
+        function initJarvisApp() {
+            try {
+                const saved = localStorage.getItem('jarvis_notes');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        NOTES = parsed;
+                    }
+                }
+            } catch (e) {}
+
+            setupSpeechEngine();
+            bindUIEvents();
+            updateClockTelemetry();
+            setInterval(updateClockTelemetry, 10000);
+
+            setTimeout(() => {
+                const boot = document.getElementById('bootScreen');
+                const act = document.getElementById('activationScreen');
+                if (boot) boot.classList.add('hidden');
+                if (act) act.classList.remove('hidden');
+            }, 1200);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initJarvisApp);
+        } else {
+            initJarvisApp();
+        }
     </script>
 </body>
 </html>
