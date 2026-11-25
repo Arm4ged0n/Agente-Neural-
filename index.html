@@ -843,6 +843,8 @@
         let commandBuffer = "";
         let latestInterimBuffer = "";
         let lastHeardTranscript = "";
+        let lastJarvisSpokenNorm = "";
+        let lastJarvisFinishedAt = 0;
         let commandSilenceTimer = null;
         let micHardTimeoutTimer = null;
         let micStartWatchdog = null;
@@ -1177,7 +1179,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════ */
-        /* 4. VOZ MASCULINA ROBÓTICA (DSP METÁLICO + MICROFONE CONTÍNUO ESTÁVEL)   */
+        /* 4. VOZ MASCULINA ROBÓTICA + ESCUTA CALIBRADA (SEM ECO / SEM CORTAR)     */
         /* ═══════════════════════════════════════════════════════════════════════ */
         const FEMALE_VOICE_HINTS = /luciana|joana|maria|fernanda|helena|francisca|thalita|camila|raquel|catarina|ines|inês|sofia|leticia|letícia|vitoria|vitória|sara|monica|mônica|ana|paula|female|mulher|woman|girl|samantha|victoria|karen|moira|tessa|fiona|shelley|sandy|flo|grandma|avó|avo\b/i;
         const MALE_VOICE_HINTS = /daniel|reed|eddy|rocko|grandpa|avô|arthur|tiago|felipe|antonio|antônio|joaquim|cristiano|ricardo|thiago|bruno|pedro|lucas|gabriel|rafael|carlos|paulo|jorge|fernando|rodrigo|henrique|male|homem|man|guy/i;
@@ -1205,20 +1207,17 @@
                 }
                 const source = robotAudioCtx.createMediaElementSource(audioEl);
 
-                // Filtro de graves masculinos (chest resonance)
                 const bassBoost = robotAudioCtx.createBiquadFilter();
                 bassBoost.type = 'lowshelf';
                 bassBoost.frequency.value = 180;
                 bassBoost.gain.value = 8.5;
 
-                // Ressonância metálica estilo armadura/Jarvis
                 const metallicPeaking = robotAudioCtx.createBiquadFilter();
                 metallicPeaking.type = 'peaking';
                 metallicPeaking.frequency.value = 1150;
                 metallicPeaking.Q.value = 5.5;
                 metallicPeaking.gain.value = 7.0;
 
-                // Delay curto de 14ms para timbre sintético/robótico limpo
                 const combDelay = robotAudioCtx.createDelay();
                 combDelay.delayTime.value = 0.014;
                 const combGain = robotAudioCtx.createGain();
@@ -1237,9 +1236,7 @@
 
                 masterGain.connect(robotAudioCtx.destination);
                 robotSourceConnected = true;
-            } catch (e) {
-                // Se CORS impedir WebAudio no host, o playbackRate rebaixado já mantém o timbre grave
-            }
+            } catch (e) {}
         }
 
         function unlockJarvisAudio() {
@@ -1400,7 +1397,6 @@
                         audioEl.mozPreservesPitch = false;
                         audioEl.webkitPreservesPitch = false;
                     } catch (e) {}
-                    // Velocidade 0.87 sem preservar pitch abaixa o tom vocal deixando masculino e robótico
                     audioEl.playbackRate = rate;
                     const playPromise = audioEl.play();
                     if (playPromise && typeof playPromise.catch === 'function') {
@@ -1414,7 +1410,6 @@
 
         async function playRobotMaleChunk(chunkText) {
             const encoded = encodeURIComponent(chunkText);
-            // Voz masculina PT-BR (Ricardo) + timbre grave robótico (0.87x sem preservePitch + ressonância metálica)
             const ricardoUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Ricardo&text=${encoded}`;
             if (await playDirectAudioUrl(ricardoUrl, 0.87, 4500)) {
                 return true;
@@ -1454,6 +1449,16 @@
                 : "Fale 'Ei Jarvis' ou toque no botão / digite...";
         }
 
+        function isEchoFromJarvis(candidateNorm) {
+            if (!candidateNorm) return true;
+            if (Date.now() - lastJarvisFinishedAt < 900) return true;
+            if (!lastJarvisSpokenNorm) return false;
+            if (candidateNorm.length >= 6 && lastJarvisSpokenNorm.includes(candidateNorm)) {
+                return true;
+            }
+            return false;
+        }
+
         function startFreshRecognition(forManualCommand = false) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SR) {
@@ -1475,7 +1480,7 @@
             rec.lang = 'pt-BR';
             rec.continuous = false;
             rec.interimResults = true;
-            rec.maxAlternatives = 1;
+            rec.maxAlternatives = 3;
             recognition = rec;
 
             let didStart = false;
@@ -1491,7 +1496,7 @@
                         updateSystemStatus('standby');
                         appendLog('SYSTEM', 'Microfone não respondeu. Toque novamente para falar.', 'log-err');
                     }
-                }, 3000);
+                }, 3500);
             }
 
             rec.onstart = () => {
@@ -1530,6 +1535,10 @@
                 if (!combinedRaw) return;
 
                 const norm = normalizeText(combinedRaw);
+                if (!forManualCommand && isEchoFromJarvis(norm)) {
+                    return;
+                }
+
                 const wakeRegex = /\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)\b/i;
 
                 if (!isRecordingCommand) {
@@ -1540,8 +1549,8 @@
                         lastHeardTranscript = "";
                         localHeardText = "";
                         updateSystemStatus('user_speaking');
-                        startMicHardTimeout(8500);
-                        appendLog('SYSTEM', 'Wake word "Ei, Jarvis" detectada! Fale seu comando...', 'log-sys');
+                        startMicHardTimeout(11000);
+                        appendLog('SYSTEM', 'Ouvindo você... Pode falar sua pergunta.', 'log-sys');
 
                         const afterWake = combinedRaw.replace(/^.*?\b(ei|hey|oi|ok|eai|e ai)?\s*jarv(is|es|i)[,.\s!?-]*/i, '').trim();
                         if (afterWake) {
@@ -1549,10 +1558,10 @@
                             lastHeardTranscript = afterWake;
                             commandBuffer = afterWake;
                             setInputHearingPreview(afterWake);
-                            scheduleSilenceCutoff(hasFinal ? 750 : 1150);
+                            scheduleSilenceCutoff(hasFinal ? 1300 : 1850);
                         } else {
                             setInputHearingPreview('pode falar...');
-                            scheduleSilenceCutoff(3500);
+                            scheduleSilenceCutoff(4500);
                         }
                     }
                     return;
@@ -1567,9 +1576,10 @@
                     commandBuffer = cleaned;
                     latestInterimBuffer = cleaned;
                     setInputHearingPreview(cleaned);
-                    scheduleSilenceCutoff(hasFinal ? 700 : 1100);
+                    // Só começa a contar pausa depois que o usuário começou a falar de fato
+                    scheduleSilenceCutoff(hasFinal ? 1250 : 1750);
                 } else if (hasFinal) {
-                    scheduleSilenceCutoff(550);
+                    scheduleSilenceCutoff(1000);
                 }
             };
 
@@ -1579,10 +1589,9 @@
                     const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
                     if (captured) {
                         commandBuffer = captured;
-                        scheduleSilenceCutoff(350);
-                        try { rec.stop(); } catch (e) {}
+                        scheduleSilenceCutoff(650);
                     } else {
-                        scheduleSilenceCutoff(1100);
+                        scheduleSilenceCutoff(2200);
                     }
                 }
             };
@@ -1593,8 +1602,8 @@
                     const captured = (commandBuffer || latestInterimBuffer || lastHeardTranscript || localHeardText).trim();
                     if (captured) {
                         commandBuffer = captured;
+                        scheduleSilenceCutoff(400);
                     }
-                    scheduleSilenceCutoff(300);
                 }
             };
 
@@ -1624,7 +1633,7 @@
                         if (disp) disp.textContent = 'perm';
                         appendLog('SYSTEM', 'Microfone bloqueado pelo navegador. Use no Safari/Vercel ou digite abaixo.', 'log-err');
                     } else if (event.error === 'no-speech') {
-                        appendLog('SYSTEM', 'Nenhuma voz detectada. Toque novamente e fale perto do microfone.', 'log-sys');
+                        appendLog('SYSTEM', 'Não captei áudio claro. Toque novamente e fale mais perto do microfone.', 'log-sys');
                     } else if (event.error !== 'aborted') {
                         appendLog('SYSTEM', `Microfone interrompido (${event.error}). Toque novamente para falar.`, 'log-err');
                     }
@@ -1654,7 +1663,7 @@
                         isRecordingCommand = false;
                         setInputHearingPreview('');
                         updateSystemStatus('standby');
-                        appendLog('SYSTEM', 'Escuta encerrada sem fala captada. Toque novamente para perguntar.', 'log-sys');
+                        appendLog('SYSTEM', 'Escuta encerrada sem áudio captado. Toque novamente para perguntar.', 'log-sys');
                     }
                     return;
                 }
@@ -1664,14 +1673,14 @@
                         if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
                             startFreshRecognition(false);
                         }
-                    }, 480);
+                    }, 950);
                 }
             };
 
             try {
                 rec.start();
                 if (forManualCommand) {
-                    startMicHardTimeout(8500);
+                    startMicHardTimeout(11500);
                 }
             } catch (e) {
                 isListening = false;
@@ -1703,8 +1712,18 @@
                 updateSystemStatus('standby');
                 appendLog('SYSTEM', 'Nenhuma fala captada. Voltando para STANDBY.', 'log-sys');
                 if (shouldAutoListen) {
-                    setTimeout(() => startFreshRecognition(false), 500);
+                    setTimeout(() => startFreshRecognition(false), 900);
                 }
+                return;
+            }
+
+            // Se for comando para abrir YouTube / Spotify / Apps, dispara o redirecionamento imediatamente
+            const immediateApp = parseOpenAppIntent(finalCmd);
+            if (immediateApp) {
+                appendLog('SANDRO', finalCmd, 'log-user');
+                appendLog('JARVIS', immediateApp.reply, 'log-jarvis');
+                openExternalAppSafe(immediateApp.url, immediateApp.appName, immediateApp.deepLink);
+                speakText(immediateApp.reply);
                 return;
             }
 
@@ -1759,6 +1778,7 @@
         function releaseSpeechLock() {
             clearSpeechTimers();
             stopAllAudio();
+            lastJarvisFinishedAt = Date.now();
             isBusy = false;
             isRecordingCommand = false;
             commandBuffer = "";
@@ -1771,7 +1791,7 @@
                     if (shouldAutoListen && !isBusy && !isListening && !isRecordingCommand) {
                         startFreshRecognition(false);
                     }
-                }, 650);
+                }, 1350);
             }
         }
 
@@ -1857,6 +1877,7 @@
                     return;
                 }
 
+                lastJarvisSpokenNorm = normalizeText(text);
                 isBusy = true;
                 stopRecognitionSafe();
                 stopAllAudio();
@@ -1961,7 +1982,7 @@
             lastHeardTranscript = "";
             setInputHearingPreview('pode falar agora...');
             updateSystemStatus('user_speaking');
-            appendLog('SYSTEM', 'Microfone ativo — fale sua pergunta e faça pausa para o Jarvis responder.', 'log-sys');
+            appendLog('SYSTEM', 'Microfone ativo — faça sua pergunta completa e aguarde 1,5s.', 'log-sys');
 
             setTimeout(() => {
                 startFreshRecognition(true);
@@ -1987,18 +2008,18 @@
 
         function parseOpenAppIntent(rawText) {
             const norm = normalizeText(rawText);
-            const openTrigger = /^(jarvis[,.\s]*)?(abrir|abre|abra|iniciar|inicia|acessar|acessa|entrar no|entrar na|executar|colocar no|coloca no)\s+(.+)$/i;
+            const openTrigger = /^(?:(?:ei|hey|oi|ok)\s+)?(?:jarvis[,.\s]*)?(?:por favor[,.\s]*)?(?:voce pode\s+|pode\s+|quero\s+|queria\s+)?(abrir|abre|abra|iniciar|inicia|acessar|acessa|entrar no|entrar na|executar|colocar no|coloca no|ir para|vai para)\s+(.+)$/i;
             const match = norm.match(openTrigger);
             if (!match) return null;
 
-            let target = match[3]
+            let target = match[2]
                 .replace(/^(o|a|os|as|aplicativo|app|site|pagina|página)\s+/gi, '')
                 .replace(/\s+(por favor|agora|para mim|pra mim)$/gi, '')
                 .trim();
 
             if (!target) return null;
 
-            const ytSearchMatch = target.match(/^youtube\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar)?\s*(.+)$/i);
+            const ytSearchMatch = target.match(/^(?:youtube|you tube)\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar|ver|ouvir)?\s*(.+)$/i);
             if (ytSearchMatch && ytSearchMatch[1]) {
                 const query = ytSearchMatch[1].trim();
                 const webUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
@@ -2007,6 +2028,17 @@
                     url: webUrl,
                     deepLink: `youtube://results?search_query=${encodeURIComponent(query)}`,
                     reply: `Abrindo o YouTube e buscando por ${query}, ${CONFIG.address}.`
+                };
+            }
+
+            const spSearchMatch = target.match(/^spotify\s+(?:e\s+)?(?:pesquisar|buscar|procurar|tocar|ouvir)?\s*(.+)$/i);
+            if (spSearchMatch && spSearchMatch[1]) {
+                const query = spSearchMatch[1].trim();
+                return {
+                    appName: `Spotify (${query})`,
+                    url: `https://open.spotify.com/search/${encodeURIComponent(query)}`,
+                    deepLink: `spotify:search:${encodeURIComponent(query)}`,
+                    reply: `Abrindo o Spotify e buscando ${query}, ${CONFIG.address}.`
                 };
             }
 
@@ -2057,24 +2089,30 @@
 
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (isMobile && deepLink) {
+                // Tenta abrir o app nativo (YouTube/Spotify) diretamente e, se não estiver instalado, cai no navegador
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = deepLink;
+                document.body.appendChild(iframe);
+                setTimeout(() => {
+                    try { document.body.removeChild(iframe); } catch (e) {}
+                }, 1200);
+
                 try {
                     window.location.href = deepLink;
-                    setTimeout(() => {
-                        window.open(url, '_blank', 'noopener,noreferrer');
-                    }, 900);
-                    return;
                 } catch (e) {}
+
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        window.location.assign(url);
+                    }
+                }, 1100);
+                return;
             }
 
             const win = window.open(url, '_blank', 'noopener,noreferrer');
             if (!win || win.closed || typeof win.closed === 'undefined') {
-                const a = document.createElement('a');
-                a.href = url;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                window.location.assign(url);
             }
         }
 
@@ -2092,11 +2130,13 @@
 
             return `Você é ${CONFIG.name}, o assistente de inteligência artificial pessoal de ${CONFIG.address}, com personalidade ${CONFIG.persona}.
 Regras obrigatórias:
-- Responda qualquer pergunta (notícias, cotações, fatos atuais, tecnologia, clima ou assuntos pessoais) em português do Brasil, de forma clara, completa e objetiva (2 a 4 frases) para ser falada em voz alta.
+- Foque ESTRITAMENTE no assunto exato da última pergunta feita pelo ${CONFIG.address}. Nunca mude de tema nem invente assuntos não perguntados.
+- Se a frase ouvida parecer incompleta ou ambígua, peça de forma educada para o ${CONFIG.address} repetir a pergunta em uma frase curta.
+- Responda em português do Brasil, de forma clara, completa e objetiva (2 a 4 frases) para ser falada em voz alta.
 - NÃO use markdown, asteriscos, colchetes ou emojis na resposta falada.
 - Se o usuário revelar um fato novo e duradouro sobre sua vida, projetos, metas, finanças ou rotina, termine sua resposta com uma linha no formato EXATO: [[SAVE:area|titulo|texto]] onde area é uma destas: metas, trabalho, projetos, financas, aprendizado, saude, relacoes, meta. Só inclua se houver novidade real.
 
-SECOND BRAIN (Contexto atual de ${CONFIG.address}):
+SECOND BRAIN (Contexto de referência de ${CONFIG.address} — use apenas quando a pergunta tiver relação com isso):
 ${brainDump}`;
         }
 
@@ -2192,11 +2232,11 @@ ${brainDump}`;
 
             const webContext = await fetchLiveWebSnippets(userQuestion);
             const enrichedUserPrompt = webContext
-                ? `Pergunta do ${CONFIG.address}: ${userQuestion}\n\nDados coletados agora da internet para embasar sua resposta:\n${webContext}`
-                : userQuestion;
+                ? `Pergunta exata do ${CONFIG.address}: "${userQuestion}"\n\nDados coletados agora da internet sobre essa pergunta:\n${webContext}`
+                : `Pergunta exata do ${CONFIG.address}: "${userQuestion}"`;
 
             try {
-                const recentMsgs = sessionHistory.slice(-6).map(m => ({
+                const recentMsgs = sessionHistory.slice(-4).map(m => ({
                     role: m.role === 'model' ? 'assistant' : 'user',
                     content: m.parts?.[0]?.text || ''
                 }));
@@ -2213,7 +2253,7 @@ ${brainDump}`;
                         ],
                         seed: Math.floor(Math.random() * 99999)
                     })
-                }, 7000);
+                }, 7500);
 
                 if (pRes.ok) {
                     const pData = await pRes.json();
@@ -2225,7 +2265,7 @@ ${brainDump}`;
             } catch (e) {}
 
             try {
-                const simplePrompt = `${systemText}\n\nUsuário: ${enrichedUserPrompt}\nJarvis:`;
+                const simplePrompt = `${systemText}\n\n${enrichedUserPrompt}\nJarvis:`;
                 const gRes = await fetchWithTimeout(`https://text.pollinations.ai/${encodeURIComponent(simplePrompt)}?model=openai`, {}, 6500);
                 if (gRes.ok) {
                     const replyText = (await gRes.text()).trim();
@@ -2273,7 +2313,7 @@ ${brainDump}`;
                 const bodyObj = {
                     system_instruction: { parts: [{ text: systemText }] },
                     contents: contentsPayload,
-                    generationConfig: { maxOutputTokens: 420, temperature: 0.7 }
+                    generationConfig: { maxOutputTokens: 420, temperature: 0.5 }
                 };
                 if (cand.useSearch) {
                     bodyObj.tools = [{ google_search: {} }];
@@ -2351,7 +2391,7 @@ ${brainDump}`;
             });
 
             const systemPrompt = buildSystemInstruction();
-            const result = await queryGeminiWithFallback(sessionHistory.slice(-10), systemPrompt, userText);
+            const result = await queryGeminiWithFallback(sessionHistory.slice(-6), systemPrompt, userText);
 
             if (!result.ok) {
                 document.getElementById('dispGeminiBar').style.color = '#ef4444';
